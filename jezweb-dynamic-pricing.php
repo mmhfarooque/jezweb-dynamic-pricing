@@ -30,7 +30,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Define plugin constants
  */
-define( 'JDPD_VERSION', '1.0.3' );
+define( 'JDPD_VERSION', '1.0.4' );
 define( 'JDPD_PLUGIN_FILE', __FILE__ );
 define( 'JDPD_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
 define( 'JDPD_PLUGIN_URL', plugin_dir_url( __FILE__ ) );

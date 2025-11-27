@@ -302,20 +302,6 @@ function jdpd_get_user_order_count( $user_id ) {
     $customer = new WC_Customer( $user_id );
     return $customer->get_order_count();
 }
-
-/**
- * Log message (for debugging)
- *
- * @param string $message Message to log.
- * @param string $level   Log level.
- */
-function jdpd_log( $message, $level = 'info' ) {
-    if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-        $logger = wc_get_logger();
-        $logger->log( $level, $message, array( 'source' => 'jezweb-dynamic-pricing' ) );
-    }
-}
-
 /**
  * Get cart subtotal
  *
