@@ -126,17 +126,21 @@ if ( $is_edit ) {
                     <div class="postbox">
                         <h2 class="hndle"><?php esc_html_e( 'Basic Information', 'jezweb-dynamic-pricing' ); ?></h2>
                         <div class="inside">
-                            <table class="form-table">
-                                <tr>
-                                    <th><label for="rule_name"><?php esc_html_e( 'Rule Name', 'jezweb-dynamic-pricing' ); ?></label></th>
-                                    <td>
+                            <div class="jdpd-form-fields">
+                                <div class="jdpd-form-row">
+                                    <div class="jdpd-form-label">
+                                        <label for="rule_name"><?php esc_html_e( 'Rule Name', 'jezweb-dynamic-pricing' ); ?></label>
+                                    </div>
+                                    <div class="jdpd-form-field">
                                         <input type="text" name="rule_name" id="rule_name" class="regular-text"
                                                value="<?php echo esc_attr( $rule_name ); ?>" required>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th><label for="rule_type"><?php esc_html_e( 'Rule Type', 'jezweb-dynamic-pricing' ); ?></label></th>
-                                    <td>
+                                    </div>
+                                </div>
+                                <div class="jdpd-form-row">
+                                    <div class="jdpd-form-label">
+                                        <label for="rule_type"><?php esc_html_e( 'Rule Type', 'jezweb-dynamic-pricing' ); ?></label>
+                                    </div>
+                                    <div class="jdpd-form-field">
                                         <select name="rule_type" id="rule_type" class="jdpd-rule-type-select">
                                             <?php foreach ( jdpd_get_rule_types() as $type_key => $type_label ) : ?>
                                                 <option value="<?php echo esc_attr( $type_key ); ?>" <?php selected( $rule_type, $type_key ); ?>>
@@ -144,9 +148,9 @@ if ( $is_edit ) {
                                                 </option>
                                             <?php endforeach; ?>
                                         </select>
-                                    </td>
-                                </tr>
-                            </table>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -154,10 +158,12 @@ if ( $is_edit ) {
                     <div class="postbox" id="jdpd-discount-settings">
                         <h2 class="hndle"><?php esc_html_e( 'Discount Settings', 'jezweb-dynamic-pricing' ); ?></h2>
                         <div class="inside">
-                            <table class="form-table">
-                                <tr class="jdpd-discount-type-row">
-                                    <th><label for="discount_type"><?php esc_html_e( 'Discount Type', 'jezweb-dynamic-pricing' ); ?></label></th>
-                                    <td>
+                            <div class="jdpd-form-fields">
+                                <div class="jdpd-form-row jdpd-discount-type-row">
+                                    <div class="jdpd-form-label">
+                                        <label for="discount_type"><?php esc_html_e( 'Discount Type', 'jezweb-dynamic-pricing' ); ?></label>
+                                    </div>
+                                    <div class="jdpd-form-field">
                                         <select name="discount_type" id="discount_type">
                                             <?php foreach ( jdpd_get_discount_types() as $type_key => $type_label ) : ?>
                                                 <option value="<?php echo esc_attr( $type_key ); ?>" <?php selected( $discount_type, $type_key ); ?>>
@@ -165,71 +171,73 @@ if ( $is_edit ) {
                                                 </option>
                                             <?php endforeach; ?>
                                         </select>
-                                    </td>
-                                </tr>
-                                <tr class="jdpd-discount-value-row">
-                                    <th><label for="discount_value"><?php esc_html_e( 'Discount Value', 'jezweb-dynamic-pricing' ); ?></label></th>
-                                    <td>
+                                    </div>
+                                </div>
+                                <div class="jdpd-form-row jdpd-discount-value-row">
+                                    <div class="jdpd-form-label">
+                                        <label for="discount_value"><?php esc_html_e( 'Discount Value', 'jezweb-dynamic-pricing' ); ?></label>
+                                    </div>
+                                    <div class="jdpd-form-field">
                                         <input type="number" name="discount_value" id="discount_value"
                                                value="<?php echo esc_attr( $discount_value ); ?>"
                                                step="0.01" min="0" class="small-text">
                                         <span class="jdpd-discount-suffix">%</span>
-                                    </td>
-                                </tr>
-                            </table>
+                                    </div>
+                                </div>
+                            </div>
 
                             <!-- Quantity Ranges -->
                             <div class="jdpd-quantity-ranges" id="jdpd-quantity-ranges">
                                 <h3><?php esc_html_e( 'Quantity Ranges', 'jezweb-dynamic-pricing' ); ?></h3>
                                 <p class="description"><?php esc_html_e( 'Set different discounts based on quantity purchased.', 'jezweb-dynamic-pricing' ); ?></p>
 
-                                <table class="widefat jdpd-ranges-table">
-                                    <thead>
-                                        <tr>
-                                            <th><?php esc_html_e( 'Min Qty', 'jezweb-dynamic-pricing' ); ?></th>
-                                            <th><?php esc_html_e( 'Max Qty', 'jezweb-dynamic-pricing' ); ?></th>
-                                            <th><?php esc_html_e( 'Discount Type', 'jezweb-dynamic-pricing' ); ?></th>
-                                            <th><?php esc_html_e( 'Discount', 'jezweb-dynamic-pricing' ); ?></th>
-                                            <th></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="jdpd-ranges-body">
-                                        <?php if ( ! empty( $quantity_ranges ) ) : ?>
-                                            <?php foreach ( $quantity_ranges as $index => $range ) : ?>
-                                                <tr class="jdpd-range-row">
-                                                    <td>
-                                                        <input type="number" name="quantity_ranges[<?php echo $index; ?>][min]"
-                                                               value="<?php echo esc_attr( $range->min_quantity ); ?>"
-                                                               min="1" class="small-text">
-                                                    </td>
-                                                    <td>
-                                                        <input type="number" name="quantity_ranges[<?php echo $index; ?>][max]"
-                                                               value="<?php echo esc_attr( $range->max_quantity ); ?>"
-                                                               min="1" class="small-text"
-                                                               placeholder="<?php esc_attr_e( 'No limit', 'jezweb-dynamic-pricing' ); ?>">
-                                                    </td>
-                                                    <td>
-                                                        <select name="quantity_ranges[<?php echo $index; ?>][type]">
-                                                            <?php foreach ( jdpd_get_discount_types() as $type_key => $type_label ) : ?>
-                                                                <option value="<?php echo esc_attr( $type_key ); ?>" <?php selected( $range->discount_type, $type_key ); ?>>
-                                                                    <?php echo esc_html( $type_label ); ?>
-                                                                </option>
-                                                            <?php endforeach; ?>
-                                                        </select>
-                                                    </td>
-                                                    <td>
-                                                        <input type="number" name="quantity_ranges[<?php echo $index; ?>][value]"
-                                                               value="<?php echo esc_attr( $range->discount_value ); ?>"
-                                                               step="0.01" min="0" class="small-text">
-                                                    </td>
-                                                    <td>
-                                                        <button type="button" class="button jdpd-remove-range">&times;</button>
-                                                    </td>
-                                                </tr>
-                                            <?php endforeach; ?>
-                                        <?php endif; ?>
-                                    </tbody>
-                                </table>
+                                <div class="jdpd-ranges-header">
+                                    <div class="jdpd-range-col jdpd-range-col-min"><?php esc_html_e( 'Min Qty', 'jezweb-dynamic-pricing' ); ?></div>
+                                    <div class="jdpd-range-col jdpd-range-col-max"><?php esc_html_e( 'Max Qty', 'jezweb-dynamic-pricing' ); ?></div>
+                                    <div class="jdpd-range-col jdpd-range-col-type"><?php esc_html_e( 'Discount Type', 'jezweb-dynamic-pricing' ); ?></div>
+                                    <div class="jdpd-range-col jdpd-range-col-value"><?php esc_html_e( 'Discount', 'jezweb-dynamic-pricing' ); ?></div>
+                                    <div class="jdpd-range-col jdpd-range-col-action"></div>
+                                </div>
+                                <div class="jdpd-ranges-list" id="jdpd-ranges-body">
+                                    <?php if ( ! empty( $quantity_ranges ) ) : ?>
+                                        <?php foreach ( $quantity_ranges as $index => $range ) : ?>
+                                            <div class="jdpd-range-row">
+                                                <div class="jdpd-range-col jdpd-range-col-min">
+                                                    <span class="jdpd-range-mobile-label"><?php esc_html_e( 'Min Qty:', 'jezweb-dynamic-pricing' ); ?></span>
+                                                    <input type="number" name="quantity_ranges[<?php echo $index; ?>][min]"
+                                                           value="<?php echo esc_attr( $range->min_quantity ); ?>"
+                                                           min="1" class="small-text">
+                                                </div>
+                                                <div class="jdpd-range-col jdpd-range-col-max">
+                                                    <span class="jdpd-range-mobile-label"><?php esc_html_e( 'Max Qty:', 'jezweb-dynamic-pricing' ); ?></span>
+                                                    <input type="number" name="quantity_ranges[<?php echo $index; ?>][max]"
+                                                           value="<?php echo esc_attr( $range->max_quantity ); ?>"
+                                                           min="1" class="small-text"
+                                                           placeholder="<?php esc_attr_e( 'No limit', 'jezweb-dynamic-pricing' ); ?>">
+                                                </div>
+                                                <div class="jdpd-range-col jdpd-range-col-type">
+                                                    <span class="jdpd-range-mobile-label"><?php esc_html_e( 'Discount Type:', 'jezweb-dynamic-pricing' ); ?></span>
+                                                    <select name="quantity_ranges[<?php echo $index; ?>][type]">
+                                                        <?php foreach ( jdpd_get_discount_types() as $type_key => $type_label ) : ?>
+                                                            <option value="<?php echo esc_attr( $type_key ); ?>" <?php selected( $range->discount_type, $type_key ); ?>>
+                                                                <?php echo esc_html( $type_label ); ?>
+                                                            </option>
+                                                        <?php endforeach; ?>
+                                                    </select>
+                                                </div>
+                                                <div class="jdpd-range-col jdpd-range-col-value">
+                                                    <span class="jdpd-range-mobile-label"><?php esc_html_e( 'Discount:', 'jezweb-dynamic-pricing' ); ?></span>
+                                                    <input type="number" name="quantity_ranges[<?php echo $index; ?>][value]"
+                                                           value="<?php echo esc_attr( $range->discount_value ); ?>"
+                                                           step="0.01" min="0" class="small-text">
+                                                </div>
+                                                <div class="jdpd-range-col jdpd-range-col-action">
+                                                    <button type="button" class="button jdpd-remove-range">&times;</button>
+                                                </div>
+                                            </div>
+                                        <?php endforeach; ?>
+                                    <?php endif; ?>
+                                </div>
                                 <p>
                                     <button type="button" class="button" id="jdpd-add-range">
                                         <?php esc_html_e( '+ Add Range', 'jezweb-dynamic-pricing' ); ?>
@@ -240,10 +248,12 @@ if ( $is_edit ) {
                             <!-- Special Offer Settings -->
                             <div class="jdpd-special-offer-settings" id="jdpd-special-offer-settings" style="display: none;">
                                 <h3><?php esc_html_e( 'Special Offer Settings', 'jezweb-dynamic-pricing' ); ?></h3>
-                                <table class="form-table">
-                                    <tr>
-                                        <th><label for="special_offer_type"><?php esc_html_e( 'Offer Type', 'jezweb-dynamic-pricing' ); ?></label></th>
-                                        <td>
+                                <div class="jdpd-form-fields">
+                                    <div class="jdpd-form-row">
+                                        <div class="jdpd-form-label">
+                                            <label for="special_offer_type"><?php esc_html_e( 'Offer Type', 'jezweb-dynamic-pricing' ); ?></label>
+                                        </div>
+                                        <div class="jdpd-form-field">
                                             <select name="special_offer_type" id="special_offer_type">
                                                 <?php foreach ( jdpd_get_special_offer_types() as $type_key => $type_label ) : ?>
                                                     <option value="<?php echo esc_attr( $type_key ); ?>">
@@ -251,29 +261,35 @@ if ( $is_edit ) {
                                                     </option>
                                                 <?php endforeach; ?>
                                             </select>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th><label for="buy_quantity"><?php esc_html_e( 'Buy Quantity (X)', 'jezweb-dynamic-pricing' ); ?></label></th>
-                                        <td>
+                                        </div>
+                                    </div>
+                                    <div class="jdpd-form-row">
+                                        <div class="jdpd-form-label">
+                                            <label for="buy_quantity"><?php esc_html_e( 'Buy Quantity (X)', 'jezweb-dynamic-pricing' ); ?></label>
+                                        </div>
+                                        <div class="jdpd-form-field">
                                             <input type="number" name="buy_quantity" id="buy_quantity" value="1" min="1" class="small-text">
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th><label for="get_quantity"><?php esc_html_e( 'Get Quantity (Y)', 'jezweb-dynamic-pricing' ); ?></label></th>
-                                        <td>
+                                        </div>
+                                    </div>
+                                    <div class="jdpd-form-row">
+                                        <div class="jdpd-form-label">
+                                            <label for="get_quantity"><?php esc_html_e( 'Get Quantity (Y)', 'jezweb-dynamic-pricing' ); ?></label>
+                                        </div>
+                                        <div class="jdpd-form-field">
                                             <input type="number" name="get_quantity" id="get_quantity" value="1" min="1" class="small-text">
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th><label for="get_discount"><?php esc_html_e( 'Discount on Y', 'jezweb-dynamic-pricing' ); ?></label></th>
-                                        <td>
+                                        </div>
+                                    </div>
+                                    <div class="jdpd-form-row">
+                                        <div class="jdpd-form-label">
+                                            <label for="get_discount"><?php esc_html_e( 'Discount on Y', 'jezweb-dynamic-pricing' ); ?></label>
+                                        </div>
+                                        <div class="jdpd-form-field">
                                             <input type="number" name="get_discount" id="get_discount" value="100" min="0" max="100" class="small-text">
                                             <span>%</span>
                                             <p class="description"><?php esc_html_e( '100% = Free item', 'jezweb-dynamic-pricing' ); ?></p>
-                                        </td>
-                                    </tr>
-                                </table>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
 
                             <!-- Gift Products Settings -->
@@ -281,54 +297,47 @@ if ( $is_edit ) {
                                 <h3><?php esc_html_e( 'Gift Products', 'jezweb-dynamic-pricing' ); ?></h3>
                                 <p class="description"><?php esc_html_e( 'Select products to be added as gifts when this rule applies.', 'jezweb-dynamic-pricing' ); ?></p>
 
-                                <table class="widefat jdpd-gifts-table">
-                                    <thead>
-                                        <tr>
-                                            <th><?php esc_html_e( 'Product', 'jezweb-dynamic-pricing' ); ?></th>
-                                            <th><?php esc_html_e( 'Quantity', 'jezweb-dynamic-pricing' ); ?></th>
-                                            <th><?php esc_html_e( 'Discount Type', 'jezweb-dynamic-pricing' ); ?></th>
-                                            <th><?php esc_html_e( 'Discount', 'jezweb-dynamic-pricing' ); ?></th>
-                                            <th></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="jdpd-gifts-body">
-                                        <?php if ( ! empty( $gift_products ) ) : ?>
-                                            <?php foreach ( $gift_products as $index => $gift ) : ?>
-                                                <tr class="jdpd-gift-row">
-                                                    <td>
-                                                        <select name="gift_products[<?php echo $index; ?>][product_id]" class="jdpd-product-search" style="width: 100%;">
-                                                            <option value="<?php echo esc_attr( $gift['product_id'] ); ?>" selected>
-                                                                <?php echo esc_html( $gift['product_name'] ); ?>
-                                                            </option>
-                                                        </select>
-                                                    </td>
-                                                    <td>
-                                                        <input type="number" name="gift_products[<?php echo $index; ?>][quantity]"
-                                                               value="<?php echo esc_attr( $gift['quantity'] ); ?>" min="1" class="small-text">
-                                                    </td>
-                                                    <td>
-                                                        <select name="gift_products[<?php echo $index; ?>][discount_type]">
-                                                            <option value="percentage" <?php selected( $gift['discount_type'], 'percentage' ); ?>>
-                                                                <?php esc_html_e( 'Percentage', 'jezweb-dynamic-pricing' ); ?>
-                                                            </option>
-                                                            <option value="fixed" <?php selected( $gift['discount_type'], 'fixed' ); ?>>
-                                                                <?php esc_html_e( 'Fixed', 'jezweb-dynamic-pricing' ); ?>
-                                                            </option>
-                                                        </select>
-                                                    </td>
-                                                    <td>
-                                                        <input type="number" name="gift_products[<?php echo $index; ?>][discount_value]"
-                                                               value="<?php echo esc_attr( $gift['discount_value'] ); ?>"
-                                                               step="0.01" min="0" class="small-text">
-                                                    </td>
-                                                    <td>
-                                                        <button type="button" class="button jdpd-remove-gift">&times;</button>
-                                                    </td>
-                                                </tr>
-                                            <?php endforeach; ?>
-                                        <?php endif; ?>
-                                    </tbody>
-                                </table>
+                                <div class="jdpd-gifts-list" id="jdpd-gifts-body">
+                                    <?php if ( ! empty( $gift_products ) ) : ?>
+                                        <?php foreach ( $gift_products as $index => $gift ) : ?>
+                                            <div class="jdpd-gift-row">
+                                                <div class="jdpd-gift-col jdpd-gift-col-product">
+                                                    <span class="jdpd-gift-mobile-label"><?php esc_html_e( 'Product:', 'jezweb-dynamic-pricing' ); ?></span>
+                                                    <select name="gift_products[<?php echo $index; ?>][product_id]" class="jdpd-product-search" style="width: 100%;">
+                                                        <option value="<?php echo esc_attr( $gift['product_id'] ); ?>" selected>
+                                                            <?php echo esc_html( $gift['product_name'] ); ?>
+                                                        </option>
+                                                    </select>
+                                                </div>
+                                                <div class="jdpd-gift-col jdpd-gift-col-qty">
+                                                    <span class="jdpd-gift-mobile-label"><?php esc_html_e( 'Qty:', 'jezweb-dynamic-pricing' ); ?></span>
+                                                    <input type="number" name="gift_products[<?php echo $index; ?>][quantity]"
+                                                           value="<?php echo esc_attr( $gift['quantity'] ); ?>" min="1" class="small-text">
+                                                </div>
+                                                <div class="jdpd-gift-col jdpd-gift-col-type">
+                                                    <span class="jdpd-gift-mobile-label"><?php esc_html_e( 'Type:', 'jezweb-dynamic-pricing' ); ?></span>
+                                                    <select name="gift_products[<?php echo $index; ?>][discount_type]">
+                                                        <option value="percentage" <?php selected( $gift['discount_type'], 'percentage' ); ?>>
+                                                            <?php esc_html_e( 'Percentage', 'jezweb-dynamic-pricing' ); ?>
+                                                        </option>
+                                                        <option value="fixed" <?php selected( $gift['discount_type'], 'fixed' ); ?>>
+                                                            <?php esc_html_e( 'Fixed', 'jezweb-dynamic-pricing' ); ?>
+                                                        </option>
+                                                    </select>
+                                                </div>
+                                                <div class="jdpd-gift-col jdpd-gift-col-value">
+                                                    <span class="jdpd-gift-mobile-label"><?php esc_html_e( 'Discount:', 'jezweb-dynamic-pricing' ); ?></span>
+                                                    <input type="number" name="gift_products[<?php echo $index; ?>][discount_value]"
+                                                           value="<?php echo esc_attr( $gift['discount_value'] ); ?>"
+                                                           step="0.01" min="0" class="small-text">
+                                                </div>
+                                                <div class="jdpd-gift-col jdpd-gift-col-action">
+                                                    <button type="button" class="button jdpd-remove-gift">&times;</button>
+                                                </div>
+                                            </div>
+                                        <?php endforeach; ?>
+                                    <?php endif; ?>
+                                </div>
                                 <p>
                                     <button type="button" class="button" id="jdpd-add-gift">
                                         <?php esc_html_e( '+ Add Gift Product', 'jezweb-dynamic-pricing' ); ?>
@@ -342,10 +351,12 @@ if ( $is_edit ) {
                     <div class="postbox">
                         <h2 class="hndle"><?php esc_html_e( 'Apply To', 'jezweb-dynamic-pricing' ); ?></h2>
                         <div class="inside">
-                            <table class="form-table">
-                                <tr>
-                                    <th><label for="apply_to"><?php esc_html_e( 'Apply To', 'jezweb-dynamic-pricing' ); ?></label></th>
-                                    <td>
+                            <div class="jdpd-form-fields">
+                                <div class="jdpd-form-row">
+                                    <div class="jdpd-form-label">
+                                        <label for="apply_to"><?php esc_html_e( 'Apply To', 'jezweb-dynamic-pricing' ); ?></label>
+                                    </div>
+                                    <div class="jdpd-form-field">
                                         <select name="apply_to" id="apply_to" class="jdpd-apply-to-select">
                                             <?php foreach ( jdpd_get_apply_to_options() as $key => $label ) : ?>
                                                 <option value="<?php echo esc_attr( $key ); ?>" <?php selected( $apply_to, $key ); ?>>
@@ -353,39 +364,45 @@ if ( $is_edit ) {
                                                 </option>
                                             <?php endforeach; ?>
                                         </select>
-                                    </td>
-                                </tr>
-                                <tr class="jdpd-products-row" style="<?php echo 'specific_products' !== $apply_to ? 'display: none;' : ''; ?>">
-                                    <th><label for="products"><?php esc_html_e( 'Products', 'jezweb-dynamic-pricing' ); ?></label></th>
-                                    <td>
+                                    </div>
+                                </div>
+                                <div class="jdpd-form-row jdpd-products-row" style="<?php echo 'specific_products' !== $apply_to ? 'display: none;' : ''; ?>">
+                                    <div class="jdpd-form-label">
+                                        <label for="products"><?php esc_html_e( 'Products', 'jezweb-dynamic-pricing' ); ?></label>
+                                    </div>
+                                    <div class="jdpd-form-field">
                                         <select name="products[]" id="products" class="jdpd-product-search" multiple style="width: 100%;">
                                             <?php foreach ( $selected_products as $id => $name ) : ?>
                                                 <option value="<?php echo esc_attr( $id ); ?>" selected><?php echo esc_html( $name ); ?></option>
                                             <?php endforeach; ?>
                                         </select>
-                                    </td>
-                                </tr>
-                                <tr class="jdpd-categories-row" style="<?php echo 'categories' !== $apply_to ? 'display: none;' : ''; ?>">
-                                    <th><label for="categories"><?php esc_html_e( 'Categories', 'jezweb-dynamic-pricing' ); ?></label></th>
-                                    <td>
+                                    </div>
+                                </div>
+                                <div class="jdpd-form-row jdpd-categories-row" style="<?php echo 'categories' !== $apply_to ? 'display: none;' : ''; ?>">
+                                    <div class="jdpd-form-label">
+                                        <label for="categories"><?php esc_html_e( 'Categories', 'jezweb-dynamic-pricing' ); ?></label>
+                                    </div>
+                                    <div class="jdpd-form-field">
                                         <select name="categories[]" id="categories" class="jdpd-category-search" multiple style="width: 100%;">
                                             <?php foreach ( $selected_categories as $id => $name ) : ?>
                                                 <option value="<?php echo esc_attr( $id ); ?>" selected><?php echo esc_html( $name ); ?></option>
                                             <?php endforeach; ?>
                                         </select>
-                                    </td>
-                                </tr>
-                                <tr class="jdpd-tags-row" style="<?php echo 'tags' !== $apply_to ? 'display: none;' : ''; ?>">
-                                    <th><label for="tags"><?php esc_html_e( 'Tags', 'jezweb-dynamic-pricing' ); ?></label></th>
-                                    <td>
+                                    </div>
+                                </div>
+                                <div class="jdpd-form-row jdpd-tags-row" style="<?php echo 'tags' !== $apply_to ? 'display: none;' : ''; ?>">
+                                    <div class="jdpd-form-label">
+                                        <label for="tags"><?php esc_html_e( 'Tags', 'jezweb-dynamic-pricing' ); ?></label>
+                                    </div>
+                                    <div class="jdpd-form-field">
                                         <select name="tags[]" id="tags" class="jdpd-tag-search" multiple style="width: 100%;">
                                             <?php foreach ( $selected_tags as $id => $name ) : ?>
                                                 <option value="<?php echo esc_attr( $id ); ?>" selected><?php echo esc_html( $name ); ?></option>
                                             <?php endforeach; ?>
                                         </select>
-                                    </td>
-                                </tr>
-                            </table>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -393,28 +410,32 @@ if ( $is_edit ) {
                     <div class="postbox">
                         <h2 class="hndle"><?php esc_html_e( 'Exclusions', 'jezweb-dynamic-pricing' ); ?></h2>
                         <div class="inside">
-                            <table class="form-table">
-                                <tr>
-                                    <th><label for="exclude_products"><?php esc_html_e( 'Exclude Products', 'jezweb-dynamic-pricing' ); ?></label></th>
-                                    <td>
+                            <div class="jdpd-form-fields">
+                                <div class="jdpd-form-row">
+                                    <div class="jdpd-form-label">
+                                        <label for="exclude_products"><?php esc_html_e( 'Exclude Products', 'jezweb-dynamic-pricing' ); ?></label>
+                                    </div>
+                                    <div class="jdpd-form-field">
                                         <select name="exclude_products[]" id="exclude_products" class="jdpd-product-search" multiple style="width: 100%;">
                                             <?php foreach ( $exclude_products as $id => $name ) : ?>
                                                 <option value="<?php echo esc_attr( $id ); ?>" selected><?php echo esc_html( $name ); ?></option>
                                             <?php endforeach; ?>
                                         </select>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th><label for="exclude_categories"><?php esc_html_e( 'Exclude Categories', 'jezweb-dynamic-pricing' ); ?></label></th>
-                                    <td>
+                                    </div>
+                                </div>
+                                <div class="jdpd-form-row">
+                                    <div class="jdpd-form-label">
+                                        <label for="exclude_categories"><?php esc_html_e( 'Exclude Categories', 'jezweb-dynamic-pricing' ); ?></label>
+                                    </div>
+                                    <div class="jdpd-form-field">
                                         <select name="exclude_categories[]" id="exclude_categories" class="jdpd-category-search" multiple style="width: 100%;">
                                             <?php foreach ( $exclude_categories as $id => $name ) : ?>
                                                 <option value="<?php echo esc_attr( $id ); ?>" selected><?php echo esc_html( $name ); ?></option>
                                             <?php endforeach; ?>
                                         </select>
-                                    </td>
-                                </tr>
-                            </table>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -571,34 +592,58 @@ if ( $is_edit ) {
 </div>
 
 <script type="text/template" id="tmpl-jdpd-quantity-range">
-    <tr class="jdpd-range-row">
-        <td><input type="number" name="quantity_ranges[{{data.index}}][min]" value="1" min="1" class="small-text"></td>
-        <td><input type="number" name="quantity_ranges[{{data.index}}][max]" min="1" class="small-text" placeholder="<?php esc_attr_e( 'No limit', 'jezweb-dynamic-pricing' ); ?>"></td>
-        <td>
+    <div class="jdpd-range-row">
+        <div class="jdpd-range-col jdpd-range-col-min">
+            <span class="jdpd-range-mobile-label"><?php esc_html_e( 'Min Qty:', 'jezweb-dynamic-pricing' ); ?></span>
+            <input type="number" name="quantity_ranges[{{data.index}}][min]" value="1" min="1" class="small-text">
+        </div>
+        <div class="jdpd-range-col jdpd-range-col-max">
+            <span class="jdpd-range-mobile-label"><?php esc_html_e( 'Max Qty:', 'jezweb-dynamic-pricing' ); ?></span>
+            <input type="number" name="quantity_ranges[{{data.index}}][max]" min="1" class="small-text" placeholder="<?php esc_attr_e( 'No limit', 'jezweb-dynamic-pricing' ); ?>">
+        </div>
+        <div class="jdpd-range-col jdpd-range-col-type">
+            <span class="jdpd-range-mobile-label"><?php esc_html_e( 'Discount Type:', 'jezweb-dynamic-pricing' ); ?></span>
             <select name="quantity_ranges[{{data.index}}][type]">
                 <?php foreach ( jdpd_get_discount_types() as $type_key => $type_label ) : ?>
                     <option value="<?php echo esc_attr( $type_key ); ?>"><?php echo esc_html( $type_label ); ?></option>
                 <?php endforeach; ?>
             </select>
-        </td>
-        <td><input type="number" name="quantity_ranges[{{data.index}}][value]" value="0" step="0.01" min="0" class="small-text"></td>
-        <td><button type="button" class="button jdpd-remove-range">&times;</button></td>
-    </tr>
+        </div>
+        <div class="jdpd-range-col jdpd-range-col-value">
+            <span class="jdpd-range-mobile-label"><?php esc_html_e( 'Discount:', 'jezweb-dynamic-pricing' ); ?></span>
+            <input type="number" name="quantity_ranges[{{data.index}}][value]" value="0" step="0.01" min="0" class="small-text">
+        </div>
+        <div class="jdpd-range-col jdpd-range-col-action">
+            <button type="button" class="button jdpd-remove-range">&times;</button>
+        </div>
+    </div>
 </script>
 
 <script type="text/template" id="tmpl-jdpd-gift-product">
-    <tr class="jdpd-gift-row">
-        <td><select name="gift_products[{{data.index}}][product_id]" class="jdpd-product-search" style="width: 100%;"></select></td>
-        <td><input type="number" name="gift_products[{{data.index}}][quantity]" value="1" min="1" class="small-text"></td>
-        <td>
+    <div class="jdpd-gift-row">
+        <div class="jdpd-gift-col jdpd-gift-col-product">
+            <span class="jdpd-gift-mobile-label"><?php esc_html_e( 'Product:', 'jezweb-dynamic-pricing' ); ?></span>
+            <select name="gift_products[{{data.index}}][product_id]" class="jdpd-product-search" style="width: 100%;"></select>
+        </div>
+        <div class="jdpd-gift-col jdpd-gift-col-qty">
+            <span class="jdpd-gift-mobile-label"><?php esc_html_e( 'Qty:', 'jezweb-dynamic-pricing' ); ?></span>
+            <input type="number" name="gift_products[{{data.index}}][quantity]" value="1" min="1" class="small-text">
+        </div>
+        <div class="jdpd-gift-col jdpd-gift-col-type">
+            <span class="jdpd-gift-mobile-label"><?php esc_html_e( 'Type:', 'jezweb-dynamic-pricing' ); ?></span>
             <select name="gift_products[{{data.index}}][discount_type]">
                 <option value="percentage"><?php esc_html_e( 'Percentage', 'jezweb-dynamic-pricing' ); ?></option>
                 <option value="fixed"><?php esc_html_e( 'Fixed', 'jezweb-dynamic-pricing' ); ?></option>
             </select>
-        </td>
-        <td><input type="number" name="gift_products[{{data.index}}][discount_value]" value="100" step="0.01" min="0" class="small-text"></td>
-        <td><button type="button" class="button jdpd-remove-gift">&times;</button></td>
-    </tr>
+        </div>
+        <div class="jdpd-gift-col jdpd-gift-col-value">
+            <span class="jdpd-gift-mobile-label"><?php esc_html_e( 'Discount:', 'jezweb-dynamic-pricing' ); ?></span>
+            <input type="number" name="gift_products[{{data.index}}][discount_value]" value="100" step="0.01" min="0" class="small-text">
+        </div>
+        <div class="jdpd-gift-col jdpd-gift-col-action">
+            <button type="button" class="button jdpd-remove-gift">&times;</button>
+        </div>
+    </div>
 </script>
 
 <script type="text/template" id="tmpl-jdpd-condition">
@@ -625,28 +670,3 @@ if ( $is_edit ) {
     </div>
 </script>
 
-<style>
-.jdpd-rule-edit-wrap #poststuff #post-body.columns-2 {
-    margin-right: 300px;
-}
-.jdpd-rule-edit-wrap #postbox-container-1 {
-    width: 280px;
-    float: right;
-    margin-right: -300px;
-}
-.jdpd-condition-row,
-.jdpd-range-row,
-.jdpd-gift-row {
-    margin-bottom: 10px;
-}
-.jdpd-condition-row select,
-.jdpd-condition-row input {
-    margin-right: 5px;
-}
-.jdpd-ranges-table input,
-.jdpd-ranges-table select,
-.jdpd-gifts-table input,
-.jdpd-gifts-table select {
-    margin: 2px;
-}
-</style>

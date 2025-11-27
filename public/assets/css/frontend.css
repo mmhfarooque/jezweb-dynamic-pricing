@@ -2,7 +2,9 @@
  * Jezweb Dynamic Pricing - Frontend Styles
  */
 
-/* Quantity Table */
+/* ========================================
+   Quantity Table - Flexbox Layout
+   ======================================== */
 .jdpd-quantity-table {
     margin: 20px 0;
     padding: 15px;
@@ -18,52 +20,116 @@
     color: #333;
 }
 
-.jdpd-pricing-table {
-    width: 100%;
-    border-collapse: collapse;
+/* Pricing Grid - Base */
+.jdpd-pricing-grid {
     background: #fff;
     border-radius: 4px;
     overflow: hidden;
-}
-
-.jdpd-pricing-table th,
-.jdpd-pricing-table td {
-    padding: 12px 15px;
-    text-align: center;
     border: 1px solid #e0e0e0;
 }
 
-.jdpd-pricing-table thead th {
+.jdpd-pricing-row {
+    display: flex;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.jdpd-pricing-row:last-child {
+    border-bottom: none;
+}
+
+.jdpd-pricing-cell {
+    flex: 1;
+    padding: 12px 15px;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+/* Header Row */
+.jdpd-pricing-header {
     background: #f5f5f5;
     font-weight: 600;
     color: #333;
 }
 
-.jdpd-pricing-table tbody th {
+/* Label Cell */
+.jdpd-label-cell {
     background: #fafafa;
     font-weight: 500;
 }
 
-.jdpd-pricing-table .jdpd-savings {
+/* Savings */
+.jdpd-pricing-cell.jdpd-savings {
     color: #00a32a;
     font-weight: 600;
 }
 
-.jdpd-pricing-table del {
+/* Price Cell */
+.jdpd-price-cell del {
     color: #999;
     text-decoration: line-through;
-    margin-right: 5px;
 }
 
-.jdpd-pricing-table ins {
+.jdpd-price-cell ins {
     color: #00a32a;
     font-weight: 600;
     text-decoration: none;
 }
 
-/* Vertical Table Layout */
-.jdpd-table-vertical .jdpd-pricing-table th:first-child {
+/* Horizontal Layout */
+.jdpd-pricing-horizontal .jdpd-label-cell {
+    flex: 0 0 100px;
     text-align: left;
+    justify-content: flex-start;
+}
+
+/* Vertical Layout */
+.jdpd-pricing-vertical .jdpd-pricing-row {
+    display: flex;
+}
+
+.jdpd-pricing-vertical .jdpd-pricing-cell:first-child {
+    text-align: left;
+    justify-content: flex-start;
+}
+
+/* Mobile Responsive - Vertical Layout */
+@media screen and (max-width: 480px) {
+    .jdpd-pricing-vertical .jdpd-pricing-header {
+        display: none;
+    }
+
+    .jdpd-pricing-vertical .jdpd-pricing-row {
+        flex-direction: column;
+        padding: 10px 0;
+        border-bottom: 1px solid #e0e0e0;
+    }
+
+    .jdpd-pricing-vertical .jdpd-pricing-cell {
+        padding: 8px 15px;
+        text-align: left;
+        justify-content: space-between;
+    }
+
+    .jdpd-pricing-vertical .jdpd-pricing-cell::before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: #333;
+    }
+}
+
+/* Mobile Responsive - Horizontal Layout */
+@media screen and (max-width: 600px) {
+    .jdpd-pricing-horizontal {
+        overflow-x: auto;
+    }
+
+    .jdpd-pricing-horizontal .jdpd-pricing-row {
+        min-width: 400px;
+    }
 }
 
 /* Sale Badge */

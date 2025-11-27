@@ -105,69 +105,61 @@ class JDPD_Quantity_Table {
             <h4 class="jdpd-table-title"><?php esc_html_e( 'Bulk Pricing', 'jezweb-dynamic-pricing' ); ?></h4>
 
             <?php if ( 'horizontal' === $layout ) : ?>
-                <table class="jdpd-pricing-table">
-                    <thead>
-                        <tr>
-                            <th><?php esc_html_e( 'Quantity', 'jezweb-dynamic-pricing' ); ?></th>
-                            <?php foreach ( $table_data as $row ) : ?>
-                                <th>
-                                    <?php
-                                    if ( $row['max_qty'] ) {
-                                        printf( '%d - %d', $row['min_qty'], $row['max_qty'] );
-                                    } else {
-                                        printf( '%d+', $row['min_qty'] );
-                                    }
-                                    ?>
-                                </th>
-                            <?php endforeach; ?>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <th><?php esc_html_e( 'Price', 'jezweb-dynamic-pricing' ); ?></th>
-                            <?php foreach ( $table_data as $row ) : ?>
-                                <td><?php echo wc_price( $row['discounted_price'] ); ?></td>
-                            <?php endforeach; ?>
-                        </tr>
-                        <tr>
-                            <th><?php esc_html_e( 'You Save', 'jezweb-dynamic-pricing' ); ?></th>
-                            <?php foreach ( $table_data as $row ) : ?>
-                                <td class="jdpd-savings"><?php echo $row['savings_percent']; ?>%</td>
-                            <?php endforeach; ?>
-                        </tr>
-                    </tbody>
-                </table>
+                <div class="jdpd-pricing-grid jdpd-pricing-horizontal">
+                    <div class="jdpd-pricing-row jdpd-pricing-header">
+                        <div class="jdpd-pricing-cell jdpd-label-cell"><?php esc_html_e( 'Quantity', 'jezweb-dynamic-pricing' ); ?></div>
+                        <?php foreach ( $table_data as $row ) : ?>
+                            <div class="jdpd-pricing-cell">
+                                <?php
+                                if ( $row['max_qty'] ) {
+                                    printf( '%d - %d', $row['min_qty'], $row['max_qty'] );
+                                } else {
+                                    printf( '%d+', $row['min_qty'] );
+                                }
+                                ?>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                    <div class="jdpd-pricing-row">
+                        <div class="jdpd-pricing-cell jdpd-label-cell"><?php esc_html_e( 'Price', 'jezweb-dynamic-pricing' ); ?></div>
+                        <?php foreach ( $table_data as $row ) : ?>
+                            <div class="jdpd-pricing-cell"><?php echo wc_price( $row['discounted_price'] ); ?></div>
+                        <?php endforeach; ?>
+                    </div>
+                    <div class="jdpd-pricing-row">
+                        <div class="jdpd-pricing-cell jdpd-label-cell"><?php esc_html_e( 'You Save', 'jezweb-dynamic-pricing' ); ?></div>
+                        <?php foreach ( $table_data as $row ) : ?>
+                            <div class="jdpd-pricing-cell jdpd-savings"><?php echo esc_html( $row['savings_percent'] ); ?>%</div>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
 
             <?php else : ?>
-                <table class="jdpd-pricing-table jdpd-vertical">
-                    <thead>
-                        <tr>
-                            <th><?php esc_html_e( 'Quantity', 'jezweb-dynamic-pricing' ); ?></th>
-                            <th><?php esc_html_e( 'Price', 'jezweb-dynamic-pricing' ); ?></th>
-                            <th><?php esc_html_e( 'You Save', 'jezweb-dynamic-pricing' ); ?></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ( $table_data as $row ) : ?>
-                            <tr>
-                                <td>
-                                    <?php
-                                    if ( $row['max_qty'] ) {
-                                        printf( '%d - %d', $row['min_qty'], $row['max_qty'] );
-                                    } else {
-                                        printf( '%d+', $row['min_qty'] );
-                                    }
-                                    ?>
-                                </td>
-                                <td>
-                                    <del><?php echo wc_price( $row['original_price'] ); ?></del>
-                                    <ins><?php echo wc_price( $row['discounted_price'] ); ?></ins>
-                                </td>
-                                <td class="jdpd-savings"><?php echo $row['savings_percent']; ?>%</td>
-                            </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
+                <div class="jdpd-pricing-grid jdpd-pricing-vertical">
+                    <div class="jdpd-pricing-row jdpd-pricing-header">
+                        <div class="jdpd-pricing-cell"><?php esc_html_e( 'Quantity', 'jezweb-dynamic-pricing' ); ?></div>
+                        <div class="jdpd-pricing-cell"><?php esc_html_e( 'Price', 'jezweb-dynamic-pricing' ); ?></div>
+                        <div class="jdpd-pricing-cell"><?php esc_html_e( 'You Save', 'jezweb-dynamic-pricing' ); ?></div>
+                    </div>
+                    <?php foreach ( $table_data as $row ) : ?>
+                        <div class="jdpd-pricing-row">
+                            <div class="jdpd-pricing-cell" data-label="<?php esc_attr_e( 'Quantity', 'jezweb-dynamic-pricing' ); ?>">
+                                <?php
+                                if ( $row['max_qty'] ) {
+                                    printf( '%d - %d', $row['min_qty'], $row['max_qty'] );
+                                } else {
+                                    printf( '%d+', $row['min_qty'] );
+                                }
+                                ?>
+                            </div>
+                            <div class="jdpd-pricing-cell jdpd-price-cell" data-label="<?php esc_attr_e( 'Price', 'jezweb-dynamic-pricing' ); ?>">
+                                <del><?php echo wc_price( $row['original_price'] ); ?></del>
+                                <ins><?php echo wc_price( $row['discounted_price'] ); ?></ins>
+                            </div>
+                            <div class="jdpd-pricing-cell jdpd-savings" data-label="<?php esc_attr_e( 'You Save', 'jezweb-dynamic-pricing' ); ?>"><?php echo esc_html( $row['savings_percent'] ); ?>%</div>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
             <?php endif; ?>
         </div>
 

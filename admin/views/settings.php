@@ -71,67 +71,44 @@ if ( isset( $_POST['jdpd_save_settings'] ) && wp_verify_nonce( $_POST['jdpd_sett
     <!-- Plugin Info -->
     <div class="jdpd-plugin-info">
         <h2><?php esc_html_e( 'Plugin Information', 'jezweb-dynamic-pricing' ); ?></h2>
-        <table class="widefat">
-            <tbody>
-                <tr>
-                    <th><?php esc_html_e( 'Version', 'jezweb-dynamic-pricing' ); ?></th>
-                    <td><?php echo esc_html( JDPD_VERSION ); ?></td>
-                </tr>
-                <tr>
-                    <th><?php esc_html_e( 'PHP Version', 'jezweb-dynamic-pricing' ); ?></th>
-                    <td><?php echo esc_html( PHP_VERSION ); ?> (<?php esc_html_e( 'Required: 8.0+', 'jezweb-dynamic-pricing' ); ?>)</td>
-                </tr>
-                <tr>
-                    <th><?php esc_html_e( 'WordPress Version', 'jezweb-dynamic-pricing' ); ?></th>
-                    <td><?php echo esc_html( get_bloginfo( 'version' ) ); ?> (<?php esc_html_e( 'Required: 6.0+', 'jezweb-dynamic-pricing' ); ?>)</td>
-                </tr>
-                <tr>
-                    <th><?php esc_html_e( 'WooCommerce Version', 'jezweb-dynamic-pricing' ); ?></th>
-                    <td>
-                        <?php
-                        if ( defined( 'WC_VERSION' ) ) {
-                            echo esc_html( WC_VERSION );
-                        } else {
-                            esc_html_e( 'Not installed', 'jezweb-dynamic-pricing' );
-                        }
-                        ?>
-                        (<?php esc_html_e( 'Required: 8.0+', 'jezweb-dynamic-pricing' ); ?>)
-                    </td>
-                </tr>
-                <tr>
-                    <th><?php esc_html_e( 'Author', 'jezweb-dynamic-pricing' ); ?></th>
-                    <td>Mahmmud Farooque - <a href="https://jezweb.com.au" target="_blank">Jezweb</a></td>
-                </tr>
-                <tr>
-                    <th><?php esc_html_e( 'Documentation', 'jezweb-dynamic-pricing' ); ?></th>
-                    <td><a href="https://jezweb.com.au/docs/dynamic-pricing" target="_blank"><?php esc_html_e( 'View Documentation', 'jezweb-dynamic-pricing' ); ?></a></td>
-                </tr>
-                <tr>
-                    <th><?php esc_html_e( 'Support', 'jezweb-dynamic-pricing' ); ?></th>
-                    <td><a href="https://github.com/mmhfarooque/jezweb-dynamic-pricing/issues" target="_blank"><?php esc_html_e( 'Get Support', 'jezweb-dynamic-pricing' ); ?></a></td>
-                </tr>
-            </tbody>
-        </table>
+        <div class="jdpd-info-list">
+            <div class="jdpd-info-row">
+                <div class="jdpd-info-label"><?php esc_html_e( 'Version', 'jezweb-dynamic-pricing' ); ?></div>
+                <div class="jdpd-info-value"><?php echo esc_html( JDPD_VERSION ); ?></div>
+            </div>
+            <div class="jdpd-info-row">
+                <div class="jdpd-info-label"><?php esc_html_e( 'PHP Version', 'jezweb-dynamic-pricing' ); ?></div>
+                <div class="jdpd-info-value"><?php echo esc_html( PHP_VERSION ); ?> (<?php esc_html_e( 'Required: 8.0+', 'jezweb-dynamic-pricing' ); ?>)</div>
+            </div>
+            <div class="jdpd-info-row">
+                <div class="jdpd-info-label"><?php esc_html_e( 'WordPress Version', 'jezweb-dynamic-pricing' ); ?></div>
+                <div class="jdpd-info-value"><?php echo esc_html( get_bloginfo( 'version' ) ); ?> (<?php esc_html_e( 'Required: 6.0+', 'jezweb-dynamic-pricing' ); ?>)</div>
+            </div>
+            <div class="jdpd-info-row">
+                <div class="jdpd-info-label"><?php esc_html_e( 'WooCommerce Version', 'jezweb-dynamic-pricing' ); ?></div>
+                <div class="jdpd-info-value">
+                    <?php
+                    if ( defined( 'WC_VERSION' ) ) {
+                        echo esc_html( WC_VERSION );
+                    } else {
+                        esc_html_e( 'Not installed', 'jezweb-dynamic-pricing' );
+                    }
+                    ?>
+                    (<?php esc_html_e( 'Required: 8.0+', 'jezweb-dynamic-pricing' ); ?>)
+                </div>
+            </div>
+            <div class="jdpd-info-row">
+                <div class="jdpd-info-label"><?php esc_html_e( 'Author', 'jezweb-dynamic-pricing' ); ?></div>
+                <div class="jdpd-info-value">Mahmmud Farooque - <a href="https://jezweb.com.au" target="_blank">Jezweb</a></div>
+            </div>
+            <div class="jdpd-info-row">
+                <div class="jdpd-info-label"><?php esc_html_e( 'Documentation', 'jezweb-dynamic-pricing' ); ?></div>
+                <div class="jdpd-info-value"><a href="https://jezweb.com.au/docs/dynamic-pricing" target="_blank"><?php esc_html_e( 'View Documentation', 'jezweb-dynamic-pricing' ); ?></a></div>
+            </div>
+            <div class="jdpd-info-row">
+                <div class="jdpd-info-label"><?php esc_html_e( 'Support', 'jezweb-dynamic-pricing' ); ?></div>
+                <div class="jdpd-info-value"><a href="https://github.com/mmhfarooque/jezweb-dynamic-pricing/issues" target="_blank"><?php esc_html_e( 'Get Support', 'jezweb-dynamic-pricing' ); ?></a></div>
+            </div>
+        </div>
     </div>
 </div>
-
-<style>
-.jdpd-settings-wrap .nav-tab-wrapper {
-    margin-bottom: 20px;
-}
-.jdpd-plugin-info {
-    margin-top: 30px;
-    max-width: 600px;
-}
-.jdpd-plugin-info table {
-    margin-top: 10px;
-}
-.jdpd-plugin-info th {
-    width: 200px;
-    text-align: left;
-    padding: 10px;
-}
-.jdpd-plugin-info td {
-    padding: 10px;
-}
-</style>
