@@ -3,7 +3,7 @@
  * Plugin Name: Jezweb Dynamic Pricing & Discounts for WooCommerce
  * Plugin URI: https://github.com/mmhfarooque/jezweb-dynamic-pricing
  * Description: Powerful dynamic pricing and discount rules for WooCommerce. Create quantity discounts, cart rules, BOGO offers, gift products, and special promotions.
- * Version: 1.0.8
+ * Version: 1.0.9
  * Author: Mahmmud Farooque
  * Author URI: https://jezweb.com.au
  * Text Domain: jezweb-dynamic-pricing
@@ -30,7 +30,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Define plugin constants
  */
-define( 'JDPD_VERSION', '1.0.8' );
+define( 'JDPD_VERSION', '1.0.9' );
 define( 'JDPD_PLUGIN_FILE', __FILE__ );
 define( 'JDPD_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
 define( 'JDPD_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
@@ -119,25 +119,16 @@ final class Jezweb_Dynamic_Pricing {
      * Initialize the plugin
      */
     public function init() {
-        // Allow reset via URL parameter (admin only)
-        if ( is_admin() && isset( $_GET['jdpd_reset_errors'] ) && current_user_can( 'manage_options' ) ) {
-            // Use the proper reset method which also clears the disabled flag
-            jdpd_error_handler()->reset_critical_errors();
-            add_action( 'admin_notices', function() {
-                echo '<div class="notice notice-success is-dismissible"><p><strong>Jezweb Dynamic Pricing:</strong> Errors have been reset. The plugin is now active.</p></div>';
-            });
-        }
+        // Always register the reset handler (runs at admin_init when user is authenticated)
+        if ( is_admin() ) {
+            add_action( 'admin_init', array( $this, 'handle_error_reset' ), 1 );
 
-        // Show notice after checking for updates
-        if ( is_admin() && isset( $_GET['jdpd_updates_checked'] ) ) {
-            add_action( 'admin_notices', function() {
-                echo '<div class="notice notice-info is-dismissible"><p><strong>Jezweb Dynamic Pricing:</strong> Update check complete. If an update is available, it will appear above.</p></div>';
-            });
+            // Show success notices after redirects
+            add_action( 'admin_notices', array( $this, 'show_admin_notices' ) );
         }
 
         // Check if plugin is disabled due to critical errors
         if ( jdpd_error_handler()->is_disabled() ) {
-            jdpd_log( 'Plugin disabled due to critical errors', 'warning' );
             // Still show admin notice with reset link
             add_action( 'admin_notices', array( $this, 'show_disabled_notice' ) );
             return;
@@ -293,6 +284,42 @@ final class Jezweb_Dynamic_Pricing {
         // Redirect back to plugins page with notice
         wp_safe_redirect( admin_url( 'plugins.php?jdpd_updates_checked=1' ) );
         exit;
+    }
+
+    /**
+     * Handle error reset via URL parameter
+     * Runs at admin_init when user is authenticated
+     */
+    public function handle_error_reset() {
+        if ( ! isset( $_GET['jdpd_reset_errors'] ) ) {
+            return;
+        }
+
+        if ( ! current_user_can( 'manage_options' ) ) {
+            return;
+        }
+
+        // Reset the errors
+        jdpd_error_handler()->reset_critical_errors();
+
+        // Redirect to remove the parameter and show success
+        wp_safe_redirect( admin_url( 'plugins.php?jdpd_reset_success=1' ) );
+        exit;
+    }
+
+    /**
+     * Show admin notices for various actions
+     */
+    public function show_admin_notices() {
+        // Show success notice after error reset
+        if ( isset( $_GET['jdpd_reset_success'] ) ) {
+            echo '<div class="notice notice-success is-dismissible"><p><strong>Jezweb Dynamic Pricing:</strong> Errors have been reset. The plugin is now active.</p></div>';
+        }
+
+        // Show notice after checking for updates
+        if ( isset( $_GET['jdpd_updates_checked'] ) ) {
+            echo '<div class="notice notice-info is-dismissible"><p><strong>Jezweb Dynamic Pricing:</strong> Update check complete. If an update is available, it will appear above.</p></div>';
+        }
     }
 
     /**
