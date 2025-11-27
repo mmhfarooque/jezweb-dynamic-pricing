@@ -3,7 +3,7 @@
  * Plugin Name: Jezweb Dynamic Pricing & Discounts for WooCommerce
  * Plugin URI: https://github.com/mmhfarooque/jezweb-dynamic-pricing
  * Description: Powerful dynamic pricing and discount rules for WooCommerce. Create quantity discounts, cart rules, BOGO offers, gift products, and special promotions.
- * Version: 1.0.5
+ * Version: 1.0.6
  * Author: Mahmmud Farooque
  * Author URI: https://jezweb.com.au
  * Text Domain: jezweb-dynamic-pricing
@@ -30,7 +30,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Define plugin constants
  */
-define( 'JDPD_VERSION', '1.0.5' );
+define( 'JDPD_VERSION', '1.0.6' );
 define( 'JDPD_PLUGIN_FILE', __FILE__ );
 define( 'JDPD_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
 define( 'JDPD_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
@@ -119,9 +119,19 @@ final class Jezweb_Dynamic_Pricing {
      * Initialize the plugin
      */
     public function init() {
+        // Allow reset via URL parameter (admin only)
+        if ( is_admin() && isset( $_GET['jdpd_reset_errors'] ) && current_user_can( 'manage_options' ) ) {
+            delete_transient( 'jdpd_critical_errors' );
+            add_action( 'admin_notices', function() {
+                echo '<div class="notice notice-success"><p>Jezweb Dynamic Pricing errors have been reset.</p></div>';
+            });
+        }
+
         // Check if plugin is disabled due to critical errors
         if ( jdpd_error_handler()->is_disabled() ) {
             jdpd_log( 'Plugin disabled due to critical errors', 'warning' );
+            // Still show admin notice with reset link
+            add_action( 'admin_notices', array( $this, 'show_disabled_notice' ) );
             return;
         }
 
@@ -312,6 +322,26 @@ final class Jezweb_Dynamic_Pricing {
                     '8.0'
                 );
                 ?>
+            </p>
+        </div>
+        <?php
+    }
+
+    /**
+     * Show disabled notice with reset link
+     */
+    public function show_disabled_notice() {
+        $reset_url = admin_url( 'plugins.php?jdpd_reset_errors=1' );
+        ?>
+        <div class="notice notice-error">
+            <p>
+                <strong><?php esc_html_e( 'Jezweb Dynamic Pricing & Discounts', 'jezweb-dynamic-pricing' ); ?>:</strong>
+                <?php esc_html_e( 'Plugin is temporarily disabled due to previous critical errors.', 'jezweb-dynamic-pricing' ); ?>
+            </p>
+            <p>
+                <a href="<?php echo esc_url( $reset_url ); ?>" class="button button-primary">
+                    <?php esc_html_e( 'Reset Errors & Enable Plugin', 'jezweb-dynamic-pricing' ); ?>
+                </a>
             </p>
         </div>
         <?php
