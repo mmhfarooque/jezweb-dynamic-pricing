@@ -57,34 +57,41 @@ $total_pages = $result['total_pages'];
 
     <!-- Filters -->
     <div class="jdpd-filters">
-        <form method="get" action="">
+        <form method="get" action="" class="jdpd-filters-form">
             <input type="hidden" name="page" value="jdpd-rules">
 
-            <select name="status">
-                <option value=""><?php esc_html_e( 'All Statuses', 'jezweb-dynamic-pricing' ); ?></option>
-                <option value="active" <?php selected( $status, 'active' ); ?>><?php esc_html_e( 'Active', 'jezweb-dynamic-pricing' ); ?></option>
-                <option value="inactive" <?php selected( $status, 'inactive' ); ?>><?php esc_html_e( 'Inactive', 'jezweb-dynamic-pricing' ); ?></option>
-            </select>
+            <div class="jdpd-filter-item">
+                <select name="status">
+                    <option value=""><?php esc_html_e( 'All Statuses', 'jezweb-dynamic-pricing' ); ?></option>
+                    <option value="active" <?php selected( $status, 'active' ); ?>><?php esc_html_e( 'Active', 'jezweb-dynamic-pricing' ); ?></option>
+                    <option value="inactive" <?php selected( $status, 'inactive' ); ?>><?php esc_html_e( 'Inactive', 'jezweb-dynamic-pricing' ); ?></option>
+                </select>
+            </div>
 
-            <select name="rule_type">
-                <option value=""><?php esc_html_e( 'All Types', 'jezweb-dynamic-pricing' ); ?></option>
-                <?php foreach ( jdpd_get_rule_types() as $type_key => $type_label ) : ?>
-                    <option value="<?php echo esc_attr( $type_key ); ?>" <?php selected( $rule_type, $type_key ); ?>>
-                        <?php echo esc_html( $type_label ); ?>
-                    </option>
-                <?php endforeach; ?>
-            </select>
+            <div class="jdpd-filter-item">
+                <select name="rule_type">
+                    <option value=""><?php esc_html_e( 'All Types', 'jezweb-dynamic-pricing' ); ?></option>
+                    <?php foreach ( jdpd_get_rule_types() as $type_key => $type_label ) : ?>
+                        <option value="<?php echo esc_attr( $type_key ); ?>" <?php selected( $rule_type, $type_key ); ?>>
+                            <?php echo esc_html( $type_label ); ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
 
-            <input type="search" name="s" value="<?php echo esc_attr( $search ); ?>"
-                   placeholder="<?php esc_attr_e( 'Search rules...', 'jezweb-dynamic-pricing' ); ?>">
+            <div class="jdpd-filter-item jdpd-filter-search">
+                <input type="search" name="s" value="<?php echo esc_attr( $search ); ?>"
+                       placeholder="<?php esc_attr_e( 'Search rules...', 'jezweb-dynamic-pricing' ); ?>">
+            </div>
 
-            <button type="submit" class="button"><?php esc_html_e( 'Filter', 'jezweb-dynamic-pricing' ); ?></button>
-
-            <?php if ( $status || $rule_type || $search ) : ?>
-                <a href="<?php echo esc_url( admin_url( 'admin.php?page=jdpd-rules' ) ); ?>" class="button">
-                    <?php esc_html_e( 'Clear', 'jezweb-dynamic-pricing' ); ?>
-                </a>
-            <?php endif; ?>
+            <div class="jdpd-filter-actions">
+                <button type="submit" class="button"><?php esc_html_e( 'Filter', 'jezweb-dynamic-pricing' ); ?></button>
+                <?php if ( $status || $rule_type || $search ) : ?>
+                    <a href="<?php echo esc_url( admin_url( 'admin.php?page=jdpd-rules' ) ); ?>" class="button">
+                        <?php esc_html_e( 'Clear', 'jezweb-dynamic-pricing' ); ?>
+                    </a>
+                <?php endif; ?>
+            </div>
         </form>
     </div>
 
@@ -92,8 +99,12 @@ $total_pages = $result['total_pages'];
     <form method="post" id="jdpd-rules-form">
         <?php wp_nonce_field( 'jdpd_bulk_action', 'jdpd_bulk_nonce' ); ?>
 
-        <div class="tablenav top">
-            <div class="alignleft actions bulkactions">
+        <div class="jdpd-bulk-actions">
+            <div class="jdpd-bulk-left">
+                <label class="jdpd-select-all-wrap">
+                    <input type="checkbox" id="cb-select-all">
+                    <span><?php esc_html_e( 'Select All', 'jezweb-dynamic-pricing' ); ?></span>
+                </label>
                 <select name="bulk_action" id="bulk-action-selector">
                     <option value=""><?php esc_html_e( 'Bulk Actions', 'jezweb-dynamic-pricing' ); ?></option>
                     <option value="activate"><?php esc_html_e( 'Activate', 'jezweb-dynamic-pricing' ); ?></option>
@@ -106,8 +117,8 @@ $total_pages = $result['total_pages'];
             </div>
 
             <?php if ( $total_pages > 1 ) : ?>
-                <div class="tablenav-pages">
-                    <span class="displaying-num">
+                <div class="jdpd-pagination">
+                    <span class="jdpd-displaying-num">
                         <?php
                         printf(
                             /* translators: %d: number of items */
@@ -116,7 +127,7 @@ $total_pages = $result['total_pages'];
                         );
                         ?>
                     </span>
-                    <span class="pagination-links">
+                    <span class="jdpd-pagination-links">
                         <?php
                         echo paginate_links(
                             array(
@@ -134,73 +145,73 @@ $total_pages = $result['total_pages'];
             <?php endif; ?>
         </div>
 
-        <table class="wp-list-table widefat fixed striped jdpd-rules-table">
-            <thead>
-                <tr>
-                    <td class="manage-column column-cb check-column">
-                        <input type="checkbox" id="cb-select-all">
-                    </td>
-                    <th class="column-drag" width="30"></th>
-                    <th class="column-name"><?php esc_html_e( 'Name', 'jezweb-dynamic-pricing' ); ?></th>
-                    <th class="column-type"><?php esc_html_e( 'Type', 'jezweb-dynamic-pricing' ); ?></th>
-                    <th class="column-discount"><?php esc_html_e( 'Discount', 'jezweb-dynamic-pricing' ); ?></th>
-                    <th class="column-status"><?php esc_html_e( 'Status', 'jezweb-dynamic-pricing' ); ?></th>
-                    <th class="column-priority"><?php esc_html_e( 'Priority', 'jezweb-dynamic-pricing' ); ?></th>
-                    <th class="column-usage"><?php esc_html_e( 'Usage', 'jezweb-dynamic-pricing' ); ?></th>
-                </tr>
-            </thead>
-            <tbody id="the-list">
-                <?php if ( empty( $rules ) ) : ?>
-                    <tr>
-                        <td colspan="8">
-                            <?php esc_html_e( 'No rules found.', 'jezweb-dynamic-pricing' ); ?>
-                            <a href="<?php echo esc_url( admin_url( 'admin.php?page=jdpd-add-rule' ) ); ?>">
-                                <?php esc_html_e( 'Create your first rule', 'jezweb-dynamic-pricing' ); ?>
-                            </a>
-                        </td>
-                    </tr>
-                <?php else : ?>
-                    <?php foreach ( $rules as $rule ) : ?>
-                        <?php
-                        $rule_types = jdpd_get_rule_types();
-                        $discount_types = jdpd_get_discount_types();
-                        $edit_url = admin_url( 'admin.php?page=jdpd-add-rule&rule_id=' . $rule->id );
-                        $delete_url = wp_nonce_url(
-                            admin_url( 'admin.php?page=jdpd-rules&action=delete&rule_id=' . $rule->id ),
-                            'jdpd_rule_action'
-                        );
-                        $duplicate_url = wp_nonce_url(
-                            admin_url( 'admin.php?page=jdpd-rules&action=duplicate&rule_id=' . $rule->id ),
-                            'jdpd_rule_action'
-                        );
-                        ?>
-                        <tr data-rule-id="<?php echo esc_attr( $rule->id ); ?>">
-                            <th scope="row" class="check-column">
-                                <input type="checkbox" name="rule_ids[]" value="<?php echo esc_attr( $rule->id ); ?>">
-                            </th>
-                            <td class="column-drag">
-                                <span class="jdpd-drag-handle dashicons dashicons-menu"></span>
-                            </td>
-                            <td class="column-name">
-                                <strong>
-                                    <a href="<?php echo esc_url( $edit_url ); ?>"><?php echo esc_html( $rule->name ); ?></a>
-                                </strong>
-                                <div class="row-actions">
-                                    <span class="edit">
-                                        <a href="<?php echo esc_url( $edit_url ); ?>"><?php esc_html_e( 'Edit', 'jezweb-dynamic-pricing' ); ?></a> |
-                                    </span>
-                                    <span class="duplicate">
-                                        <a href="<?php echo esc_url( $duplicate_url ); ?>"><?php esc_html_e( 'Duplicate', 'jezweb-dynamic-pricing' ); ?></a> |
-                                    </span>
-                                    <span class="trash">
-                                        <a href="<?php echo esc_url( $delete_url ); ?>" class="jdpd-delete-rule"><?php esc_html_e( 'Delete', 'jezweb-dynamic-pricing' ); ?></a>
-                                    </span>
-                                </div>
-                            </td>
-                            <td class="column-type">
+        <!-- Rules List Header (Desktop) -->
+        <div class="jdpd-rules-header">
+            <div class="jdpd-rule-col jdpd-col-cb"></div>
+            <div class="jdpd-rule-col jdpd-col-drag"></div>
+            <div class="jdpd-rule-col jdpd-col-name"><?php esc_html_e( 'Name', 'jezweb-dynamic-pricing' ); ?></div>
+            <div class="jdpd-rule-col jdpd-col-type"><?php esc_html_e( 'Type', 'jezweb-dynamic-pricing' ); ?></div>
+            <div class="jdpd-rule-col jdpd-col-discount"><?php esc_html_e( 'Discount', 'jezweb-dynamic-pricing' ); ?></div>
+            <div class="jdpd-rule-col jdpd-col-status"><?php esc_html_e( 'Status', 'jezweb-dynamic-pricing' ); ?></div>
+            <div class="jdpd-rule-col jdpd-col-priority"><?php esc_html_e( 'Priority', 'jezweb-dynamic-pricing' ); ?></div>
+            <div class="jdpd-rule-col jdpd-col-usage"><?php esc_html_e( 'Usage', 'jezweb-dynamic-pricing' ); ?></div>
+        </div>
+
+        <!-- Rules List -->
+        <div class="jdpd-rules-list" id="the-list">
+            <?php if ( empty( $rules ) ) : ?>
+                <div class="jdpd-no-rules">
+                    <p>
+                        <?php esc_html_e( 'No rules found.', 'jezweb-dynamic-pricing' ); ?>
+                        <a href="<?php echo esc_url( admin_url( 'admin.php?page=jdpd-add-rule' ) ); ?>">
+                            <?php esc_html_e( 'Create your first rule', 'jezweb-dynamic-pricing' ); ?>
+                        </a>
+                    </p>
+                </div>
+            <?php else : ?>
+                <?php foreach ( $rules as $rule ) : ?>
+                    <?php
+                    $rule_types = jdpd_get_rule_types();
+                    $discount_types = jdpd_get_discount_types();
+                    $edit_url = admin_url( 'admin.php?page=jdpd-add-rule&rule_id=' . $rule->id );
+                    $delete_url = wp_nonce_url(
+                        admin_url( 'admin.php?page=jdpd-rules&action=delete&rule_id=' . $rule->id ),
+                        'jdpd_rule_action'
+                    );
+                    $duplicate_url = wp_nonce_url(
+                        admin_url( 'admin.php?page=jdpd-rules&action=duplicate&rule_id=' . $rule->id ),
+                        'jdpd_rule_action'
+                    );
+                    ?>
+                    <div class="jdpd-rule-item" data-rule-id="<?php echo esc_attr( $rule->id ); ?>">
+                        <div class="jdpd-rule-col jdpd-col-cb">
+                            <input type="checkbox" name="rule_ids[]" value="<?php echo esc_attr( $rule->id ); ?>">
+                        </div>
+                        <div class="jdpd-rule-col jdpd-col-drag">
+                            <span class="jdpd-drag-handle dashicons dashicons-menu"></span>
+                        </div>
+                        <div class="jdpd-rule-col jdpd-col-name">
+                            <span class="jdpd-mobile-label"><?php esc_html_e( 'Name:', 'jezweb-dynamic-pricing' ); ?></span>
+                            <strong>
+                                <a href="<?php echo esc_url( $edit_url ); ?>"><?php echo esc_html( $rule->name ); ?></a>
+                            </strong>
+                            <div class="jdpd-row-actions">
+                                <a href="<?php echo esc_url( $edit_url ); ?>"><?php esc_html_e( 'Edit', 'jezweb-dynamic-pricing' ); ?></a>
+                                <span class="jdpd-sep">|</span>
+                                <a href="<?php echo esc_url( $duplicate_url ); ?>"><?php esc_html_e( 'Duplicate', 'jezweb-dynamic-pricing' ); ?></a>
+                                <span class="jdpd-sep">|</span>
+                                <a href="<?php echo esc_url( $delete_url ); ?>" class="jdpd-delete-rule jdpd-delete"><?php esc_html_e( 'Delete', 'jezweb-dynamic-pricing' ); ?></a>
+                            </div>
+                        </div>
+                        <div class="jdpd-rule-col jdpd-col-type">
+                            <span class="jdpd-mobile-label"><?php esc_html_e( 'Type:', 'jezweb-dynamic-pricing' ); ?></span>
+                            <span class="jdpd-badge jdpd-badge-<?php echo esc_attr( $rule->rule_type ); ?>">
                                 <?php echo esc_html( $rule_types[ $rule->rule_type ] ?? $rule->rule_type ); ?>
-                            </td>
-                            <td class="column-discount">
+                            </span>
+                        </div>
+                        <div class="jdpd-rule-col jdpd-col-discount">
+                            <span class="jdpd-mobile-label"><?php esc_html_e( 'Discount:', 'jezweb-dynamic-pricing' ); ?></span>
+                            <span class="jdpd-discount-value">
                                 <?php
                                 if ( 'percentage' === $rule->discount_type ) {
                                     echo esc_html( $rule->discount_value . '%' );
@@ -210,91 +221,36 @@ $total_pages = $result['total_pages'];
                                     echo wc_price( $rule->discount_value );
                                 }
                                 ?>
-                            </td>
-                            <td class="column-status">
-                                <label class="jdpd-status-toggle">
-                                    <input type="checkbox" class="jdpd-toggle-status"
-                                           data-rule-id="<?php echo esc_attr( $rule->id ); ?>"
-                                        <?php checked( $rule->status, 'active' ); ?>>
-                                    <span class="slider"></span>
-                                </label>
-                            </td>
-                            <td class="column-priority">
-                                <?php echo esc_html( $rule->priority ); ?>
-                            </td>
-                            <td class="column-usage">
+                            </span>
+                        </div>
+                        <div class="jdpd-rule-col jdpd-col-status">
+                            <span class="jdpd-mobile-label"><?php esc_html_e( 'Status:', 'jezweb-dynamic-pricing' ); ?></span>
+                            <label class="jdpd-status-toggle">
+                                <input type="checkbox" class="jdpd-toggle-status"
+                                       data-rule-id="<?php echo esc_attr( $rule->id ); ?>"
+                                    <?php checked( $rule->status, 'active' ); ?>>
+                                <span class="jdpd-toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="jdpd-rule-col jdpd-col-priority">
+                            <span class="jdpd-mobile-label"><?php esc_html_e( 'Priority:', 'jezweb-dynamic-pricing' ); ?></span>
+                            <span><?php echo esc_html( $rule->priority ); ?></span>
+                        </div>
+                        <div class="jdpd-rule-col jdpd-col-usage">
+                            <span class="jdpd-mobile-label"><?php esc_html_e( 'Usage:', 'jezweb-dynamic-pricing' ); ?></span>
+                            <span>
                                 <?php
                                 if ( $rule->usage_limit ) {
-                                    printf(
-                                        '%d / %d',
-                                        $rule->usage_count,
-                                        $rule->usage_limit
-                                    );
+                                    printf( '%d / %d', $rule->usage_count, $rule->usage_limit );
                                 } else {
                                     echo esc_html( $rule->usage_count );
                                 }
                                 ?>
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
-                <?php endif; ?>
-            </tbody>
-        </table>
+                            </span>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            <?php endif; ?>
+        </div>
     </form>
 </div>
-
-<style>
-.jdpd-rules-wrap .jdpd-filters {
-    margin: 15px 0;
-}
-.jdpd-rules-wrap .jdpd-filters select,
-.jdpd-rules-wrap .jdpd-filters input[type="search"] {
-    margin-right: 5px;
-}
-.jdpd-rules-table .column-drag {
-    cursor: move;
-}
-.jdpd-drag-handle {
-    color: #c0c0c0;
-    cursor: move;
-}
-.jdpd-status-toggle {
-    position: relative;
-    display: inline-block;
-    width: 40px;
-    height: 20px;
-}
-.jdpd-status-toggle input {
-    opacity: 0;
-    width: 0;
-    height: 0;
-}
-.jdpd-status-toggle .slider {
-    position: absolute;
-    cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: #ccc;
-    transition: .4s;
-    border-radius: 20px;
-}
-.jdpd-status-toggle .slider:before {
-    position: absolute;
-    content: "";
-    height: 14px;
-    width: 14px;
-    left: 3px;
-    bottom: 3px;
-    background-color: white;
-    transition: .4s;
-    border-radius: 50%;
-}
-.jdpd-status-toggle input:checked + .slider {
-    background-color: #2196F3;
-}
-.jdpd-status-toggle input:checked + .slider:before {
-    transform: translateX(20px);
-}
-</style>
