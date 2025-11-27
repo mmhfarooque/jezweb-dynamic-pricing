@@ -1,0 +1,428 @@
+/**
+ * Jezweb Dynamic Pricing - Frontend Styles
+ */
+
+/* Quantity Table */
+.jdpd-quantity-table {
+    margin: 20px 0;
+    padding: 15px;
+    background: #f9f9f9;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+}
+
+.jdpd-table-title {
+    margin: 0 0 15px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+}
+
+.jdpd-pricing-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.jdpd-pricing-table th,
+.jdpd-pricing-table td {
+    padding: 12px 15px;
+    text-align: center;
+    border: 1px solid #e0e0e0;
+}
+
+.jdpd-pricing-table thead th {
+    background: #f5f5f5;
+    font-weight: 600;
+    color: #333;
+}
+
+.jdpd-pricing-table tbody th {
+    background: #fafafa;
+    font-weight: 500;
+}
+
+.jdpd-pricing-table .jdpd-savings {
+    color: #00a32a;
+    font-weight: 600;
+}
+
+.jdpd-pricing-table del {
+    color: #999;
+    text-decoration: line-through;
+    margin-right: 5px;
+}
+
+.jdpd-pricing-table ins {
+    color: #00a32a;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+/* Vertical Table Layout */
+.jdpd-table-vertical .jdpd-pricing-table th:first-child {
+    text-align: left;
+}
+
+/* Sale Badge */
+.jdpd-sale-badge {
+    display: inline-block;
+    padding: 5px 10px;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1;
+    color: #fff;
+    background: #d63638;
+    border-radius: 3px;
+}
+
+.jdpd-badge-rounded {
+    border-radius: 20px;
+    padding: 6px 12px;
+}
+
+.jdpd-badge-ribbon {
+    position: relative;
+    padding: 5px 15px 5px 10px;
+    border-radius: 0;
+}
+
+.jdpd-badge-ribbon::after {
+    content: '';
+    position: absolute;
+    right: -10px;
+    top: 0;
+    border: 12px solid transparent;
+    border-left-color: #d63638;
+}
+
+/* You Save */
+.jdpd-you-save {
+    display: block;
+    margin-top: 8px;
+    padding: 5px 10px;
+    font-size: 13px;
+    color: #00a32a;
+    background: #e8f5e9;
+    border-radius: 4px;
+}
+
+/* Notices */
+.jdpd-notice {
+    margin: 15px 0;
+    padding: 12px 15px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.jdpd-notice-default {
+    background: #f0f6fc;
+    border-left: 4px solid #2271b1;
+    color: #1e3a5f;
+}
+
+.jdpd-notice-info {
+    background: #e8f5e9;
+    border-left: 4px solid #00a32a;
+    color: #1e4620;
+}
+
+.jdpd-notice-success {
+    background: #e8f5e9;
+    border-left: 4px solid #00a32a;
+    color: #1e4620;
+}
+
+.jdpd-notice-icon {
+    font-size: 20px;
+}
+
+.jdpd-notice-text {
+    flex: 1;
+}
+
+/* Offer Message */
+.jdpd-offer-message {
+    margin: 15px 0;
+    padding: 15px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #fff;
+    font-weight: 600;
+    text-align: center;
+    border-radius: 8px;
+}
+
+/* Gift Notice */
+.jdpd-gift-notice {
+    margin: 15px 0;
+    padding: 15px;
+    background: #fff3cd;
+    border: 1px solid #ffc107;
+    border-radius: 8px;
+}
+
+.jdpd-gift-notice strong {
+    display: block;
+    margin-bottom: 10px;
+    color: #856404;
+}
+
+.jdpd-gift-notice ul {
+    margin: 0;
+    padding: 0 0 0 20px;
+}
+
+.jdpd-gift-notice li {
+    margin: 5px 0;
+}
+
+.jdpd-free-tag {
+    display: inline-block;
+    padding: 2px 6px;
+    font-size: 11px;
+    font-weight: 700;
+    color: #fff;
+    background: #00a32a;
+    border-radius: 3px;
+    vertical-align: middle;
+}
+
+/* Gift Badge in Cart */
+.jdpd-gift-badge {
+    display: inline-block;
+    padding: 3px 8px;
+    margin-right: 8px;
+    font-size: 11px;
+    font-weight: 700;
+    color: #fff;
+    background: #d63638;
+    border-radius: 3px;
+    text-transform: uppercase;
+    vertical-align: middle;
+}
+
+/* Cart Savings */
+.jdpd-cart-savings th,
+.jdpd-cart-savings td {
+    color: #00a32a;
+    font-weight: 600;
+}
+
+/* Modal */
+.jdpd-modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 99999;
+    justify-content: center;
+    align-items: center;
+}
+
+.jdpd-modal {
+    position: relative;
+    max-width: 400px;
+    margin: 20px;
+    padding: 30px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    animation: jdpd-modal-in 0.3s ease;
+}
+
+@keyframes jdpd-modal-in {
+    from {
+        opacity: 0;
+        transform: scale(0.9) translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.jdpd-modal-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 30px;
+    height: 30px;
+    border: none;
+    background: #f0f0f0;
+    border-radius: 50%;
+    font-size: 20px;
+    line-height: 1;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.jdpd-modal-close:hover {
+    background: #ddd;
+}
+
+.jdpd-modal-content {
+    text-align: center;
+}
+
+.jdpd-modal-icon {
+    font-size: 48px;
+    margin-bottom: 15px;
+}
+
+.jdpd-modal-content h3 {
+    margin: 0 0 10px;
+    font-size: 24px;
+}
+
+.jdpd-modal-content p {
+    margin: 0 0 20px;
+    color: #666;
+}
+
+.jdpd-modal-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.jdpd-modal-actions .button {
+    flex: 1;
+}
+
+/* Checkout Deals */
+.jdpd-checkout-deals {
+    margin: 20px 0;
+    padding: 20px;
+    background: linear-gradient(135deg, #fff 0%, #f0f6fc 100%);
+    border: 2px dashed #2271b1;
+    border-radius: 8px;
+}
+
+.jdpd-checkout-deals h3 {
+    margin: 0 0 15px;
+    color: #2271b1;
+    text-align: center;
+}
+
+.jdpd-countdown {
+    text-align: center;
+    margin-bottom: 15px;
+    padding: 10px;
+    background: #d63638;
+    color: #fff;
+    border-radius: 6px;
+}
+
+.jdpd-countdown-label {
+    margin-right: 10px;
+}
+
+.jdpd-countdown-timer {
+    font-size: 20px;
+    font-weight: 700;
+    font-family: monospace;
+}
+
+.jdpd-deals-list {
+    display: grid;
+    gap: 15px;
+}
+
+.jdpd-deal-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 15px;
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+}
+
+.jdpd-deal-image {
+    width: 60px;
+    height: 60px;
+    flex-shrink: 0;
+}
+
+.jdpd-deal-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+.jdpd-deal-info {
+    flex: 1;
+}
+
+.jdpd-deal-info h4 {
+    margin: 0 0 5px;
+    font-size: 14px;
+}
+
+.jdpd-deal-description {
+    margin: 0 0 5px;
+    font-size: 12px;
+    color: #666;
+}
+
+.jdpd-deal-price {
+    font-size: 14px;
+}
+
+.jdpd-deal-price del {
+    color: #999;
+    margin-right: 5px;
+}
+
+.jdpd-deal-price ins {
+    color: #00a32a;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.jdpd-deal-savings {
+    display: block;
+    font-size: 11px;
+    color: #00a32a;
+}
+
+.jdpd-add-deal {
+    flex-shrink: 0;
+}
+
+/* Responsive */
+@media screen and (max-width: 768px) {
+    .jdpd-pricing-table {
+        font-size: 13px;
+    }
+
+    .jdpd-pricing-table th,
+    .jdpd-pricing-table td {
+        padding: 8px 10px;
+    }
+
+    .jdpd-deal-item {
+        flex-wrap: wrap;
+    }
+
+    .jdpd-deal-image {
+        width: 50px;
+        height: 50px;
+    }
+
+    .jdpd-add-deal {
+        width: 100%;
+    }
+
+    .jdpd-modal-actions {
+        flex-direction: column;
+    }
+}
