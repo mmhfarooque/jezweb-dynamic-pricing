@@ -31,10 +31,14 @@ class JDPD_Admin_Settings {
             'cart'     => __( 'Cart', 'jezweb-dynamic-pricing' ),
             'checkout' => __( 'Checkout Deals', 'jezweb-dynamic-pricing' ),
             'advanced' => __( 'Advanced', 'jezweb-dynamic-pricing' ),
+            'debug'    => __( 'Debug Log', 'jezweb-dynamic-pricing' ),
         );
 
         add_action( 'admin_init', array( $this, 'register_settings' ) );
+        add_action( 'admin_init', array( $this, 'handle_debug_actions' ) );
         add_action( 'wp_ajax_jdpd_save_settings', array( $this, 'ajax_save_settings' ) );
+        add_action( 'wp_ajax_jdpd_clear_log', array( $this, 'ajax_clear_log' ) );
+        add_action( 'wp_ajax_jdpd_download_log', array( $this, 'ajax_download_log' ) );
     }
 
     /**
@@ -71,6 +75,9 @@ class JDPD_Admin_Settings {
         // Advanced settings
         register_setting( 'jdpd_advanced_settings', 'jdpd_show_in_order_email' );
         register_setting( 'jdpd_advanced_settings', 'jdpd_show_order_metabox' );
+
+        // Debug settings
+        register_setting( 'jdpd_debug_settings', 'jdpd_enable_debug_log' );
     }
 
     /**
@@ -129,6 +136,9 @@ class JDPD_Admin_Settings {
                 break;
             case 'advanced':
                 $this->render_advanced_settings();
+                break;
+            case 'debug':
+                $this->render_debug_settings();
                 break;
         }
     }
@@ -447,5 +457,228 @@ class JDPD_Admin_Settings {
         }
 
         wp_send_json_success( array( 'message' => __( 'Settings saved.', 'jezweb-dynamic-pricing' ) ) );
+    }
+
+    /**
+     * Render debug settings
+     */
+    private function render_debug_settings() {
+        $logger = function_exists( 'jdpd_logger' ) ? jdpd_logger() : null;
+        $error_handler = function_exists( 'jdpd_error_handler' ) ? jdpd_error_handler() : null;
+        $log_contents = $logger ? $logger->get_log_contents( 200 ) : '';
+        $is_disabled = $error_handler ? $error_handler->is_disabled() : false;
+        ?>
+        <?php if ( $is_disabled ) : ?>
+            <div class="notice notice-error">
+                <p>
+                    <strong><?php esc_html_e( 'Plugin is currently disabled due to critical errors.', 'jezweb-dynamic-pricing' ); ?></strong>
+                </p>
+            </div>
+        <?php endif; ?>
+
+        <table class="form-table">
+            <tr>
+                <th scope="row">
+                    <label for="jdpd_enable_debug_log"><?php esc_html_e( 'Enable Debug Logging', 'jezweb-dynamic-pricing' ); ?></label>
+                </th>
+                <td>
+                    <input type="checkbox" name="jdpd_enable_debug_log" id="jdpd_enable_debug_log" value="yes"
+                        <?php checked( get_option( 'jdpd_enable_debug_log', 'yes' ), 'yes' ); ?>>
+                    <p class="description"><?php esc_html_e( 'Enable detailed debug logging. Errors and critical issues are always logged regardless of this setting.', 'jezweb-dynamic-pricing' ); ?></p>
+                </td>
+            </tr>
+            <tr>
+                <th scope="row">
+                    <?php esc_html_e( 'Log File Location', 'jezweb-dynamic-pricing' ); ?>
+                </th>
+                <td>
+                    <code><?php echo $logger ? esc_html( $logger->get_log_file() ) : esc_html__( 'Not available', 'jezweb-dynamic-pricing' ); ?></code>
+                </td>
+            </tr>
+            <tr>
+                <th scope="row">
+                    <?php esc_html_e( 'Actions', 'jezweb-dynamic-pricing' ); ?>
+                </th>
+                <td>
+                    <p>
+                        <?php
+                        $clear_url = wp_nonce_url(
+                            admin_url( 'admin.php?page=jdpd-settings&tab=debug&action=clear_log' ),
+                            'jdpd_clear_log'
+                        );
+                        $download_url = wp_nonce_url(
+                            admin_url( 'admin.php?page=jdpd-settings&tab=debug&action=download_log' ),
+                            'jdpd_download_log'
+                        );
+                        $reset_url = wp_nonce_url(
+                            admin_url( 'admin.php?page=jdpd-settings&tab=debug&action=reset_errors' ),
+                            'jdpd_reset_errors'
+                        );
+                        ?>
+                        <a href="<?php echo esc_url( $download_url ); ?>" class="button">
+                            <?php esc_html_e( 'Download Log', 'jezweb-dynamic-pricing' ); ?>
+                        </a>
+                        <a href="<?php echo esc_url( $clear_url ); ?>" class="button" onclick="return confirm('<?php esc_attr_e( 'Are you sure you want to clear the log file?', 'jezweb-dynamic-pricing' ); ?>');">
+                            <?php esc_html_e( 'Clear Log', 'jezweb-dynamic-pricing' ); ?>
+                        </a>
+                        <?php if ( $is_disabled ) : ?>
+                            <a href="<?php echo esc_url( $reset_url ); ?>" class="button button-primary">
+                                <?php esc_html_e( 'Reset Errors & Re-enable Plugin', 'jezweb-dynamic-pricing' ); ?>
+                            </a>
+                        <?php endif; ?>
+                    </p>
+                </td>
+            </tr>
+        </table>
+
+        <h3><?php esc_html_e( 'Debug Log', 'jezweb-dynamic-pricing' ); ?></h3>
+        <p class="description"><?php esc_html_e( 'Showing the last 200 lines of the debug log:', 'jezweb-dynamic-pricing' ); ?></p>
+        <textarea readonly class="large-text code" rows="20" style="font-family: monospace; white-space: pre; overflow-x: auto;"><?php echo esc_textarea( $log_contents ); ?></textarea>
+
+        <h3><?php esc_html_e( 'System Information', 'jezweb-dynamic-pricing' ); ?></h3>
+        <table class="widefat" style="max-width: 600px;">
+            <tbody>
+                <tr>
+                    <td><strong><?php esc_html_e( 'Plugin Version', 'jezweb-dynamic-pricing' ); ?></strong></td>
+                    <td><?php echo esc_html( defined( 'JDPD_VERSION' ) ? JDPD_VERSION : 'Unknown' ); ?></td>
+                </tr>
+                <tr>
+                    <td><strong><?php esc_html_e( 'WordPress Version', 'jezweb-dynamic-pricing' ); ?></strong></td>
+                    <td><?php echo esc_html( get_bloginfo( 'version' ) ); ?></td>
+                </tr>
+                <tr>
+                    <td><strong><?php esc_html_e( 'WooCommerce Version', 'jezweb-dynamic-pricing' ); ?></strong></td>
+                    <td><?php echo esc_html( defined( 'WC_VERSION' ) ? WC_VERSION : 'Not installed' ); ?></td>
+                </tr>
+                <tr>
+                    <td><strong><?php esc_html_e( 'PHP Version', 'jezweb-dynamic-pricing' ); ?></strong></td>
+                    <td><?php echo esc_html( PHP_VERSION ); ?></td>
+                </tr>
+                <tr>
+                    <td><strong><?php esc_html_e( 'Debug Mode', 'jezweb-dynamic-pricing' ); ?></strong></td>
+                    <td><?php echo $logger && $logger->is_debug_enabled() ? esc_html__( 'Enabled', 'jezweb-dynamic-pricing' ) : esc_html__( 'Disabled', 'jezweb-dynamic-pricing' ); ?></td>
+                </tr>
+                <tr>
+                    <td><strong><?php esc_html_e( 'Plugin Status', 'jezweb-dynamic-pricing' ); ?></strong></td>
+                    <td><?php echo $is_disabled ? '<span style="color: #d63638;">' . esc_html__( 'Disabled (Critical Errors)', 'jezweb-dynamic-pricing' ) . '</span>' : '<span style="color: #00a32a;">' . esc_html__( 'Active', 'jezweb-dynamic-pricing' ) . '</span>'; ?></td>
+                </tr>
+            </tbody>
+        </table>
+        <?php
+    }
+
+    /**
+     * Handle debug actions
+     */
+    public function handle_debug_actions() {
+        if ( ! isset( $_GET['page'] ) || $_GET['page'] !== 'jdpd-settings' ) {
+            return;
+        }
+
+        if ( ! isset( $_GET['action'] ) ) {
+            return;
+        }
+
+        if ( ! current_user_can( 'manage_woocommerce' ) ) {
+            return;
+        }
+
+        $action = sanitize_key( $_GET['action'] );
+
+        switch ( $action ) {
+            case 'clear_log':
+                if ( ! wp_verify_nonce( $_GET['_wpnonce'] ?? '', 'jdpd_clear_log' ) ) {
+                    wp_die( esc_html__( 'Security check failed.', 'jezweb-dynamic-pricing' ) );
+                }
+                if ( function_exists( 'jdpd_logger' ) ) {
+                    jdpd_logger()->clear_log();
+                }
+                wp_redirect( admin_url( 'admin.php?page=jdpd-settings&tab=debug&message=log_cleared' ) );
+                exit;
+
+            case 'download_log':
+                if ( ! wp_verify_nonce( $_GET['_wpnonce'] ?? '', 'jdpd_download_log' ) ) {
+                    wp_die( esc_html__( 'Security check failed.', 'jezweb-dynamic-pricing' ) );
+                }
+                $this->download_log_file();
+                exit;
+
+            case 'reset_errors':
+                if ( ! wp_verify_nonce( $_GET['_wpnonce'] ?? '', 'jdpd_reset_errors' ) ) {
+                    wp_die( esc_html__( 'Security check failed.', 'jezweb-dynamic-pricing' ) );
+                }
+                if ( function_exists( 'jdpd_error_handler' ) ) {
+                    jdpd_error_handler()->reset_critical_errors();
+                }
+                wp_redirect( admin_url( 'admin.php?page=jdpd-settings&tab=debug&message=errors_reset' ) );
+                exit;
+        }
+    }
+
+    /**
+     * Download log file
+     */
+    private function download_log_file() {
+        if ( ! function_exists( 'jdpd_logger' ) ) {
+            wp_die( esc_html__( 'Logger not available.', 'jezweb-dynamic-pricing' ) );
+        }
+
+        $logger = jdpd_logger();
+        $log_file = $logger->get_log_file();
+
+        if ( ! file_exists( $log_file ) ) {
+            wp_die( esc_html__( 'Log file not found.', 'jezweb-dynamic-pricing' ) );
+        }
+
+        $filename = 'jdpd-debug-log-' . date( 'Y-m-d-His' ) . '.log';
+
+        header( 'Content-Type: text/plain' );
+        header( 'Content-Disposition: attachment; filename="' . $filename . '"' );
+        header( 'Content-Length: ' . filesize( $log_file ) );
+        header( 'Cache-Control: no-cache, no-store, must-revalidate' );
+        header( 'Pragma: no-cache' );
+        header( 'Expires: 0' );
+
+        readfile( $log_file );
+        exit;
+    }
+
+    /**
+     * AJAX clear log
+     */
+    public function ajax_clear_log() {
+        check_ajax_referer( 'jdpd_admin_nonce', 'nonce' );
+
+        if ( ! current_user_can( 'manage_woocommerce' ) ) {
+            wp_send_json_error( array( 'message' => __( 'Permission denied.', 'jezweb-dynamic-pricing' ) ) );
+        }
+
+        if ( function_exists( 'jdpd_logger' ) ) {
+            jdpd_logger()->clear_log();
+            wp_send_json_success( array( 'message' => __( 'Log cleared.', 'jezweb-dynamic-pricing' ) ) );
+        } else {
+            wp_send_json_error( array( 'message' => __( 'Logger not available.', 'jezweb-dynamic-pricing' ) ) );
+        }
+    }
+
+    /**
+     * AJAX download log
+     */
+    public function ajax_download_log() {
+        check_ajax_referer( 'jdpd_admin_nonce', 'nonce' );
+
+        if ( ! current_user_can( 'manage_woocommerce' ) ) {
+            wp_send_json_error( array( 'message' => __( 'Permission denied.', 'jezweb-dynamic-pricing' ) ) );
+        }
+
+        if ( function_exists( 'jdpd_logger' ) ) {
+            $log_contents = jdpd_logger()->get_log_contents( 1000 );
+            wp_send_json_success( array(
+                'content' => $log_contents,
+                'filename' => 'jdpd-debug-log-' . date( 'Y-m-d-His' ) . '.log',
+            ) );
+        } else {
+            wp_send_json_error( array( 'message' => __( 'Logger not available.', 'jezweb-dynamic-pricing' ) ) );
+        }
     }
 }

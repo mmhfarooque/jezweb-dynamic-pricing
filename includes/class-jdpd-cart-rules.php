@@ -26,8 +26,11 @@ class JDPD_Cart_Rules {
      */
     public function __construct() {
         if ( 'yes' !== get_option( 'jdpd_enable_plugin', 'yes' ) ) {
+            jdpd_log( 'Cart rules disabled - plugin not enabled', 'debug' );
             return;
         }
+
+        jdpd_log( 'Cart rules initialized', 'debug' );
 
         // Apply cart discounts
         add_action( 'woocommerce_cart_calculate_fees', array( $this, 'apply_cart_discounts' ), 20 );
@@ -102,6 +105,7 @@ class JDPD_Cart_Rules {
 
                 // Add negative fee (discount)
                 $cart->add_fee( $label, -$discount, true );
+                jdpd_log( sprintf( 'Applied cart rule "%s" (ID: %d): discount %.2f', $rule_name, $rule_obj->get_id(), $discount ), 'info' );
 
                 // Track applied rule
                 $this->applied_rules[] = array(

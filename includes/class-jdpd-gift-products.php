@@ -26,8 +26,11 @@ class JDPD_Gift_Products {
      */
     public function __construct() {
         if ( 'yes' !== get_option( 'jdpd_enable_plugin', 'yes' ) ) {
+            jdpd_log( 'Gift products disabled - plugin not enabled', 'debug' );
             return;
         }
+
+        jdpd_log( 'Gift products initialized', 'debug' );
 
         // Add gift products to cart
         add_action( 'woocommerce_cart_loaded_from_session', array( $this, 'maybe_add_gift_products' ), 30 );
@@ -160,6 +163,7 @@ class JDPD_Gift_Products {
             );
 
             WC()->cart->add_to_cart( $product_id, $quantity, 0, array(), $cart_item_data );
+            jdpd_log( sprintf( 'Added gift product %d (qty: %d) from rule %d', $product_id, $quantity, $rule->get_id() ), 'info' );
         }
     }
 
@@ -176,6 +180,7 @@ class JDPD_Gift_Products {
         foreach ( WC()->cart->get_cart() as $cart_item_key => $cart_item ) {
             if ( isset( $cart_item['jdpd_gift_rule_id'] ) && $cart_item['jdpd_gift_rule_id'] == $rule_id ) {
                 WC()->cart->remove_cart_item( $cart_item_key );
+                jdpd_log( sprintf( 'Removed gift product %d from rule %d (conditions no longer met)', $cart_item['product_id'], $rule_id ), 'debug' );
             }
         }
     }
