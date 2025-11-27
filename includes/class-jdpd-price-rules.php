@@ -26,8 +26,11 @@ class JDPD_Price_Rules {
      */
     public function __construct() {
         if ( 'yes' !== get_option( 'jdpd_enable_plugin', 'yes' ) ) {
+            jdpd_log( 'Price rules disabled - plugin not enabled', 'debug' );
             return;
         }
+
+        jdpd_log( 'Price rules initialized', 'debug' );
 
         // Hook into WooCommerce price filters
         add_filter( 'woocommerce_product_get_price', array( $this, 'get_discounted_price' ), 99, 2 );
@@ -146,11 +149,13 @@ class JDPD_Price_Rules {
             // Check conditions
             $conditions = new JDPD_Conditions();
             if ( ! $conditions->check_rule_conditions( $rule_obj ) ) {
+                jdpd_log( sprintf( 'Rule %d conditions not met for product %d', $rule_obj->get( 'id' ), $product->get_id() ), 'debug' );
                 continue;
             }
 
             // Check if already applied an exclusive rule
             if ( $applied_exclusive ) {
+                jdpd_log( sprintf( 'Skipping rule %d - exclusive rule already applied', $rule_obj->get( 'id' ) ), 'debug' );
                 break;
             }
 
@@ -159,6 +164,7 @@ class JDPD_Price_Rules {
 
             if ( $discount > 0 ) {
                 $final_price = max( 0, $final_price - $discount );
+                jdpd_log( sprintf( 'Applied rule %d: discount %.2f on product %d (price: %.2f -> %.2f)', $rule_obj->get( 'id' ), $discount, $product->get_id(), $price, $final_price ), 'debug' );
 
                 if ( $rule_obj->is_exclusive() ) {
                     $applied_exclusive = true;

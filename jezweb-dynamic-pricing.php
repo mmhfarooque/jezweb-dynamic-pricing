@@ -30,12 +30,22 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Define plugin constants
  */
-define( 'JDPD_VERSION', '1.0.1' );
+define( 'JDPD_VERSION', '1.0.2' );
 define( 'JDPD_PLUGIN_FILE', __FILE__ );
 define( 'JDPD_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
 define( 'JDPD_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'JDPD_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
 define( 'JDPD_DB_VERSION', '1.0.0' );
+
+/**
+ * Initialize logger and error handler early
+ */
+require_once JDPD_PLUGIN_PATH . 'includes/class-jdpd-logger.php';
+require_once JDPD_PLUGIN_PATH . 'includes/class-jdpd-error-handler.php';
+
+// Initialize logger
+jdpd_logger();
+jdpd_log( 'Plugin initializing', 'debug' );
 
 /**
  * Main plugin class
@@ -109,14 +119,24 @@ final class Jezweb_Dynamic_Pricing {
      * Initialize the plugin
      */
     public function init() {
+        // Check if plugin is disabled due to critical errors
+        if ( jdpd_error_handler()->is_disabled() ) {
+            jdpd_log( 'Plugin disabled due to critical errors', 'warning' );
+            return;
+        }
+
+        jdpd_log( 'Plugin init started', 'debug' );
+
         // Check if WooCommerce is active
         if ( ! class_exists( 'WooCommerce' ) ) {
+            jdpd_log( 'WooCommerce not active', 'warning' );
             add_action( 'admin_notices', array( $this, 'woocommerce_missing_notice' ) );
             return;
         }
 
         // Check PHP version
         if ( version_compare( PHP_VERSION, '8.0', '<' ) ) {
+            jdpd_log( 'PHP version too low: ' . PHP_VERSION, 'warning' );
             add_action( 'admin_notices', array( $this, 'php_version_notice' ) );
             return;
         }
@@ -127,8 +147,14 @@ final class Jezweb_Dynamic_Pricing {
         // Include required files
         $this->includes();
 
-        // Initialize components
-        $this->init_hooks();
+        // Initialize components with error handling
+        jdpd_safe_execute(
+            array( $this, 'init_hooks' ),
+            null,
+            'Initialize plugin hooks'
+        );
+
+        jdpd_log( 'Plugin init completed', 'info' );
     }
 
     /**

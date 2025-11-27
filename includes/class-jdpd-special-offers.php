@@ -26,8 +26,11 @@ class JDPD_Special_Offers {
      */
     public function __construct() {
         if ( 'yes' !== get_option( 'jdpd_enable_plugin', 'yes' ) ) {
+            jdpd_log( 'Special offers disabled - plugin not enabled', 'debug' );
             return;
         }
+
+        jdpd_log( 'Special offers initialized', 'debug' );
 
         // Apply special offers to cart
         add_action( 'woocommerce_cart_loaded_from_session', array( $this, 'apply_special_offers' ), 99 );
