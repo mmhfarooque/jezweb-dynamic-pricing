@@ -30,7 +30,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Define plugin constants
  */
-define( 'JDPD_VERSION', '1.0.2' );
+define( 'JDPD_VERSION', '1.0.3' );
 define( 'JDPD_PLUGIN_FILE', __FILE__ );
 define( 'JDPD_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
 define( 'JDPD_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
@@ -38,14 +38,14 @@ define( 'JDPD_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
 define( 'JDPD_DB_VERSION', '1.0.0' );
 
 /**
- * Initialize logger and error handler early
+ * Initialize logger and error handler
+ * Note: Logger initializes on 'plugins_loaded' hook to ensure WP functions are available
  */
 require_once JDPD_PLUGIN_PATH . 'includes/class-jdpd-logger.php';
 require_once JDPD_PLUGIN_PATH . 'includes/class-jdpd-error-handler.php';
 
-// Initialize logger
+// Create logger instance (defers initialization until plugins_loaded)
 jdpd_logger();
-jdpd_log( 'Plugin initializing', 'debug' );
 
 /**
  * Main plugin class
