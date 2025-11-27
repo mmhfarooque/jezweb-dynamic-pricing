@@ -17,7 +17,7 @@ class JDPD_GitHub_Updater {
     /**
      * GitHub repository details
      */
-    private $github_username = 'developer-jeremaiah';
+    private $github_username = 'mmhfarooque';
     private $github_repo = 'jezweb-dynamic-pricing';
     private $github_branch = 'main';
 
