@@ -3,7 +3,7 @@
  * Plugin Name: Jezweb Dynamic Pricing & Discounts for WooCommerce
  * Plugin URI: https://github.com/mmhfarooque/jezweb-dynamic-pricing
  * Description: Powerful dynamic pricing and discount rules for WooCommerce. Create quantity discounts, cart rules, BOGO offers, gift products, and special promotions.
- * Version: 1.0.10
+ * Version: 1.1.0
  * Author: Mahmmud Farooque
  * Author URI: https://jezweb.com.au
  * Text Domain: jezweb-dynamic-pricing
@@ -30,7 +30,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Define plugin constants
  */
-define( 'JDPD_VERSION', '1.0.10' );
+define( 'JDPD_VERSION', '1.1.0' );
 define( 'JDPD_PLUGIN_FILE', __FILE__ );
 define( 'JDPD_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
 define( 'JDPD_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
@@ -127,12 +127,12 @@ final class Jezweb_Dynamic_Pricing {
             add_action( 'admin_notices', array( $this, 'show_admin_notices' ) );
         }
 
-        // Check if plugin is disabled due to critical errors
-        if ( jdpd_error_handler()->is_disabled() ) {
-            // Still show admin notice with reset link
-            add_action( 'admin_notices', array( $this, 'show_disabled_notice' ) );
-            return;
-        }
+        // Error protection disabled for now - causing initialization issues
+        // TODO: Re-enable after debugging
+        // if ( jdpd_error_handler()->is_disabled() ) {
+        //     add_action( 'admin_notices', array( $this, 'show_disabled_notice' ) );
+        //     return;
+        // }
 
         jdpd_log( 'Plugin init started', 'debug' );
 
