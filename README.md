@@ -81,7 +81,7 @@ This plugin automatically checks for updates from the GitHub repository. When a 
 
 ## Support
 
-For support and feature requests, please [open an issue](https://github.com/developer-jeremaiah/jezweb-dynamic-pricing/issues) on GitHub.
+For support and feature requests, please [open an issue](https://github.com/mmhfarooque/jezweb-dynamic-pricing/issues) on GitHub.
 
 ## License
 

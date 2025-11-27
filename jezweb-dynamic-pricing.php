@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Jezweb Dynamic Pricing & Discounts for WooCommerce
- * Plugin URI: https://github.com/developer-jeremaiah/jezweb-dynamic-pricing
+ * Plugin URI: https://github.com/mmhfarooque/jezweb-dynamic-pricing
  * Description: Powerful dynamic pricing and discount rules for WooCommerce. Create quantity discounts, cart rules, BOGO offers, gift products, and special promotions.
  * Version: 1.0.0
  * Author: Mahmmud Farooque
@@ -16,7 +16,7 @@
  * License: GPL v2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  *
- * GitHub Plugin URI: https://github.com/developer-jeremaiah/jezweb-dynamic-pricing
+ * GitHub Plugin URI: https://github.com/mmhfarooque/jezweb-dynamic-pricing
  * GitHub Branch: main
  *
  * @package Jezweb_Dynamic_Pricing

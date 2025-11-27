@@ -108,7 +108,7 @@ if ( isset( $_POST['jdpd_save_settings'] ) && wp_verify_nonce( $_POST['jdpd_sett
                 </tr>
                 <tr>
                     <th><?php esc_html_e( 'Support', 'jezweb-dynamic-pricing' ); ?></th>
-                    <td><a href="https://github.com/developer-jeremaiah/jezweb-dynamic-pricing/issues" target="_blank"><?php esc_html_e( 'Get Support', 'jezweb-dynamic-pricing' ); ?></a></td>
+                    <td><a href="https://github.com/mmhfarooque/jezweb-dynamic-pricing/issues" target="_blank"><?php esc_html_e( 'Get Support', 'jezweb-dynamic-pricing' ); ?></a></td>
                 </tr>
             </tbody>
         </table>
