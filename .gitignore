@@ -1,0 +1,39 @@
+# IDE
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Node
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Composer
+vendor/
+
+# Build
+build/
+dist/
+
+# Logs
+*.log
+
+# Temp files
+*.swp
+*.swo
+*~
+
+# Testing
+tests/
+phpunit.xml
+.phpunit.result.cache
+
+# Local config
+.env
+.env.local
+wp-config.php
