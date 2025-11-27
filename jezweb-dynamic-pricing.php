@@ -3,7 +3,7 @@
  * Plugin Name: Jezweb Dynamic Pricing & Discounts for WooCommerce
  * Plugin URI: https://github.com/mmhfarooque/jezweb-dynamic-pricing
  * Description: Powerful dynamic pricing and discount rules for WooCommerce. Create quantity discounts, cart rules, BOGO offers, gift products, and special promotions.
- * Version: 1.0.7
+ * Version: 1.0.8
  * Author: Mahmmud Farooque
  * Author URI: https://jezweb.com.au
  * Text Domain: jezweb-dynamic-pricing
@@ -30,7 +30,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Define plugin constants
  */
-define( 'JDPD_VERSION', '1.0.7' );
+define( 'JDPD_VERSION', '1.0.8' );
 define( 'JDPD_PLUGIN_FILE', __FILE__ );
 define( 'JDPD_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
 define( 'JDPD_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
@@ -124,7 +124,14 @@ final class Jezweb_Dynamic_Pricing {
             // Use the proper reset method which also clears the disabled flag
             jdpd_error_handler()->reset_critical_errors();
             add_action( 'admin_notices', function() {
-                echo '<div class="notice notice-success"><p>Jezweb Dynamic Pricing errors have been reset. The plugin is now active.</p></div>';
+                echo '<div class="notice notice-success is-dismissible"><p><strong>Jezweb Dynamic Pricing:</strong> Errors have been reset. The plugin is now active.</p></div>';
+            });
+        }
+
+        // Show notice after checking for updates
+        if ( is_admin() && isset( $_GET['jdpd_updates_checked'] ) ) {
+            add_action( 'admin_notices', function() {
+                echo '<div class="notice notice-info is-dismissible"><p><strong>Jezweb Dynamic Pricing:</strong> Update check complete. If an update is available, it will appear above.</p></div>';
             });
         }
 
@@ -259,6 +266,33 @@ final class Jezweb_Dynamic_Pricing {
 
         // Add settings link
         add_filter( 'plugin_action_links_' . JDPD_PLUGIN_BASENAME, array( $this, 'plugin_action_links' ) );
+
+        // Handle check for updates action
+        add_action( 'admin_init', array( $this, 'handle_check_updates' ) );
+    }
+
+    /**
+     * Handle check for updates action
+     */
+    public function handle_check_updates() {
+        if ( ! isset( $_GET['jdpd_check_updates'] ) ) {
+            return;
+        }
+
+        if ( ! current_user_can( 'update_plugins' ) ) {
+            return;
+        }
+
+        if ( ! wp_verify_nonce( $_GET['_wpnonce'] ?? '', 'jdpd_check_updates' ) ) {
+            return;
+        }
+
+        // Force check for updates
+        JDPD_GitHub_Updater::force_check();
+
+        // Redirect back to plugins page with notice
+        wp_safe_redirect( admin_url( 'plugins.php?jdpd_updates_checked=1' ) );
+        exit;
     }
 
     /**
@@ -355,9 +389,15 @@ final class Jezweb_Dynamic_Pricing {
      * @return array
      */
     public function plugin_action_links( $links ) {
+        $check_update_url = wp_nonce_url(
+            admin_url( 'plugins.php?jdpd_check_updates=1' ),
+            'jdpd_check_updates'
+        );
+
         $plugin_links = array(
             '<a href="' . admin_url( 'admin.php?page=jdpd-settings' ) . '">' . esc_html__( 'Settings', 'jezweb-dynamic-pricing' ) . '</a>',
             '<a href="' . admin_url( 'admin.php?page=jdpd-rules' ) . '">' . esc_html__( 'Rules', 'jezweb-dynamic-pricing' ) . '</a>',
+            '<a href="' . esc_url( $check_update_url ) . '">' . esc_html__( 'Check for updates', 'jezweb-dynamic-pricing' ) . '</a>',
         );
         return array_merge( $plugin_links, $links );
     }
