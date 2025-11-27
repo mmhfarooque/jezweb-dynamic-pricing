@@ -94,6 +94,12 @@ class JDPD_Error_Handler {
             return;
         }
 
+        // Check for force enable flag (set by reset)
+        if ( get_option( 'jdpd_force_enable' ) ) {
+            delete_option( 'jdpd_force_enable' );
+            return;
+        }
+
         $critical_errors = get_transient( 'jdpd_critical_errors' );
 
         if ( $critical_errors && $critical_errors >= 5 ) {
@@ -251,9 +257,30 @@ class JDPD_Error_Handler {
      * Reset critical errors counter
      */
     public function reset_critical_errors() {
-        if ( function_exists( 'delete_transient' ) ) {
-            delete_transient( 'jdpd_critical_errors' );
+        global $wpdb;
+
+        // Delete transient the normal way
+        delete_transient( 'jdpd_critical_errors' );
+
+        // Also delete directly from database (bypasses object cache)
+        $wpdb->delete(
+            $wpdb->options,
+            array( 'option_name' => '_transient_jdpd_critical_errors' )
+        );
+        $wpdb->delete(
+            $wpdb->options,
+            array( 'option_name' => '_transient_timeout_jdpd_critical_errors' )
+        );
+
+        // Clear object cache if available
+        if ( function_exists( 'wp_cache_delete' ) ) {
+            wp_cache_delete( 'jdpd_critical_errors', 'transient' );
+            wp_cache_flush();
         }
+
+        // Set force enable flag for next page load
+        update_option( 'jdpd_force_enable', true, false );
+
         $this->disabled = false;
         $this->error_count = 0;
 
