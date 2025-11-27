@@ -45,6 +45,13 @@ class JDPD_Error_Handler {
     private $disabled = false;
 
     /**
+     * Whether handler is initialized
+     *
+     * @var bool
+     */
+    private $initialized = false;
+
+    /**
      * Get single instance
      *
      * @return JDPD_Error_Handler
@@ -60,7 +67,22 @@ class JDPD_Error_Handler {
      * Constructor
      */
     private function __construct() {
-        // Check if plugin was disabled due to critical errors
+        // Defer initialization until WordPress is ready
+        if ( did_action( 'plugins_loaded' ) ) {
+            $this->init();
+        } else {
+            add_action( 'plugins_loaded', array( $this, 'init' ), 2 );
+        }
+    }
+
+    /**
+     * Initialize the error handler
+     */
+    public function init() {
+        if ( $this->initialized ) {
+            return;
+        }
+        $this->initialized = true;
         $this->check_critical_errors();
     }
 
@@ -68,6 +90,10 @@ class JDPD_Error_Handler {
      * Check for critical errors from previous requests
      */
     private function check_critical_errors() {
+        if ( ! function_exists( 'get_transient' ) ) {
+            return;
+        }
+
         $critical_errors = get_transient( 'jdpd_critical_errors' );
 
         if ( $critical_errors && $critical_errors >= 5 ) {
@@ -210,6 +236,10 @@ class JDPD_Error_Handler {
      * Record a critical error
      */
     private function record_critical_error() {
+        if ( ! function_exists( 'get_transient' ) || ! function_exists( 'set_transient' ) ) {
+            return;
+        }
+
         $critical_errors = get_transient( 'jdpd_critical_errors' );
         $critical_errors = $critical_errors ? (int) $critical_errors + 1 : 1;
 
@@ -221,7 +251,9 @@ class JDPD_Error_Handler {
      * Reset critical errors counter
      */
     public function reset_critical_errors() {
-        delete_transient( 'jdpd_critical_errors' );
+        if ( function_exists( 'delete_transient' ) ) {
+            delete_transient( 'jdpd_critical_errors' );
+        }
         $this->disabled = false;
         $this->error_count = 0;
 

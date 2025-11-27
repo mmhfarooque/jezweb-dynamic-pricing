@@ -76,9 +76,33 @@ class JDPD_Logger {
     }
 
     /**
+     * Whether logger is initialized
+     *
+     * @var bool
+     */
+    private $initialized = false;
+
+    /**
      * Constructor
      */
     private function __construct() {
+        // Defer initialization until WordPress is ready
+        if ( did_action( 'plugins_loaded' ) ) {
+            $this->init();
+        } else {
+            add_action( 'plugins_loaded', array( $this, 'init' ), 1 );
+        }
+    }
+
+    /**
+     * Initialize the logger (called when WordPress is ready)
+     */
+    public function init() {
+        if ( $this->initialized ) {
+            return;
+        }
+
+        $this->initialized = true;
         $this->debug_enabled = get_option( 'jdpd_enable_debug_log', 'yes' ) === 'yes';
         $this->setup_log_directory();
         $this->register_error_handlers();
@@ -88,13 +112,27 @@ class JDPD_Logger {
      * Setup log directory
      */
     private function setup_log_directory() {
-        $upload_dir = wp_upload_dir();
-        $this->log_dir = trailingslashit( $upload_dir['basedir'] ) . 'jdpd-logs';
-        $this->log_file = $this->log_dir . '/debug-' . wp_hash( 'jdpd-log' ) . '.log';
+        // Use WP_CONTENT_DIR as fallback if wp_upload_dir not ready
+        if ( function_exists( 'wp_upload_dir' ) ) {
+            $upload_dir = wp_upload_dir();
+            $base_dir = $upload_dir['basedir'];
+        } else {
+            $base_dir = WP_CONTENT_DIR . '/uploads';
+        }
+
+        $this->log_dir = trailingslashit( $base_dir ) . 'jdpd-logs';
+
+        // Generate log file name with hash for security
+        $hash = $this->generate_hash( 'jdpd-log' );
+        $this->log_file = $this->log_dir . '/debug-' . $hash . '.log';
 
         // Create directory if it doesn't exist
         if ( ! file_exists( $this->log_dir ) ) {
-            wp_mkdir_p( $this->log_dir );
+            if ( function_exists( 'wp_mkdir_p' ) ) {
+                wp_mkdir_p( $this->log_dir );
+            } else {
+                mkdir( $this->log_dir, 0755, true );
+            }
         }
 
         // Add .htaccess to protect logs
@@ -108,6 +146,21 @@ class JDPD_Logger {
         if ( ! file_exists( $index_file ) ) {
             file_put_contents( $index_file, '<?php // Silence is golden' );
         }
+    }
+
+    /**
+     * Generate a hash (with fallback if wp_hash not available)
+     *
+     * @param string $data Data to hash.
+     * @return string
+     */
+    private function generate_hash( $data ) {
+        if ( function_exists( 'wp_hash' ) ) {
+            return wp_hash( $data );
+        }
+        // Fallback hash using site URL or constant
+        $salt = defined( 'AUTH_KEY' ) ? AUTH_KEY : ( defined( 'ABSPATH' ) ? ABSPATH : 'jdpd-default-salt' );
+        return substr( md5( $data . $salt ), 0, 12 );
     }
 
     /**
@@ -198,6 +251,11 @@ class JDPD_Logger {
      * @param array  $context Additional context.
      */
     public function log( $message, $level = self::INFO, $context = array() ) {
+        // Skip if not initialized yet (too early in WordPress load)
+        if ( ! $this->initialized ) {
+            return;
+        }
+
         if ( ! $this->debug_enabled && ! in_array( $level, array( self::EMERGENCY, self::ALERT, self::CRITICAL, self::ERROR ) ) ) {
             return;
         }
@@ -205,7 +263,8 @@ class JDPD_Logger {
         try {
             $this->rotate_log_if_needed();
 
-            $timestamp = current_time( 'Y-m-d H:i:s' );
+            // Use current_time if available, otherwise use date()
+            $timestamp = function_exists( 'current_time' ) ? current_time( 'Y-m-d H:i:s' ) : date( 'Y-m-d H:i:s' );
             $level_upper = strtoupper( $level );
 
             // Format context if provided
@@ -344,7 +403,7 @@ class JDPD_Logger {
      * @return string
      */
     public function get_log_contents( $lines = 100 ) {
-        if ( ! file_exists( $this->log_file ) ) {
+        if ( ! $this->initialized || empty( $this->log_file ) || ! file_exists( $this->log_file ) ) {
             return '';
         }
 
@@ -370,6 +429,9 @@ class JDPD_Logger {
      * Clear log file
      */
     public function clear_log() {
+        if ( ! $this->initialized || empty( $this->log_file ) ) {
+            return;
+        }
         if ( file_exists( $this->log_file ) ) {
             file_put_contents( $this->log_file, '' );
         }
@@ -382,7 +444,19 @@ class JDPD_Logger {
      * @return bool
      */
     public function is_debug_enabled() {
+        if ( ! $this->initialized ) {
+            return false;
+        }
         return $this->debug_enabled;
+    }
+
+    /**
+     * Check if logger is initialized
+     *
+     * @return bool
+     */
+    public function is_initialized() {
+        return $this->initialized;
     }
 }
 
