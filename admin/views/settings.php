@@ -11,8 +11,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 $settings = new JDPD_Admin_Settings();
 
-// Handle form submission
+// Handle form submission - verify nonce AND capability
 if ( isset( $_POST['jdpd_save_settings'] ) && wp_verify_nonce( $_POST['jdpd_settings_nonce'], 'jdpd_save_settings' ) ) {
+    // Security: Verify user has permission to manage WooCommerce settings
+    if ( ! current_user_can( 'manage_woocommerce' ) ) {
+        wp_die( esc_html__( 'You do not have permission to access this page.', 'jezweb-dynamic-pricing' ) );
+    }
+
     $tab = $settings->get_current_tab();
 
     // Get all checkbox fields
@@ -51,7 +56,14 @@ if ( isset( $_POST['jdpd_save_settings'] ) && wp_verify_nonce( $_POST['jdpd_sett
 ?>
 
 <div class="wrap jdpd-settings-wrap">
-    <h1><?php esc_html_e( 'Dynamic Pricing Settings', 'jezweb-dynamic-pricing' ); ?></h1>
+    <!-- Jezweb Branded Header -->
+    <div class="jdpd-page-header">
+        <h1>
+            <img src="https://www.jezweb.com.au/wp-content/uploads/2021/11/Jezweb-Logo-White-Transparent.svg" alt="Jezweb" class="jdpd-header-logo">
+            <?php esc_html_e( 'Dynamic Pricing Settings', 'jezweb-dynamic-pricing' ); ?>
+            <span class="jdpd-version-badge">v<?php echo esc_html( JDPD_VERSION ); ?></span>
+        </h1>
+    </div>
 
     <?php $settings->render_tabs(); ?>
 
@@ -109,6 +121,27 @@ if ( isset( $_POST['jdpd_save_settings'] ) && wp_verify_nonce( $_POST['jdpd_sett
                 <div class="jdpd-info-label"><?php esc_html_e( 'Support', 'jezweb-dynamic-pricing' ); ?></div>
                 <div class="jdpd-info-value"><a href="https://github.com/mmhfarooque/jezweb-dynamic-pricing/issues" target="_blank"><?php esc_html_e( 'Get Support', 'jezweb-dynamic-pricing' ); ?></a></div>
             </div>
+        </div>
+    </div>
+
+    <!-- Jezweb Credits Footer -->
+    <div class="jdpd-credits">
+        <div class="jdpd-credits-logo">
+            <img src="https://www.jezweb.com.au/wp-content/uploads/2023/05/Jezweb-logo-1.png" alt="Jezweb" style="height: 50px; width: auto;">
+            <div class="jdpd-credits-text">
+                <span class="jdpd-credits-title"><?php esc_html_e( 'Developed by Jezweb', 'jezweb-dynamic-pricing' ); ?></span>
+                <span class="jdpd-credits-subtitle"><?php esc_html_e( 'Web Design & Digital Marketing Agency', 'jezweb-dynamic-pricing' ); ?></span>
+            </div>
+        </div>
+        <div class="jdpd-credits-links">
+            <a href="https://jezweb.com.au" target="_blank" class="jdpd-btn-primary">
+                <span class="dashicons dashicons-admin-site-alt3"></span>
+                <?php esc_html_e( 'Visit Jezweb', 'jezweb-dynamic-pricing' ); ?>
+            </a>
+            <a href="https://jezweb.com.au/contact/" target="_blank" class="jdpd-btn-secondary">
+                <span class="dashicons dashicons-email-alt"></span>
+                <?php esc_html_e( 'Contact Us', 'jezweb-dynamic-pricing' ); ?>
+            </a>
         </div>
     </div>
 </div>

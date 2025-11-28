@@ -30,10 +30,17 @@ $total_pages = $result['total_pages'];
 ?>
 
 <div class="wrap jdpd-rules-wrap">
-    <h1 class="wp-heading-inline"><?php esc_html_e( 'Discount Rules', 'jezweb-dynamic-pricing' ); ?></h1>
-    <a href="<?php echo esc_url( admin_url( 'admin.php?page=jdpd-add-rule' ) ); ?>" class="page-title-action">
-        <?php esc_html_e( 'Add New Rule', 'jezweb-dynamic-pricing' ); ?>
-    </a>
+    <!-- Jezweb Branded Header -->
+    <div class="jdpd-page-header">
+        <h1>
+            <img src="https://www.jezweb.com.au/wp-content/uploads/2021/11/Jezweb-Logo-White-Transparent.svg" alt="Jezweb" class="jdpd-header-logo">
+            <?php esc_html_e( 'Discount Rules', 'jezweb-dynamic-pricing' ); ?>
+            <span class="jdpd-version-badge">v<?php echo esc_html( JDPD_VERSION ); ?></span>
+        </h1>
+        <a href="<?php echo esc_url( admin_url( 'admin.php?page=jdpd-add-rule' ) ); ?>" class="page-title-action">
+            <?php esc_html_e( 'Add New Rule', 'jezweb-dynamic-pricing' ); ?>
+        </a>
+    </div>
 
     <?php if ( isset( $_GET['deleted'] ) ) : ?>
         <div class="notice notice-success is-dismissible">
@@ -253,4 +260,25 @@ $total_pages = $result['total_pages'];
             <?php endif; ?>
         </div>
     </form>
+
+    <!-- Jezweb Credits Footer -->
+    <div class="jdpd-credits">
+        <div class="jdpd-credits-logo">
+            <img src="https://www.jezweb.com.au/wp-content/uploads/2023/05/Jezweb-logo-1.png" alt="Jezweb" style="height: 50px; width: auto;">
+            <div class="jdpd-credits-text">
+                <span class="jdpd-credits-title"><?php esc_html_e( 'Developed by Jezweb', 'jezweb-dynamic-pricing' ); ?></span>
+                <span class="jdpd-credits-subtitle"><?php esc_html_e( 'Web Design & Digital Marketing Agency', 'jezweb-dynamic-pricing' ); ?></span>
+            </div>
+        </div>
+        <div class="jdpd-credits-links">
+            <a href="https://jezweb.com.au" target="_blank" class="jdpd-btn-primary">
+                <span class="dashicons dashicons-admin-site-alt3"></span>
+                <?php esc_html_e( 'Visit Jezweb', 'jezweb-dynamic-pricing' ); ?>
+            </a>
+            <a href="https://jezweb.com.au/contact/" target="_blank" class="jdpd-btn-secondary">
+                <span class="dashicons dashicons-email-alt"></span>
+                <?php esc_html_e( 'Contact Us', 'jezweb-dynamic-pricing' ); ?>
+            </a>
+        </div>
+    </div>
 </div>

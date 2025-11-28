@@ -89,23 +89,24 @@ class JDPD_Frontend {
             return $html;
         }
 
-        // Get badge settings
+        // Get badge settings - sanitize text from database
         $badge_style = get_option( 'jdpd_badge_style', 'default' );
-        $badge_text = get_option( 'jdpd_badge_text', __( 'Sale', 'jezweb-dynamic-pricing' ) );
+        $badge_text = sanitize_text_field( get_option( 'jdpd_badge_text', __( 'Sale', 'jezweb-dynamic-pricing' ) ) );
 
-        // Replace placeholders
+        // Replace placeholders with properly escaped values
         if ( 'percentage' === $discount['type'] ) {
-            $badge_text = str_replace( '{discount}', $discount['value'] . '%', $badge_text );
+            $badge_text = str_replace( '{discount}', esc_html( $discount['value'] ) . '%', $badge_text );
         } else {
+            // wc_price() returns safe HTML, use wp_kses_post for output
             $badge_text = str_replace( '{discount}', wc_price( $discount['value'] ), $badge_text );
         }
 
-        $classes = array( 'jdpd-sale-badge', 'jdpd-badge-' . $badge_style );
+        $classes = array( 'jdpd-sale-badge', 'jdpd-badge-' . sanitize_html_class( $badge_style ) );
 
         return sprintf(
             '<span class="%s">%s</span>',
             esc_attr( implode( ' ', $classes ) ),
-            esc_html( $badge_text )
+            wp_kses_post( $badge_text )
         );
     }
 
@@ -136,13 +137,14 @@ class JDPD_Frontend {
             echo '<strong>' . esc_html__( 'Buy this product and get:', 'jezweb-dynamic-pricing' ) . '</strong>';
             echo '<ul>';
             foreach ( $gifts as $gift ) {
-                $gift_text = $gift['product']->get_name();
+                // Security: Escape product name to prevent XSS
+                $gift_text = esc_html( $gift['product']->get_name() );
                 if ( 100 == $gift['discount']['value'] && 'percentage' === $gift['discount']['type'] ) {
                     $gift_text .= ' <span class="jdpd-free-tag">' . esc_html__( 'FREE', 'jezweb-dynamic-pricing' ) . '</span>';
                 } else {
-                    $gift_text .= ' (' . $gift['discount']['value'] . '% ' . esc_html__( 'off', 'jezweb-dynamic-pricing' ) . ')';
+                    $gift_text .= ' (' . esc_html( $gift['discount']['value'] ) . '% ' . esc_html__( 'off', 'jezweb-dynamic-pricing' ) . ')';
                 }
-                echo '<li>' . $gift_text . '</li>';
+                echo '<li>' . wp_kses_post( $gift_text ) . '</li>';
             }
             echo '</ul>';
             echo '</div>';

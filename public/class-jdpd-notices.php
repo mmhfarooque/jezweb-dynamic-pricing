@@ -65,7 +65,7 @@ class JDPD_Notices {
             ?>
             <div class="<?php echo esc_attr( implode( ' ', $classes ) ); ?>">
                 <?php if ( ! empty( $notice['icon'] ) ) : ?>
-                    <span class="jdpd-notice-icon"><?php echo $notice['icon']; ?></span>
+                    <span class="jdpd-notice-icon"><?php echo wp_kses_post( $notice['icon'] ); ?></span>
                 <?php endif; ?>
                 <span class="jdpd-notice-text"><?php echo wp_kses_post( $notice['message'] ); ?></span>
             </div>

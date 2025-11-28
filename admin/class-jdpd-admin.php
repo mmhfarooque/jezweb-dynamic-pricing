@@ -160,8 +160,12 @@ class JDPD_Admin {
         $rule_id = isset( $_GET['rule_id'] ) ? absint( $_GET['rule_id'] ) : 0;
         $rule = $rule_id > 0 ? new JDPD_Rule( $rule_id ) : null;
 
-        // Handle form submission
+        // Handle form submission - verify nonce AND capability
         if ( isset( $_POST['jdpd_save_rule'] ) && wp_verify_nonce( $_POST['jdpd_rule_nonce'], 'jdpd_save_rule' ) ) {
+            // Security: Verify user has permission to manage WooCommerce
+            if ( ! current_user_can( 'manage_woocommerce' ) ) {
+                wp_die( esc_html__( 'You do not have permission to perform this action.', 'jezweb-dynamic-pricing' ) );
+            }
             $this->save_rule( $rule );
         }
 
@@ -188,6 +192,11 @@ class JDPD_Admin {
 
         if ( ! wp_verify_nonce( $_GET['_wpnonce'] ?? '', 'jdpd_rule_action' ) ) {
             return;
+        }
+
+        // Security: Verify user has permission to manage WooCommerce
+        if ( ! current_user_can( 'manage_woocommerce' ) ) {
+            wp_die( esc_html__( 'You do not have permission to perform this action.', 'jezweb-dynamic-pricing' ) );
         }
 
         switch ( $action ) {
