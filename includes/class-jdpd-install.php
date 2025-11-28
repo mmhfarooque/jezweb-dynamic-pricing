@@ -131,6 +131,125 @@ class JDPD_Install {
             KEY user_id (user_id)
         ) $charset_collate;";
 
+        // Analytics tracking table (v1.3.0)
+        $table_analytics = $wpdb->prefix . 'jdpd_analytics';
+        $sql_analytics = "CREATE TABLE IF NOT EXISTS $table_analytics (
+            id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+            rule_id varchar(100) NOT NULL,
+            rule_name varchar(255) DEFAULT NULL,
+            rule_type varchar(50) DEFAULT NULL,
+            discount_amount decimal(12,4) NOT NULL DEFAULT 0,
+            original_total decimal(12,4) NOT NULL DEFAULT 0,
+            discounted_total decimal(12,4) NOT NULL DEFAULT 0,
+            product_id bigint(20) unsigned DEFAULT NULL,
+            product_name varchar(255) DEFAULT NULL,
+            quantity int(11) NOT NULL DEFAULT 1,
+            user_id bigint(20) unsigned DEFAULT NULL,
+            order_id bigint(20) unsigned DEFAULT NULL,
+            session_id varchar(100) DEFAULT NULL,
+            converted tinyint(1) NOT NULL DEFAULT 0,
+            created_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            PRIMARY KEY (id),
+            KEY rule_id (rule_id),
+            KEY product_id (product_id),
+            KEY user_id (user_id),
+            KEY order_id (order_id),
+            KEY created_at (created_at),
+            KEY converted (converted)
+        ) $charset_collate;";
+
+        // Analytics daily summary table (v1.3.0)
+        $table_analytics_daily = $wpdb->prefix . 'jdpd_analytics_daily';
+        $sql_analytics_daily = "CREATE TABLE IF NOT EXISTS $table_analytics_daily (
+            id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+            date date NOT NULL,
+            rule_id varchar(100) NOT NULL,
+            impressions int(11) NOT NULL DEFAULT 0,
+            applications int(11) NOT NULL DEFAULT 0,
+            conversions int(11) NOT NULL DEFAULT 0,
+            total_discount decimal(12,4) NOT NULL DEFAULT 0,
+            total_revenue decimal(12,4) NOT NULL DEFAULT 0,
+            PRIMARY KEY (id),
+            UNIQUE KEY date_rule (date, rule_id),
+            KEY date (date),
+            KEY rule_id (rule_id)
+        ) $charset_collate;";
+
+        // Customer segments table (v1.3.0)
+        $table_segments = $wpdb->prefix . 'jdpd_customer_segments';
+        $sql_segments = "CREATE TABLE IF NOT EXISTS $table_segments (
+            id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+            name varchar(255) NOT NULL,
+            slug varchar(100) NOT NULL,
+            description text,
+            type varchar(20) NOT NULL DEFAULT 'manual',
+            conditions longtext,
+            customer_count int(11) NOT NULL DEFAULT 0,
+            created_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            updated_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            PRIMARY KEY (id),
+            UNIQUE KEY slug (slug),
+            KEY type (type)
+        ) $charset_collate;";
+
+        // Customer segment assignments table (v1.3.0)
+        $table_segment_customers = $wpdb->prefix . 'jdpd_segment_customers';
+        $sql_segment_customers = "CREATE TABLE IF NOT EXISTS $table_segment_customers (
+            id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+            segment_id bigint(20) unsigned NOT NULL,
+            customer_id bigint(20) unsigned NOT NULL,
+            assigned_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            PRIMARY KEY (id),
+            UNIQUE KEY segment_customer (segment_id, customer_id),
+            KEY segment_id (segment_id),
+            KEY customer_id (customer_id)
+        ) $charset_collate;";
+
+        // A/B Tests table (v1.3.0)
+        $table_ab_tests = $wpdb->prefix . 'jdpd_ab_tests';
+        $sql_ab_tests = "CREATE TABLE IF NOT EXISTS $table_ab_tests (
+            id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+            name varchar(255) NOT NULL,
+            description text,
+            status varchar(20) NOT NULL DEFAULT 'draft',
+            control_rule_id varchar(100) NOT NULL,
+            variant_rule_id varchar(100) NOT NULL,
+            traffic_split int(3) NOT NULL DEFAULT 50,
+            goal varchar(50) NOT NULL DEFAULT 'conversion',
+            minimum_sample_size int(11) NOT NULL DEFAULT 100,
+            confidence_level decimal(5,2) NOT NULL DEFAULT 95.00,
+            start_date datetime DEFAULT NULL,
+            end_date datetime DEFAULT NULL,
+            winner varchar(20) DEFAULT NULL,
+            created_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            updated_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            PRIMARY KEY (id),
+            KEY status (status),
+            KEY control_rule_id (control_rule_id),
+            KEY variant_rule_id (variant_rule_id)
+        ) $charset_collate;";
+
+        // A/B Test results table (v1.3.0)
+        $table_ab_results = $wpdb->prefix . 'jdpd_ab_results';
+        $sql_ab_results = "CREATE TABLE IF NOT EXISTS $table_ab_results (
+            id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+            test_id bigint(20) unsigned NOT NULL,
+            variant varchar(20) NOT NULL,
+            visitor_id varchar(100) NOT NULL,
+            user_id bigint(20) unsigned DEFAULT NULL,
+            event_type varchar(50) NOT NULL,
+            event_data longtext,
+            order_id bigint(20) unsigned DEFAULT NULL,
+            order_total decimal(12,4) DEFAULT NULL,
+            created_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            PRIMARY KEY (id),
+            KEY test_id (test_id),
+            KEY variant (variant),
+            KEY visitor_id (visitor_id),
+            KEY event_type (event_type),
+            KEY created_at (created_at)
+        ) $charset_collate;";
+
         require_once ABSPATH . 'wp-admin/includes/upgrade.php';
         dbDelta( $sql_rules );
         dbDelta( $sql_quantity );
@@ -138,6 +257,12 @@ class JDPD_Install {
         dbDelta( $sql_exclusions );
         dbDelta( $sql_gifts );
         dbDelta( $sql_usage );
+        dbDelta( $sql_analytics );
+        dbDelta( $sql_analytics_daily );
+        dbDelta( $sql_segments );
+        dbDelta( $sql_segment_customers );
+        dbDelta( $sql_ab_tests );
+        dbDelta( $sql_ab_results );
     }
 
     /**
@@ -224,10 +349,38 @@ class JDPD_Install {
      * @param string $current_version Current plugin version.
      */
     private static function update( $current_version ) {
-        // Future upgrade routines will go here
-        // Example:
-        // if ( version_compare( $current_version, '1.1.0', '<' ) ) {
-        //     self::update_110();
-        // }
+        // v1.3.0 upgrade - Add new tables for analytics, segments, A/B testing
+        if ( version_compare( $current_version, '1.3.0', '<' ) ) {
+            self::update_130();
+        }
+    }
+
+    /**
+     * Upgrade to version 1.3.0
+     * Creates new tables for analytics, customer segments, and A/B testing
+     */
+    private static function update_130() {
+        // Tables are created via create_tables() which is called when DB version changes
+        // Add default options for new features
+        $new_options = array(
+            'jdpd_analytics_enabled'        => 'yes',
+            'jdpd_analytics_retention_days' => 90,
+            'jdpd_loyalty_tiers_enabled'    => 'no',
+            'jdpd_ab_testing_enabled'       => 'no',
+            'jdpd_email_notifications'      => 'yes',
+            'jdpd_upsell_messages_enabled'  => 'yes',
+            'jdpd_countdown_timers_enabled' => 'yes',
+        );
+
+        foreach ( $new_options as $key => $value ) {
+            if ( false === get_option( $key ) ) {
+                add_option( $key, $value );
+            }
+        }
+
+        // Log the upgrade
+        if ( function_exists( 'jdpd_log' ) ) {
+            jdpd_log( 'Upgraded to version 1.3.0', 'info' );
+        }
     }
 }

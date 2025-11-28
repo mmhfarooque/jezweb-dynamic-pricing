@@ -3,7 +3,7 @@
  * Plugin Name: Jezweb Dynamic Pricing & Discounts for WooCommerce
  * Plugin URI: https://github.com/mmhfarooque/jezweb-dynamic-pricing
  * Description: Powerful dynamic pricing and discount rules for WooCommerce. Create quantity discounts, cart rules, BOGO offers, gift products, and special promotions.
- * Version: 1.2.0
+ * Version: 1.3.0
  * Author: Mahmmud Farooque
  * Author URI: https://jezweb.com.au
  * Text Domain: jezweb-dynamic-pricing
@@ -30,12 +30,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Define plugin constants
  */
-define( 'JDPD_VERSION', '1.2.0' );
+define( 'JDPD_VERSION', '1.3.0' );
 define( 'JDPD_PLUGIN_FILE', __FILE__ );
 define( 'JDPD_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
 define( 'JDPD_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'JDPD_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
-define( 'JDPD_DB_VERSION', '1.0.0' );
+define( 'JDPD_DB_VERSION', '1.1.0' );
 
 /**
  * Initialize logger and error handler
@@ -191,12 +191,24 @@ final class Jezweb_Dynamic_Pricing {
         require_once JDPD_PLUGIN_PATH . 'includes/class-jdpd-schedule.php';
         require_once JDPD_PLUGIN_PATH . 'includes/class-jdpd-exclusions.php';
 
+        // New v1.3.0 includes
+        require_once JDPD_PLUGIN_PATH . 'includes/class-jdpd-analytics.php';
+        require_once JDPD_PLUGIN_PATH . 'includes/class-jdpd-import-export.php';
+        require_once JDPD_PLUGIN_PATH . 'includes/class-jdpd-rest-api.php';
+        require_once JDPD_PLUGIN_PATH . 'includes/class-jdpd-customer-segments.php';
+        require_once JDPD_PLUGIN_PATH . 'includes/class-jdpd-advanced-scheduling.php';
+        require_once JDPD_PLUGIN_PATH . 'includes/class-jdpd-ab-testing.php';
+        require_once JDPD_PLUGIN_PATH . 'includes/class-jdpd-email-notifications.php';
+        require_once JDPD_PLUGIN_PATH . 'includes/class-jdpd-performance.php';
+        require_once JDPD_PLUGIN_PATH . 'includes/class-jdpd-multicurrency.php';
+
         // Admin includes
         if ( is_admin() ) {
             require_once JDPD_PLUGIN_PATH . 'admin/class-jdpd-admin.php';
             require_once JDPD_PLUGIN_PATH . 'admin/class-jdpd-admin-rules.php';
             require_once JDPD_PLUGIN_PATH . 'admin/class-jdpd-admin-settings.php';
             require_once JDPD_PLUGIN_PATH . 'admin/class-jdpd-admin-order-meta.php';
+            require_once JDPD_PLUGIN_PATH . 'admin/class-jdpd-admin-analytics.php';
         }
 
         // Frontend includes
@@ -204,6 +216,7 @@ final class Jezweb_Dynamic_Pricing {
         require_once JDPD_PLUGIN_PATH . 'public/class-jdpd-quantity-table.php';
         require_once JDPD_PLUGIN_PATH . 'public/class-jdpd-notices.php';
         require_once JDPD_PLUGIN_PATH . 'public/class-jdpd-checkout-deals.php';
+        require_once JDPD_PLUGIN_PATH . 'public/class-jdpd-frontend-enhancements.php';
 
         // Auto-updater
         require_once JDPD_PLUGIN_PATH . 'includes/class-jdpd-github-updater.php';
@@ -225,6 +238,7 @@ final class Jezweb_Dynamic_Pricing {
             new JDPD_Admin_Rules();
             new JDPD_Admin_Settings();
             new JDPD_Admin_Order_Meta();
+            JDPD_Admin_Analytics::get_instance();
         }
 
         // Initialize frontend
@@ -232,6 +246,7 @@ final class Jezweb_Dynamic_Pricing {
         new JDPD_Quantity_Table();
         new JDPD_Notices();
         new JDPD_Checkout_Deals();
+        JDPD_Frontend_Enhancements::get_instance();
 
         // Initialize special offers
         new JDPD_Special_Offers();
@@ -247,6 +262,17 @@ final class Jezweb_Dynamic_Pricing {
 
         // Initialize GitHub updater
         new JDPD_GitHub_Updater();
+
+        // Initialize new v1.3.0 components
+        JDPD_Analytics::get_instance();
+        JDPD_Import_Export::get_instance();
+        JDPD_REST_API::get_instance();
+        JDPD_Customer_Segments::get_instance();
+        JDPD_Advanced_Scheduling::get_instance();
+        JDPD_AB_Testing::get_instance();
+        JDPD_Email_Notifications::get_instance();
+        JDPD_Performance::get_instance();
+        JDPD_Multicurrency::get_instance();
 
         // Declare HPOS compatibility
         add_action( 'before_woocommerce_init', array( $this, 'declare_hpos_compatibility' ) );
