@@ -1008,37 +1008,58 @@ class JDPD_Email_Notifications {
 }
 
 /**
- * Placeholder email classes for WooCommerce integration.
+ * Register email classes after WooCommerce is loaded.
+ * These classes extend WC_Email which requires WooCommerce to be fully loaded.
  */
-class JDPD_Email_Flash_Sale extends WC_Email {
-    public function __construct() {
-        $this->id = 'jdpd_flash_sale';
-        $this->title = __( 'Flash Sale Notification', 'jezweb-dynamic-pricing' );
-        $this->description = __( 'Flash sale notifications sent to customers.', 'jezweb-dynamic-pricing' );
-        $this->customer_email = true;
+add_action( 'woocommerce_loaded', 'jdpd_register_email_classes' );
 
-        parent::__construct();
+/**
+ * Register JDPD email classes.
+ */
+function jdpd_register_email_classes() {
+    if ( ! class_exists( 'WC_Email' ) ) {
+        return;
     }
-}
 
-class JDPD_Email_Price_Drop extends WC_Email {
-    public function __construct() {
-        $this->id = 'jdpd_price_drop';
-        $this->title = __( 'Price Drop Alert', 'jezweb-dynamic-pricing' );
-        $this->description = __( 'Price drop alerts sent to subscribed customers.', 'jezweb-dynamic-pricing' );
-        $this->customer_email = true;
+    /**
+     * Flash Sale Email
+     */
+    class JDPD_Email_Flash_Sale extends WC_Email {
+        public function __construct() {
+            $this->id = 'jdpd_flash_sale';
+            $this->title = __( 'Flash Sale Notification', 'jezweb-dynamic-pricing' );
+            $this->description = __( 'Flash sale notifications sent to customers.', 'jezweb-dynamic-pricing' );
+            $this->customer_email = true;
 
-        parent::__construct();
+            parent::__construct();
+        }
     }
-}
 
-class JDPD_Email_Cart_Abandonment extends WC_Email {
-    public function __construct() {
-        $this->id = 'jdpd_cart_abandonment';
-        $this->title = __( 'Cart Abandonment Recovery', 'jezweb-dynamic-pricing' );
-        $this->description = __( 'Cart abandonment emails with discount coupons.', 'jezweb-dynamic-pricing' );
-        $this->customer_email = true;
+    /**
+     * Price Drop Email
+     */
+    class JDPD_Email_Price_Drop extends WC_Email {
+        public function __construct() {
+            $this->id = 'jdpd_price_drop';
+            $this->title = __( 'Price Drop Alert', 'jezweb-dynamic-pricing' );
+            $this->description = __( 'Price drop alerts sent to subscribed customers.', 'jezweb-dynamic-pricing' );
+            $this->customer_email = true;
 
-        parent::__construct();
+            parent::__construct();
+        }
+    }
+
+    /**
+     * Cart Abandonment Email
+     */
+    class JDPD_Email_Cart_Abandonment extends WC_Email {
+        public function __construct() {
+            $this->id = 'jdpd_cart_abandonment';
+            $this->title = __( 'Cart Abandonment Recovery', 'jezweb-dynamic-pricing' );
+            $this->description = __( 'Cart abandonment emails with discount coupons.', 'jezweb-dynamic-pricing' );
+            $this->customer_email = true;
+
+            parent::__construct();
+        }
     }
 }
