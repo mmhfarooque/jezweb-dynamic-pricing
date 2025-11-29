@@ -581,6 +581,45 @@
     overflow: hidden;
 }
 
+/* Rule Edit Form - Wider inputs and selects */
+.jdpd-rule-edit-wrap select,
+.jdpd-rule-edit-wrap .postbox select {
+    min-width: 280px;
+    height: 42px;
+    padding: 0 14px;
+    border: 1px solid var(--jdpd-border);
+    border-radius: var(--jdpd-radius);
+    font-size: 14px;
+}
+
+.jdpd-rule-edit-wrap input[type="text"],
+.jdpd-rule-edit-wrap .postbox input[type="text"] {
+    min-width: 300px;
+    height: 42px;
+    padding: 0 14px;
+    border: 1px solid var(--jdpd-border);
+    border-radius: var(--jdpd-radius);
+    font-size: 14px;
+}
+
+.jdpd-rule-edit-wrap input[type="number"],
+.jdpd-rule-edit-wrap .postbox input[type="number"] {
+    min-width: 100px;
+    width: 120px;
+    height: 42px;
+    padding: 0 14px;
+    border: 1px solid var(--jdpd-border);
+    border-radius: var(--jdpd-radius);
+    font-size: 14px;
+}
+
+/* Wider regular-text class inputs */
+.jdpd-rule-edit-wrap input.regular-text {
+    min-width: 400px;
+    width: 100%;
+    max-width: 500px;
+}
+
 .jdpd-rule-edit-wrap .postbox h2.hndle {
     padding: 16px 20px;
     font-size: 15px;
@@ -641,6 +680,19 @@
     font-size: 14px;
     transition: var(--jdpd-transition);
     max-width: 100%;
+    min-width: 220px;
+}
+
+/* Wider select dropdowns for better text visibility */
+.jdpd-form-field select,
+.jdpd-rule-edit-wrap select {
+    min-width: 280px;
+}
+
+/* Number inputs can be narrower */
+.jdpd-form-field input[type="number"] {
+    min-width: 100px;
+    width: 120px;
 }
 
 .jdpd-form-field input:focus,
