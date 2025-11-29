@@ -4,7 +4,7 @@ Tags: woocommerce, pricing, discounts, dynamic pricing, bulk pricing, quantity d
 Requires at least: 6.0
 Tested up to: 6.7
 Requires PHP: 8.0
-Stable tag: 1.5.4
+Stable tag: 1.5.5
 WC requires at least: 8.0
 WC tested up to: 9.4
 License: GPLv2 or later
@@ -82,6 +82,14 @@ Yes, the plugin is fully compatible with WooCommerce High-Performance Order Stor
 
 == Changelog ==
 
+= 1.5.5 =
+* Fixed event sale settings not saving when updating rules
+* Fixed date format to use Australian format (dd-mm-yy)
+* Restored blue background on admin page headers
+* Fixed input field widths to match dropdowns
+* Added vertical spacing between event sale form fields
+* Database migration to add event sale columns for existing installations
+
 = 1.5.4 =
 * NEW: 14 Special Event Sale options for Australian retail calendar
 * NEW: Custom Event option - create your own special event names
@@ -152,6 +160,9 @@ Yes, the plugin is fully compatible with WooCommerce High-Performance Order Stor
 * Initial release
 
 == Upgrade Notice ==
+
+= 1.5.5 =
+Bug fix release: Fixes event sale settings not saving, restores admin UI styling, and adds database migration for event sale columns.
 
 = 1.5.4 =
 Major update: 14 special retail events with custom event support, discount badges on product prices, and customizable badge styling.

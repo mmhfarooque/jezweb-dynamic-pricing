@@ -278,12 +278,37 @@ class JDPD_Admin {
         $rule->set( 'show_badge', isset( $_POST['show_badge'] ) ? 1 : 0 );
         $rule->set( 'badge_text', sanitize_text_field( $_POST['badge_text'] ?? '' ) );
 
-        // Schedule
-        $rule->set( 'schedule_from', ! empty( $_POST['schedule_from'] ) ? sanitize_text_field( $_POST['schedule_from'] ) : null );
-        $rule->set( 'schedule_to', ! empty( $_POST['schedule_to'] ) ? sanitize_text_field( $_POST['schedule_to'] ) : null );
+        // Schedule - convert from dd-mm-yyyy to MySQL datetime format
+        $schedule_from = ! empty( $_POST['schedule_from'] ) ? sanitize_text_field( $_POST['schedule_from'] ) : null;
+        $schedule_to = ! empty( $_POST['schedule_to'] ) ? sanitize_text_field( $_POST['schedule_to'] ) : null;
+
+        // Parse dd-mm-yyyy format to MySQL datetime
+        if ( $schedule_from ) {
+            $parsed = DateTime::createFromFormat( 'd-m-Y H:i', $schedule_from );
+            if ( ! $parsed ) {
+                $parsed = DateTime::createFromFormat( 'd-m-Y', $schedule_from );
+            }
+            $schedule_from = $parsed ? $parsed->format( 'Y-m-d H:i:s' ) : null;
+        }
+        if ( $schedule_to ) {
+            $parsed = DateTime::createFromFormat( 'd-m-Y H:i', $schedule_to );
+            if ( ! $parsed ) {
+                $parsed = DateTime::createFromFormat( 'd-m-Y', $schedule_to );
+            }
+            $schedule_to = $parsed ? $parsed->format( 'Y-m-d H:i:s' ) : null;
+        }
+
+        $rule->set( 'schedule_from', $schedule_from );
+        $rule->set( 'schedule_to', $schedule_to );
 
         // Usage limit
         $rule->set( 'usage_limit', ! empty( $_POST['usage_limit'] ) ? absint( $_POST['usage_limit'] ) : null );
+
+        // Event Sale settings
+        $rule->set( 'event_type', ! empty( $_POST['event_type'] ) ? sanitize_key( $_POST['event_type'] ) : '' );
+        $rule->set( 'custom_event_name', ! empty( $_POST['custom_event_name'] ) ? sanitize_text_field( $_POST['custom_event_name'] ) : '' );
+        $rule->set( 'event_discount_type', ! empty( $_POST['event_discount_type'] ) ? sanitize_key( $_POST['event_discount_type'] ) : 'percentage' );
+        $rule->set( 'event_discount_value', ! empty( $_POST['event_discount_value'] ) ? floatval( $_POST['event_discount_value'] ) : 0 );
 
         // Conditions
         $conditions = array();

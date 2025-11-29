@@ -57,6 +57,10 @@ class JDPD_Install {
             exclusive tinyint(1) NOT NULL DEFAULT 0,
             show_badge tinyint(1) NOT NULL DEFAULT 1,
             badge_text varchar(255) DEFAULT NULL,
+            event_type varchar(100) DEFAULT NULL,
+            custom_event_name varchar(255) DEFAULT NULL,
+            event_discount_type varchar(50) DEFAULT 'percentage',
+            event_discount_value decimal(19,4) DEFAULT 0,
             created_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
             updated_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
             created_by bigint(20) unsigned DEFAULT NULL,
@@ -398,6 +402,11 @@ class JDPD_Install {
         if ( version_compare( $current_version, '1.4.0', '<' ) ) {
             self::update_140();
         }
+
+        // v1.5.5 upgrade - Add event sale columns to rules table
+        if ( version_compare( $current_version, '1.5.5', '<' ) ) {
+            self::update_155();
+        }
     }
 
     /**
@@ -487,6 +496,37 @@ class JDPD_Install {
         // Log the upgrade
         if ( function_exists( 'jdpd_log' ) ) {
             jdpd_log( 'Upgraded to version 1.4.0', 'info' );
+        }
+    }
+
+    /**
+     * Upgrade to version 1.5.5
+     * Adds event sale columns to the rules table
+     */
+    private static function update_155() {
+        global $wpdb;
+
+        $table = $wpdb->prefix . 'jdpd_rules';
+
+        // Check if event_type column exists
+        $column_exists = $wpdb->get_results(
+            $wpdb->prepare(
+                "SHOW COLUMNS FROM {$table} LIKE %s",
+                'event_type'
+            )
+        );
+
+        if ( empty( $column_exists ) ) {
+            // Add event sale columns
+            $wpdb->query( "ALTER TABLE {$table} ADD COLUMN event_type varchar(100) DEFAULT NULL AFTER badge_text" );
+            $wpdb->query( "ALTER TABLE {$table} ADD COLUMN custom_event_name varchar(255) DEFAULT NULL AFTER event_type" );
+            $wpdb->query( "ALTER TABLE {$table} ADD COLUMN event_discount_type varchar(50) DEFAULT 'percentage' AFTER custom_event_name" );
+            $wpdb->query( "ALTER TABLE {$table} ADD COLUMN event_discount_value decimal(19,4) DEFAULT 0 AFTER event_discount_type" );
+        }
+
+        // Log the upgrade
+        if ( function_exists( 'jdpd_log' ) ) {
+            jdpd_log( 'Upgraded to version 1.5.5', 'info' );
         }
     }
 }

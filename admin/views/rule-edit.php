@@ -29,6 +29,12 @@ $show_badge = $is_edit ? $rule->get( 'show_badge' ) : true;
 $badge_text = $is_edit ? $rule->get( 'badge_text' ) : '';
 $conditions = $is_edit ? $rule->get( 'conditions' ) : array();
 
+// Event Sale settings
+$event_type = $is_edit ? $rule->get( 'event_type' ) : '';
+$custom_event_name = $is_edit ? $rule->get( 'custom_event_name' ) : '';
+$event_discount_type = $is_edit ? $rule->get( 'event_discount_type' ) : 'percentage';
+$event_discount_value = $is_edit ? $rule->get( 'event_discount_value' ) : 10;
+
 // Get quantity ranges
 $quantity_ranges = $is_edit ? $rule->get_quantity_ranges() : array();
 
@@ -305,7 +311,7 @@ if ( $is_edit ) {
                                                 <select name="event_type" id="event_type">
                                                     <option value=""><?php esc_html_e( '-- Select Event --', 'jezweb-dynamic-pricing' ); ?></option>
                                                     <?php foreach ( jdpd_get_special_events() as $event_key => $event ) : ?>
-                                                        <option value="<?php echo esc_attr( $event_key ); ?>" data-month="<?php echo esc_attr( $event['month'] ); ?>" data-categories="<?php echo esc_attr( $event['categories'] ); ?>">
+                                                        <option value="<?php echo esc_attr( $event_key ); ?>" data-month="<?php echo esc_attr( $event['month'] ); ?>" data-categories="<?php echo esc_attr( $event['categories'] ); ?>" <?php selected( $event_type, $event_key ); ?>>
                                                             <?php echo esc_html( $event['name'] ); ?>
                                                         </option>
                                                     <?php endforeach; ?>
@@ -317,7 +323,7 @@ if ( $is_edit ) {
                                                 <label for="custom_event_name"><?php esc_html_e( 'Custom Event Name', 'jezweb-dynamic-pricing' ); ?></label>
                                             </div>
                                             <div class="jdpd-form-field">
-                                                <input type="text" name="custom_event_name" id="custom_event_name" class="regular-text" placeholder="<?php esc_attr_e( 'e.g., Summer Clearance Sale', 'jezweb-dynamic-pricing' ); ?>">
+                                                <input type="text" name="custom_event_name" id="custom_event_name" class="regular-text" value="<?php echo esc_attr( $custom_event_name ); ?>" placeholder="<?php esc_attr_e( 'e.g., Summer Clearance Sale', 'jezweb-dynamic-pricing' ); ?>">
                                                 <p class="description"><?php esc_html_e( 'Enter a custom name for your special event. This will be displayed as the discount badge.', 'jezweb-dynamic-pricing' ); ?></p>
                                             </div>
                                         </div>
@@ -338,8 +344,8 @@ if ( $is_edit ) {
                                             </div>
                                             <div class="jdpd-form-field">
                                                 <select name="event_discount_type" id="event_discount_type">
-                                                    <option value="percentage"><?php esc_html_e( 'Percentage Off', 'jezweb-dynamic-pricing' ); ?></option>
-                                                    <option value="fixed"><?php esc_html_e( 'Fixed Amount Off', 'jezweb-dynamic-pricing' ); ?></option>
+                                                    <option value="percentage" <?php selected( $event_discount_type, 'percentage' ); ?>><?php esc_html_e( 'Percentage Off', 'jezweb-dynamic-pricing' ); ?></option>
+                                                    <option value="fixed" <?php selected( $event_discount_type, 'fixed' ); ?>><?php esc_html_e( 'Fixed Amount Off', 'jezweb-dynamic-pricing' ); ?></option>
                                                 </select>
                                             </div>
                                         </div>
@@ -348,7 +354,7 @@ if ( $is_edit ) {
                                                 <label for="event_discount_value"><?php esc_html_e( 'Discount Value', 'jezweb-dynamic-pricing' ); ?></label>
                                             </div>
                                             <div class="jdpd-form-field">
-                                                <input type="number" name="event_discount_value" id="event_discount_value" value="10" min="0" step="0.01" class="small-text">
+                                                <input type="number" name="event_discount_value" id="event_discount_value" value="<?php echo esc_attr( $event_discount_value ); ?>" min="0" step="0.01" class="small-text">
                                                 <span id="event-discount-suffix">%</span>
                                             </div>
                                         </div>
@@ -604,13 +610,15 @@ if ( $is_edit ) {
                         <div class="inside">
                             <p>
                                 <label for="schedule_from"><?php esc_html_e( 'Start Date', 'jezweb-dynamic-pricing' ); ?></label>
-                                <input type="datetime-local" name="schedule_from" id="schedule_from"
-                                       value="<?php echo esc_attr( $schedule_from ? date( 'Y-m-d\TH:i', strtotime( $schedule_from ) ) : '' ); ?>">
+                                <input type="text" name="schedule_from" id="schedule_from" class="jdpd-datepicker"
+                                       value="<?php echo esc_attr( $schedule_from ? date( 'd-m-Y H:i', strtotime( $schedule_from ) ) : '' ); ?>"
+                                       placeholder="dd-mm-yyyy hh:mm" autocomplete="off">
                             </p>
                             <p>
                                 <label for="schedule_to"><?php esc_html_e( 'End Date', 'jezweb-dynamic-pricing' ); ?></label>
-                                <input type="datetime-local" name="schedule_to" id="schedule_to"
-                                       value="<?php echo esc_attr( $schedule_to ? date( 'Y-m-d\TH:i', strtotime( $schedule_to ) ) : '' ); ?>">
+                                <input type="text" name="schedule_to" id="schedule_to" class="jdpd-datepicker"
+                                       value="<?php echo esc_attr( $schedule_to ? date( 'd-m-Y H:i', strtotime( $schedule_to ) ) : '' ); ?>"
+                                       placeholder="dd-mm-yyyy hh:mm" autocomplete="off">
                             </p>
                         </div>
                     </div>

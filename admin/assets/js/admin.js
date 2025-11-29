@@ -15,6 +15,7 @@
             this.initDeleteConfirm();
             this.initEventSale();
             this.initColorPickers();
+            this.initDatePickers();
         },
 
         /**
@@ -435,6 +436,16 @@
 
             // Initialize on load
             this.toggleEventSaleSettings($('#special_offer_type').val());
+
+            // Initialize event fields if they have values
+            var $eventType = $('#event_type');
+            if ($eventType.val()) {
+                this.showEventInfo($eventType);
+                this.updateBadgePreview();
+            }
+
+            // Initialize discount suffix
+            this.updateEventDiscountSuffix($('#event_discount_type').val());
         },
 
         /**
@@ -554,6 +565,37 @@
                 $preview.css({
                     'background-color': bgColor,
                     'color': textColor
+                });
+            }
+        },
+
+        /**
+         * Initialize date pickers with Australian format (dd-mm-yyyy)
+         */
+        initDatePickers: function() {
+            if (typeof $.fn.datetimepicker === 'undefined' && typeof $.fn.datepicker === 'undefined') {
+                // Fallback: Add flatpickr-like functionality manually
+                $('.jdpd-datepicker').each(function() {
+                    var $input = $(this);
+
+                    // Add click handler to show native date picker as fallback
+                    $input.on('focus', function() {
+                        // Format hint
+                        if (!$input.val()) {
+                            $input.attr('placeholder', 'dd-mm-yyyy hh:mm');
+                        }
+                    });
+                });
+                return;
+            }
+
+            // If jQuery UI datepicker is available
+            if (typeof $.fn.datepicker !== 'undefined') {
+                $('.jdpd-datepicker').datepicker({
+                    dateFormat: 'dd-mm-yy',
+                    changeMonth: true,
+                    changeYear: true,
+                    showButtonPanel: true
                 });
             }
         }
