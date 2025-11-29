@@ -84,14 +84,19 @@ class JDPD_Special_Offers {
      * @param JDPD_Rule $rule Rule object.
      */
     private function process_special_offer( $rule ) {
-        $conditions = $rule->get_conditions();
-        $offer_type = 'bogo'; // Default type
+        // First check the special_offer_type field (new way - v1.6.0+)
+        $offer_type = $rule->get( 'special_offer_type' );
 
-        // Get offer type from conditions
-        foreach ( $conditions as $condition ) {
-            if ( 'offer_type' === $condition['type'] ) {
-                $offer_type = $condition['value'];
-                break;
+        // Fall back to conditions for backwards compatibility
+        if ( empty( $offer_type ) ) {
+            $conditions = $rule->get_conditions();
+            $offer_type = 'bogo'; // Default type
+
+            foreach ( $conditions as $condition ) {
+                if ( 'offer_type' === $condition['type'] ) {
+                    $offer_type = $condition['value'];
+                    break;
+                }
             }
         }
 
@@ -107,6 +112,9 @@ class JDPD_Special_Offers {
                 break;
             case 'x_for_price_of_y':
                 $this->apply_x_for_price_of_y( $rule );
+                break;
+            case 'event_sale':
+                $this->apply_event_sale( $rule );
                 break;
         }
     }
@@ -293,6 +301,50 @@ class JDPD_Special_Offers {
                     'free_quantity' => $free_per_set * $sets,
                 );
             }
+        }
+    }
+
+    /**
+     * Apply Event Sale offer (Black Friday, Boxing Day, etc.)
+     *
+     * @param JDPD_Rule $rule Rule object.
+     */
+    private function apply_event_sale( $rule ) {
+        $cart = WC()->cart;
+
+        // Get event sale discount settings
+        $discount_type = $rule->get( 'event_discount_type' ) ?: 'percentage';
+        $discount_value = floatval( $rule->get( 'event_discount_value' ) );
+        $event_type = $rule->get( 'event_type' );
+
+        if ( $discount_value <= 0 ) {
+            return;
+        }
+
+        foreach ( $cart->get_cart() as $cart_item_key => $cart_item ) {
+            $product = $cart_item['data'];
+
+            if ( ! $rule->applies_to_product( $product ) ) {
+                continue;
+            }
+
+            $quantity = $cart_item['quantity'];
+            $item_price = floatval( $product->get_price() );
+
+            // Calculate discount based on type
+            if ( 'percentage' === $discount_type ) {
+                $discount = ( $item_price * $quantity ) * ( $discount_value / 100 );
+            } else {
+                // Fixed discount per item
+                $discount = $discount_value * $quantity;
+            }
+
+            $this->applied_offers[ $cart_item_key ] = array(
+                'rule_id'    => $rule->get_id(),
+                'discount'   => $discount,
+                'type'       => 'event_sale',
+                'event_type' => $event_type,
+            );
         }
     }
 
