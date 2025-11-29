@@ -4,7 +4,7 @@ Tags: woocommerce, pricing, discounts, dynamic pricing, bulk pricing, quantity d
 Requires at least: 6.0
 Tested up to: 6.7
 Requires PHP: 8.0
-Stable tag: 1.6.3
+Stable tag: 1.6.4
 WC requires at least: 8.0
 WC tested up to: 9.4
 License: GPLv2 or later
@@ -81,6 +81,14 @@ Yes, all rules support scheduling with start and end dates, including advanced s
 Yes, the plugin is fully compatible with WooCommerce High-Performance Order Storage.
 
 == Changelog ==
+
+= 1.6.4 =
+* FIXED: Critical bug - specific products comparison now uses correct type matching
+* Database returns string IDs but code compared as integers with strict mode
+* Added array_map('intval', ...) to convert IDs before comparison
+* This fixes the core issue where rule product matching always failed
+* Added debug logging to show which products are in the rule's list
+* Variations now correctly inherit parent product discounts
 
 = 1.6.3 =
 * FIXED: Product variations now correctly match rules applied to parent products

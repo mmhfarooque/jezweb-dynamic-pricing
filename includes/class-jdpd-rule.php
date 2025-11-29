@@ -316,21 +316,33 @@ class JDPD_Rule {
                 $items = jdpd_get_rule_items( $this->id, 'product' );
                 $product_ids = wp_list_pluck( $items, 'item_id' );
 
+                // Convert to integers for comparison (database returns strings)
+                $product_ids = array_map( 'intval', $product_ids );
+
+                // Debug logging
+                error_log( 'JDPD v1.6.4 - Rule ' . $this->id . ' specific_products: ' . implode( ', ', $product_ids ) );
+                error_log( 'JDPD v1.6.4 - Checking product_id: ' . $product_id . ', parent_id: ' . $parent_id );
+
                 // Check if product ID matches
                 if ( in_array( $product_id, $product_ids, true ) ) {
+                    error_log( 'JDPD v1.6.4 - MATCH: product_id ' . $product_id . ' found in rule products' );
                     return true;
                 }
 
                 // For variations, also check if parent product ID matches
                 if ( $parent_id > 0 && in_array( $parent_id, $product_ids, true ) ) {
+                    error_log( 'JDPD v1.6.4 - MATCH: parent_id ' . $parent_id . ' found in rule products' );
                     return true;
                 }
+
+                error_log( 'JDPD v1.6.4 - NO MATCH for product ' . $product_id );
 
                 return false;
 
             case 'categories':
                 $items = jdpd_get_rule_items( $this->id, 'category' );
                 $category_ids = wp_list_pluck( $items, 'item_id' );
+                $category_ids = array_map( 'intval', $category_ids );
 
                 // For variations, get categories from parent
                 if ( $parent_id > 0 ) {
@@ -349,6 +361,7 @@ class JDPD_Rule {
             case 'tags':
                 $items = jdpd_get_rule_items( $this->id, 'tag' );
                 $tag_ids = wp_list_pluck( $items, 'item_id' );
+                $tag_ids = array_map( 'intval', $tag_ids );
 
                 // For variations, get tags from parent
                 if ( $parent_id > 0 ) {
