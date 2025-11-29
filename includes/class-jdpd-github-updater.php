@@ -186,7 +186,7 @@ class JDPD_GitHub_Updater {
         $github_version = ltrim( $github_info->tag_name, 'v' );
 
         $plugin_info = (object) array(
-            'name'              => 'Jezweb Dynamic Pricing & Discounts for WooCommerce',
+            'name'              => 'Jezweb Dynamic Pricing & Discount for Woocommerce',
             'slug'              => $this->plugin_slug,
             'version'           => $github_version,
             'author'            => '<a href="https://jezweb.com.au">Mahmmud Farooque</a>',
@@ -216,7 +216,7 @@ class JDPD_GitHub_Updater {
      */
     private function get_description() {
         return '
-            <h4>Jezweb Dynamic Pricing & Discounts for WooCommerce</h4>
+            <h4>Jezweb Dynamic Pricing & Discount for Woocommerce</h4>
             <p>A powerful dynamic pricing and discount rules plugin for WooCommerce that allows you to create:</p>
             <ul>
                 <li>Quantity-based bulk discounts</li>

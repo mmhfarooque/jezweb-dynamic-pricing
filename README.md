@@ -1,4 +1,4 @@
-# Jezweb Dynamic Pricing & Discounts for WooCommerce
+# Jezweb Dynamic Pricing & Discount for Woocommerce
 
 A powerful dynamic pricing and discount rules plugin for WooCommerce that allows you to create flexible pricing strategies for your online store.
 

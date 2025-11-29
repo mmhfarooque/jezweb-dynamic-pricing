@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to Jezweb Dynamic Pricing & Discounts for WooCommerce will be documented in this file.
+All notable changes to Jezweb Dynamic Pricing & Discount for Woocommerce will be documented in this file.
 
 ## [1.5.0] - 2025-11-29
 

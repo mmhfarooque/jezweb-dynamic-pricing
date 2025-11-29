@@ -1,4 +1,4 @@
-=== Jezweb Dynamic Pricing & Discounts for WooCommerce ===
+=== Jezweb Dynamic Pricing & Discount for Woocommerce ===
 Contributors: jezweb, mmhfarooque
 Tags: woocommerce, pricing, discounts, dynamic pricing, bulk pricing, quantity discounts
 Requires at least: 6.0
