@@ -351,16 +351,15 @@ class JDPD_Rule {
             '%s', '%s', '%s', '%d', '%s', '%f', '%s', '%s', '%s', '%s', '%d', '%d', '%d', '%s', '%s', '%s', '%s', '%f',
         );
 
-        // Debug logging
-        if ( function_exists( 'jdpd_log' ) ) {
-            jdpd_log( 'Rule Save Debug - event_type in data: ' . ( $data['event_type'] ?? 'NULL' ), 'debug' );
-            jdpd_log( 'Rule Save Debug - Data count: ' . count( $data ) . ', Format count: ' . count( $format ), 'debug' );
-        }
+        // Debug logging - v1.5.8 with PHP error_log for reliability
+        error_log( 'JDPD v1.5.8 - Rule Save - event_type: ' . ( $data['event_type'] ?? 'NULL' ) . ', Rule ID: ' . $this->id );
 
         if ( $this->id > 0 ) {
             // Update existing rule
             $data['updated_at'] = current_time( 'mysql' );
             $format[] = '%s';
+
+            error_log( 'JDPD v1.5.8 - About to UPDATE rule ID: ' . $this->id . ' with event_type: ' . $data['event_type'] );
 
             $result = $wpdb->update(
                 $table,
@@ -370,14 +369,15 @@ class JDPD_Rule {
                 array( '%d' )
             );
 
-            // Log any database errors
-            if ( function_exists( 'jdpd_log' ) ) {
-                if ( $result === false ) {
-                    jdpd_log( 'Rule Save Debug - Update FAILED! Last error: ' . $wpdb->last_error, 'error' );
-                    jdpd_log( 'Rule Save Debug - Last query: ' . $wpdb->last_query, 'error' );
-                } else {
-                    jdpd_log( 'Rule Save Debug - Update successful, rows affected: ' . $result, 'debug' );
-                }
+            // Log result to PHP error log
+            if ( $result === false ) {
+                error_log( 'JDPD v1.5.8 - UPDATE FAILED! Error: ' . $wpdb->last_error );
+                error_log( 'JDPD v1.5.8 - Failed query: ' . $wpdb->last_query );
+            } else {
+                error_log( 'JDPD v1.5.8 - UPDATE SUCCESS! Rows affected: ' . $result );
+                // Verify the save
+                $verify = $wpdb->get_var( $wpdb->prepare( "SELECT event_type FROM {$table} WHERE id = %d", $this->id ) );
+                error_log( 'JDPD v1.5.8 - Verified event_type in DB: ' . var_export( $verify, true ) );
             }
 
             return $result !== false ? $this->id : false;
