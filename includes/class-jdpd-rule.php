@@ -42,6 +42,7 @@ class JDPD_Rule {
         'exclusive'            => false,
         'show_badge'           => true,
         'badge_text'           => '',
+        'special_offer_type'   => '',
         'event_type'           => '',
         'custom_event_name'    => '',
         'event_discount_type'  => 'percentage',
@@ -77,12 +78,12 @@ class JDPD_Rule {
         );
 
         // Debug logging for load
-        error_log( 'JDPD v1.5.9 - LOAD rule ID: ' . $this->id );
+        error_log( 'JDPD v1.6.0 - LOAD rule ID: ' . $this->id );
         if ( $rule ) {
-            error_log( 'JDPD v1.5.9 - LOAD found - event_type from DB: ' . var_export( $rule->event_type ?? 'NOT SET', true ) );
+            error_log( 'JDPD v1.6.0 - LOAD found - event_type from DB: ' . var_export( $rule->event_type ?? 'NOT SET', true ) );
             $this->set_data_from_object( $rule );
         } else {
-            error_log( 'JDPD v1.5.9 - LOAD failed - rule not found in database' );
+            error_log( 'JDPD v1.6.0 - LOAD failed - rule not found in database' );
         }
     }
 
@@ -346,6 +347,7 @@ class JDPD_Rule {
             'exclusive'            => $this->get( 'exclusive' ) ? 1 : 0,
             'show_badge'           => $this->get( 'show_badge' ) ? 1 : 0,
             'badge_text'           => $this->get( 'badge_text' ),
+            'special_offer_type'   => $this->get( 'special_offer_type' ),
             'event_type'           => $this->get( 'event_type' ),
             'custom_event_name'    => $this->get( 'custom_event_name' ),
             'event_discount_type'  => $this->get( 'event_discount_type' ),
@@ -353,18 +355,18 @@ class JDPD_Rule {
         );
 
         $format = array(
-            '%s', '%s', '%s', '%d', '%s', '%f', '%s', '%s', '%s', '%s', '%d', '%d', '%d', '%s', '%s', '%s', '%s', '%f',
+            '%s', '%s', '%s', '%d', '%s', '%f', '%s', '%s', '%s', '%s', '%d', '%d', '%d', '%s', '%s', '%s', '%s', '%s', '%f',
         );
 
-        // Debug logging - v1.5.9 with PHP error_log for reliability
-        error_log( 'JDPD v1.5.9 - Rule Save - event_type: ' . ( $data['event_type'] ?? 'NULL' ) . ', Rule ID: ' . $this->id );
+        // Debug logging
+        error_log( 'JDPD v1.6.0 - Rule Save - special_offer_type: ' . ( $data['special_offer_type'] ?? 'NULL' ) . ', event_type: ' . ( $data['event_type'] ?? 'NULL' ) . ', Rule ID: ' . $this->id );
 
         if ( $this->id > 0 ) {
             // Update existing rule
             $data['updated_at'] = current_time( 'mysql' );
             $format[] = '%s';
 
-            error_log( 'JDPD v1.5.9 - About to UPDATE rule ID: ' . $this->id . ' with event_type: ' . $data['event_type'] );
+            error_log( 'JDPD v1.6.0 - About to UPDATE rule ID: ' . $this->id . ' with event_type: ' . $data['event_type'] );
 
             $result = $wpdb->update(
                 $table,
@@ -376,13 +378,13 @@ class JDPD_Rule {
 
             // Log result to PHP error log
             if ( $result === false ) {
-                error_log( 'JDPD v1.5.9 - UPDATE FAILED! Error: ' . $wpdb->last_error );
-                error_log( 'JDPD v1.5.9 - Failed query: ' . $wpdb->last_query );
+                error_log( 'JDPD v1.6.0 - UPDATE FAILED! Error: ' . $wpdb->last_error );
+                error_log( 'JDPD v1.6.0 - Failed query: ' . $wpdb->last_query );
             } else {
-                error_log( 'JDPD v1.5.9 - UPDATE SUCCESS! Rows affected: ' . $result );
+                error_log( 'JDPD v1.6.0 - UPDATE SUCCESS! Rows affected: ' . $result );
                 // Verify the save
                 $verify = $wpdb->get_var( $wpdb->prepare( "SELECT event_type FROM {$table} WHERE id = %d", $this->id ) );
-                error_log( 'JDPD v1.5.9 - Verified event_type in DB: ' . var_export( $verify, true ) );
+                error_log( 'JDPD v1.6.0 - Verified event_type in DB: ' . var_export( $verify, true ) );
             }
 
             return $result !== false ? $this->id : false;
@@ -395,20 +397,20 @@ class JDPD_Rule {
             $format[] = '%s';
             $format[] = '%d';
 
-            error_log( 'JDPD v1.5.9 - About to INSERT new rule with event_type: ' . $data['event_type'] );
+            error_log( 'JDPD v1.6.0 - About to INSERT new rule with event_type: ' . $data['event_type'] );
 
             $result = $wpdb->insert( $table, $data, $format );
 
             if ( $result ) {
                 $this->id = $wpdb->insert_id;
-                error_log( 'JDPD v1.5.9 - INSERT SUCCESS! New rule ID: ' . $this->id );
+                error_log( 'JDPD v1.6.0 - INSERT SUCCESS! New rule ID: ' . $this->id );
                 // Verify the insert
                 $verify = $wpdb->get_var( $wpdb->prepare( "SELECT event_type FROM {$table} WHERE id = %d", $this->id ) );
-                error_log( 'JDPD v1.5.9 - Verified event_type in DB after INSERT: ' . var_export( $verify, true ) );
+                error_log( 'JDPD v1.6.0 - Verified event_type in DB after INSERT: ' . var_export( $verify, true ) );
                 return $this->id;
             } else {
-                error_log( 'JDPD v1.5.9 - INSERT FAILED! Error: ' . $wpdb->last_error );
-                error_log( 'JDPD v1.5.9 - Failed INSERT query: ' . $wpdb->last_query );
+                error_log( 'JDPD v1.6.0 - INSERT FAILED! Error: ' . $wpdb->last_error );
+                error_log( 'JDPD v1.6.0 - Failed INSERT query: ' . $wpdb->last_query );
             }
 
             return false;

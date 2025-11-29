@@ -57,6 +57,7 @@ class JDPD_Install {
             exclusive tinyint(1) NOT NULL DEFAULT 0,
             show_badge tinyint(1) NOT NULL DEFAULT 1,
             badge_text varchar(255) DEFAULT NULL,
+            special_offer_type varchar(100) DEFAULT NULL,
             event_type varchar(100) DEFAULT NULL,
             custom_event_name varchar(255) DEFAULT NULL,
             event_discount_type varchar(50) DEFAULT 'percentage',
@@ -547,6 +548,18 @@ class JDPD_Install {
         }
 
         $columns_added = array();
+
+        // Add special_offer_type column if it doesn't exist
+        if ( ! in_array( 'special_offer_type', $columns, true ) ) {
+            $result = $wpdb->query( "ALTER TABLE {$table} ADD COLUMN special_offer_type varchar(100) DEFAULT NULL" );
+            if ( $result !== false ) {
+                $columns_added[] = 'special_offer_type';
+            } else {
+                if ( function_exists( 'jdpd_log' ) ) {
+                    jdpd_log( 'ensure_event_columns: FAILED to add special_offer_type - ' . $wpdb->last_error, 'error' );
+                }
+            }
+        }
 
         // Add event_type column if it doesn't exist
         if ( ! in_array( 'event_type', $columns, true ) ) {

@@ -304,21 +304,11 @@ class JDPD_Admin {
         // Usage limit
         $rule->set( 'usage_limit', ! empty( $_POST['usage_limit'] ) ? absint( $_POST['usage_limit'] ) : null );
 
-        // Event Sale settings - Debug logging
-        $event_type_raw = isset( $_POST['event_type'] ) ? $_POST['event_type'] : 'NOT_SET';
+        // Special Offer Type - MUST be saved to restore the event_sale settings panel on edit
+        $rule->set( 'special_offer_type', ! empty( $_POST['special_offer_type'] ) ? sanitize_key( $_POST['special_offer_type'] ) : '' );
+
+        // Event Sale settings
         $event_type_sanitized = ! empty( $_POST['event_type'] ) ? sanitize_key( $_POST['event_type'] ) : '';
-
-        if ( function_exists( 'jdpd_log' ) ) {
-            jdpd_log( 'Event Sale Debug - Raw event_type: ' . $event_type_raw, 'debug' );
-            jdpd_log( 'Event Sale Debug - Sanitized event_type: ' . $event_type_sanitized, 'debug' );
-            jdpd_log( 'Event Sale Debug - POST data: ' . print_r( array(
-                'event_type' => $event_type_raw,
-                'custom_event_name' => isset( $_POST['custom_event_name'] ) ? $_POST['custom_event_name'] : 'NOT_SET',
-                'event_discount_type' => isset( $_POST['event_discount_type'] ) ? $_POST['event_discount_type'] : 'NOT_SET',
-                'event_discount_value' => isset( $_POST['event_discount_value'] ) ? $_POST['event_discount_value'] : 'NOT_SET',
-            ), true ), 'debug' );
-        }
-
         $rule->set( 'event_type', $event_type_sanitized );
         $rule->set( 'custom_event_name', ! empty( $_POST['custom_event_name'] ) ? sanitize_text_field( $_POST['custom_event_name'] ) : '' );
         $rule->set( 'event_discount_type', ! empty( $_POST['event_discount_type'] ) ? sanitize_key( $_POST['event_discount_type'] ) : 'percentage' );

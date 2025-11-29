@@ -29,6 +29,9 @@ $show_badge = $is_edit ? $rule->get( 'show_badge' ) : true;
 $badge_text = $is_edit ? $rule->get( 'badge_text' ) : '';
 $conditions = $is_edit ? $rule->get( 'conditions' ) : array();
 
+// Special Offer settings
+$special_offer_type = $is_edit ? $rule->get( 'special_offer_type' ) : '';
+
 // Event Sale settings
 $event_type = $is_edit ? $rule->get( 'event_type' ) : '';
 $custom_event_name = $is_edit ? $rule->get( 'custom_event_name' ) : '';
@@ -267,7 +270,7 @@ if ( $is_edit ) {
                                         <div class="jdpd-form-field">
                                             <select name="special_offer_type" id="special_offer_type">
                                                 <?php foreach ( jdpd_get_special_offer_types() as $type_key => $type_label ) : ?>
-                                                    <option value="<?php echo esc_attr( $type_key ); ?>">
+                                                    <option value="<?php echo esc_attr( $type_key ); ?>" <?php selected( $special_offer_type, $type_key ); ?>>
                                                         <?php echo esc_html( $type_label ); ?>
                                                     </option>
                                                 <?php endforeach; ?>
