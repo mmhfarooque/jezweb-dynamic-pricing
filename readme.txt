@@ -4,7 +4,7 @@ Tags: woocommerce, pricing, discounts, dynamic pricing, bulk pricing, quantity d
 Requires at least: 6.0
 Tested up to: 6.7
 Requires PHP: 8.0
-Stable tag: 1.6.6
+Stable tag: 1.7.0
 WC requires at least: 8.0
 WC tested up to: 9.4
 License: GPLv2 or later
@@ -81,6 +81,17 @@ Yes, all rules support scheduling with start and end dates, including advanced s
 Yes, the plugin is fully compatible with WooCommerce High-Performance Order Storage.
 
 == Changelog ==
+
+= 1.7.0 =
+* PRODUCTION RELEASE - Ready for commercial deployment
+* SECURITY: Comprehensive security audit completed
+* SECURITY: All forms protected with nonce verification
+* SECURITY: Capability checks on all admin functions
+* SECURITY: All database queries use prepared statements
+* SECURITY: Input sanitization and output escaping verified
+* SECURITY: Direct file access prevention on all PHP files
+* REMOVED: All debug logging statements for production
+* IMPROVED: Code optimization and cleanup
 
 = 1.6.6 =
 * NEW: Checkout subtotal shows price breakdown (original strikethrough → discounted price)
@@ -228,6 +239,9 @@ Yes, the plugin is fully compatible with WooCommerce High-Performance Order Stor
 * Initial release
 
 == Upgrade Notice ==
+
+= 1.7.0 =
+Production release with comprehensive security hardening and code optimization. Recommended for all users.
 
 = 1.6.6 =
 Invoice and email improvement: Checkout and order emails now show full price breakdown with original price, discounted price, and savings amount.

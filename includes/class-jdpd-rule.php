@@ -79,13 +79,8 @@ class JDPD_Rule {
             $wpdb->prepare( "SELECT * FROM $table WHERE id = %d", $this->id )
         );
 
-        // Debug logging for load
-        error_log( 'JDPD v1.6.0 - LOAD rule ID: ' . $this->id );
         if ( $rule ) {
-            error_log( 'JDPD v1.6.0 - LOAD found - event_type from DB: ' . var_export( $rule->event_type ?? 'NOT SET', true ) );
             $this->set_data_from_object( $rule );
-        } else {
-            error_log( 'JDPD v1.6.0 - LOAD failed - rule not found in database' );
         }
     }
 
@@ -321,23 +316,15 @@ class JDPD_Rule {
                 // Convert to integers for comparison (database returns strings)
                 $product_ids = array_map( 'intval', $product_ids );
 
-                // Debug logging
-                error_log( 'JDPD v1.6.4 - Rule ' . $this->id . ' specific_products: ' . implode( ', ', $product_ids ) );
-                error_log( 'JDPD v1.6.4 - Checking product_id: ' . $product_id . ', parent_id: ' . $parent_id );
-
                 // Check if product ID matches
                 if ( in_array( $product_id, $product_ids, true ) ) {
-                    error_log( 'JDPD v1.6.4 - MATCH: product_id ' . $product_id . ' found in rule products' );
                     return true;
                 }
 
                 // For variations, also check if parent product ID matches
                 if ( $parent_id > 0 && in_array( $parent_id, $product_ids, true ) ) {
-                    error_log( 'JDPD v1.6.4 - MATCH: parent_id ' . $parent_id . ' found in rule products' );
                     return true;
                 }
-
-                error_log( 'JDPD v1.6.4 - NO MATCH for product ' . $product_id );
 
                 return false;
 
@@ -421,15 +408,10 @@ class JDPD_Rule {
             '%s', '%s', '%s', '%d', '%s', '%f', '%s', '%s', '%s', '%s', '%d', '%d', '%d', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%f',
         );
 
-        // Debug logging
-        error_log( 'JDPD v1.6.0 - Rule Save - special_offer_type: ' . ( $data['special_offer_type'] ?? 'NULL' ) . ', event_type: ' . ( $data['event_type'] ?? 'NULL' ) . ', Rule ID: ' . $this->id );
-
         if ( $this->id > 0 ) {
             // Update existing rule
             $data['updated_at'] = current_time( 'mysql' );
             $format[] = '%s';
-
-            error_log( 'JDPD v1.6.0 - About to UPDATE rule ID: ' . $this->id . ' with event_type: ' . $data['event_type'] );
 
             $result = $wpdb->update(
                 $table,
@@ -438,17 +420,6 @@ class JDPD_Rule {
                 $format,
                 array( '%d' )
             );
-
-            // Log result to PHP error log
-            if ( $result === false ) {
-                error_log( 'JDPD v1.6.0 - UPDATE FAILED! Error: ' . $wpdb->last_error );
-                error_log( 'JDPD v1.6.0 - Failed query: ' . $wpdb->last_query );
-            } else {
-                error_log( 'JDPD v1.6.0 - UPDATE SUCCESS! Rows affected: ' . $result );
-                // Verify the save
-                $verify = $wpdb->get_var( $wpdb->prepare( "SELECT event_type FROM {$table} WHERE id = %d", $this->id ) );
-                error_log( 'JDPD v1.6.0 - Verified event_type in DB: ' . var_export( $verify, true ) );
-            }
 
             return $result !== false ? $this->id : false;
         } else {
@@ -460,20 +431,11 @@ class JDPD_Rule {
             $format[] = '%s';
             $format[] = '%d';
 
-            error_log( 'JDPD v1.6.0 - About to INSERT new rule with event_type: ' . $data['event_type'] );
-
             $result = $wpdb->insert( $table, $data, $format );
 
             if ( $result ) {
                 $this->id = $wpdb->insert_id;
-                error_log( 'JDPD v1.6.0 - INSERT SUCCESS! New rule ID: ' . $this->id );
-                // Verify the insert
-                $verify = $wpdb->get_var( $wpdb->prepare( "SELECT event_type FROM {$table} WHERE id = %d", $this->id ) );
-                error_log( 'JDPD v1.6.0 - Verified event_type in DB after INSERT: ' . var_export( $verify, true ) );
                 return $this->id;
-            } else {
-                error_log( 'JDPD v1.6.0 - INSERT FAILED! Error: ' . $wpdb->last_error );
-                error_log( 'JDPD v1.6.0 - Failed INSERT query: ' . $wpdb->last_query );
             }
 
             return false;

@@ -117,8 +117,6 @@ class JDPD_Price_Rules {
             return $price;
         }
 
-        error_log( 'JDPD v1.6.2 - calculate_price() called for product ID: ' . $product->get_id() . ', original price: ' . $price );
-
         // Check if we should apply to sale products
         if ( 'no' === get_option( 'jdpd_apply_to_sale_products', 'no' ) ) {
             // Get raw sale price without our filters
@@ -251,46 +249,30 @@ class JDPD_Price_Rules {
         $all_rules = jdpd_get_active_rules( 'price_rule' );
         $applicable = array();
 
-        error_log( 'JDPD v1.6.2 - get_applicable_rules() for product ID: ' . $product_id );
-        error_log( 'JDPD v1.6.2 - Found ' . count( $all_rules ) . ' active price rules' );
-
         foreach ( $all_rules as $rule ) {
             $rule_obj = new JDPD_Rule( $rule );
 
             if ( $rule_obj->applies_to_product( $product ) ) {
                 $applicable[] = $rule;
-                error_log( 'JDPD v1.6.2 - Price rule ID ' . $rule->id . ' applies to product ' . $product_id );
             }
         }
 
         // Also get event sale special offers and apply them as price discounts
         $special_offers = jdpd_get_active_rules( 'special_offer' );
-        error_log( 'JDPD v1.6.2 - Found ' . count( $special_offers ) . ' active special offers' );
 
         foreach ( $special_offers as $rule ) {
             $rule_obj = new JDPD_Rule( $rule );
             $offer_type = $rule_obj->get( 'special_offer_type' );
 
-            error_log( 'JDPD v1.6.2 - Checking special offer ID ' . $rule->id . ' type: ' . $offer_type );
-
             // Only process event_sale type special offers
             if ( 'event_sale' !== $offer_type ) {
-                error_log( 'JDPD v1.6.2 - Skipping rule ' . $rule->id . ' - not event_sale type' );
                 continue;
             }
 
-            $applies = $rule_obj->applies_to_product( $product );
-            error_log( 'JDPD v1.6.2 - Event sale rule ' . $rule->id . ' applies_to_product: ' . ( $applies ? 'YES' : 'NO' ) );
-            error_log( 'JDPD v1.6.2 - Rule apply_to: ' . $rule_obj->get( 'apply_to' ) );
-            error_log( 'JDPD v1.6.2 - Event discount type: ' . $rule_obj->get( 'event_discount_type' ) . ', value: ' . $rule_obj->get( 'event_discount_value' ) );
-
-            if ( $applies ) {
+            if ( $rule_obj->applies_to_product( $product ) ) {
                 $applicable[] = $rule;
-                error_log( 'JDPD v1.6.2 - Added event_sale rule ' . $rule->id . ' to applicable rules' );
             }
         }
-
-        error_log( 'JDPD v1.6.2 - Total applicable rules for product ' . $product_id . ': ' . count( $applicable ) );
 
         // Cache results
         $this->rules_cache[ $product_id ] = $applicable;
