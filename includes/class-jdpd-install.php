@@ -527,42 +527,77 @@ class JDPD_Install {
         // Check if table exists first
         $table_exists = $wpdb->get_var( "SHOW TABLES LIKE '{$table}'" );
         if ( ! $table_exists ) {
+            if ( function_exists( 'jdpd_log' ) ) {
+                jdpd_log( 'ensure_event_columns: Table does not exist: ' . $table, 'warning' );
+            }
             return;
         }
 
-        // Get existing columns
-        $columns = $wpdb->get_col( "DESCRIBE {$table}", 0 );
+        // Get existing columns using SHOW COLUMNS for better compatibility
+        $column_results = $wpdb->get_results( "SHOW COLUMNS FROM {$table}" );
+        $columns = array();
+        if ( $column_results ) {
+            foreach ( $column_results as $col ) {
+                $columns[] = $col->Field;
+            }
+        }
+
+        if ( function_exists( 'jdpd_log' ) ) {
+            jdpd_log( 'ensure_event_columns: Existing columns: ' . implode( ', ', $columns ), 'debug' );
+        }
+
+        $columns_added = array();
 
         // Add event_type column if it doesn't exist
         if ( ! in_array( 'event_type', $columns, true ) ) {
-            $wpdb->query( "ALTER TABLE {$table} ADD COLUMN event_type varchar(100) DEFAULT NULL" );
-            if ( function_exists( 'jdpd_log' ) ) {
-                jdpd_log( 'Added event_type column to rules table', 'info' );
+            $result = $wpdb->query( "ALTER TABLE {$table} ADD COLUMN event_type varchar(100) DEFAULT NULL" );
+            if ( $result !== false ) {
+                $columns_added[] = 'event_type';
+            } else {
+                if ( function_exists( 'jdpd_log' ) ) {
+                    jdpd_log( 'ensure_event_columns: FAILED to add event_type - ' . $wpdb->last_error, 'error' );
+                }
             }
         }
 
         // Add custom_event_name column if it doesn't exist
         if ( ! in_array( 'custom_event_name', $columns, true ) ) {
-            $wpdb->query( "ALTER TABLE {$table} ADD COLUMN custom_event_name varchar(255) DEFAULT NULL" );
-            if ( function_exists( 'jdpd_log' ) ) {
-                jdpd_log( 'Added custom_event_name column to rules table', 'info' );
+            $result = $wpdb->query( "ALTER TABLE {$table} ADD COLUMN custom_event_name varchar(255) DEFAULT NULL" );
+            if ( $result !== false ) {
+                $columns_added[] = 'custom_event_name';
+            } else {
+                if ( function_exists( 'jdpd_log' ) ) {
+                    jdpd_log( 'ensure_event_columns: FAILED to add custom_event_name - ' . $wpdb->last_error, 'error' );
+                }
             }
         }
 
         // Add event_discount_type column if it doesn't exist
         if ( ! in_array( 'event_discount_type', $columns, true ) ) {
-            $wpdb->query( "ALTER TABLE {$table} ADD COLUMN event_discount_type varchar(50) DEFAULT 'percentage'" );
-            if ( function_exists( 'jdpd_log' ) ) {
-                jdpd_log( 'Added event_discount_type column to rules table', 'info' );
+            $result = $wpdb->query( "ALTER TABLE {$table} ADD COLUMN event_discount_type varchar(50) DEFAULT 'percentage'" );
+            if ( $result !== false ) {
+                $columns_added[] = 'event_discount_type';
+            } else {
+                if ( function_exists( 'jdpd_log' ) ) {
+                    jdpd_log( 'ensure_event_columns: FAILED to add event_discount_type - ' . $wpdb->last_error, 'error' );
+                }
             }
         }
 
         // Add event_discount_value column if it doesn't exist
         if ( ! in_array( 'event_discount_value', $columns, true ) ) {
-            $wpdb->query( "ALTER TABLE {$table} ADD COLUMN event_discount_value decimal(19,4) DEFAULT 0" );
-            if ( function_exists( 'jdpd_log' ) ) {
-                jdpd_log( 'Added event_discount_value column to rules table', 'info' );
+            $result = $wpdb->query( "ALTER TABLE {$table} ADD COLUMN event_discount_value decimal(19,4) DEFAULT 0" );
+            if ( $result !== false ) {
+                $columns_added[] = 'event_discount_value';
+            } else {
+                if ( function_exists( 'jdpd_log' ) ) {
+                    jdpd_log( 'ensure_event_columns: FAILED to add event_discount_value - ' . $wpdb->last_error, 'error' );
+                }
             }
+        }
+
+        if ( function_exists( 'jdpd_log' ) && ! empty( $columns_added ) ) {
+            jdpd_log( 'ensure_event_columns: Added columns: ' . implode( ', ', $columns_added ), 'info' );
         }
     }
 }

@@ -351,6 +351,12 @@ class JDPD_Rule {
             '%s', '%s', '%s', '%d', '%s', '%f', '%s', '%s', '%s', '%s', '%d', '%d', '%d', '%s', '%s', '%s', '%s', '%f',
         );
 
+        // Debug logging
+        if ( function_exists( 'jdpd_log' ) ) {
+            jdpd_log( 'Rule Save Debug - event_type in data: ' . ( $data['event_type'] ?? 'NULL' ), 'debug' );
+            jdpd_log( 'Rule Save Debug - Data count: ' . count( $data ) . ', Format count: ' . count( $format ), 'debug' );
+        }
+
         if ( $this->id > 0 ) {
             // Update existing rule
             $data['updated_at'] = current_time( 'mysql' );
@@ -363,6 +369,16 @@ class JDPD_Rule {
                 $format,
                 array( '%d' )
             );
+
+            // Log any database errors
+            if ( function_exists( 'jdpd_log' ) ) {
+                if ( $result === false ) {
+                    jdpd_log( 'Rule Save Debug - Update FAILED! Last error: ' . $wpdb->last_error, 'error' );
+                    jdpd_log( 'Rule Save Debug - Last query: ' . $wpdb->last_query, 'error' );
+                } else {
+                    jdpd_log( 'Rule Save Debug - Update successful, rows affected: ' . $result, 'debug' );
+                }
+            }
 
             return $result !== false ? $this->id : false;
         } else {
