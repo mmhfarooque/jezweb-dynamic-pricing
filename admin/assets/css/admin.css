@@ -1095,6 +1095,383 @@
 }
 
 /* ========================================
+   Modern Toggle Switch
+   ======================================== */
+.jdpd-toggle {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+}
+
+.jdpd-toggle input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+    position: absolute;
+}
+
+.jdpd-toggle .jdpd-toggle-slider {
+    position: relative;
+    width: 52px;
+    height: 28px;
+    background: #cbd5e1;
+    border-radius: 28px;
+    transition: var(--jdpd-transition);
+    flex-shrink: 0;
+}
+
+.jdpd-toggle .jdpd-toggle-slider::before {
+    position: absolute;
+    content: "";
+    height: 22px;
+    width: 22px;
+    left: 3px;
+    top: 3px;
+    background-color: white;
+    border-radius: 50%;
+    transition: var(--jdpd-transition);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.jdpd-toggle input:checked + .jdpd-toggle-slider {
+    background: linear-gradient(135deg, var(--jdpd-success), #059669);
+}
+
+.jdpd-toggle input:checked + .jdpd-toggle-slider::before {
+    transform: translateX(24px);
+}
+
+.jdpd-toggle input:focus + .jdpd-toggle-slider {
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+}
+
+.jdpd-toggle .jdpd-toggle-label {
+    margin-left: 12px;
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--jdpd-text-muted);
+    min-width: 30px;
+}
+
+.jdpd-toggle .jdpd-toggle-label::after {
+    content: attr(data-off);
+}
+
+.jdpd-toggle input:checked ~ .jdpd-toggle-label {
+    color: var(--jdpd-success);
+}
+
+.jdpd-toggle input:checked ~ .jdpd-toggle-label::after {
+    content: attr(data-on);
+}
+
+/* ========================================
+   Settings Sections Layout
+   ======================================== */
+.jdpd-settings-section {
+    background: var(--jdpd-card-bg);
+    border: 1px solid var(--jdpd-border);
+    border-radius: var(--jdpd-radius-lg);
+    box-shadow: var(--jdpd-shadow);
+    margin-bottom: 24px;
+    overflow: hidden;
+}
+
+.jdpd-section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 18px 24px;
+    background: linear-gradient(to bottom, var(--jdpd-bg), #f1f5f9);
+    border-bottom: 1px solid var(--jdpd-border);
+}
+
+.jdpd-section-header .dashicons {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    color: var(--jdpd-primary);
+}
+
+.jdpd-section-header h2 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--jdpd-text);
+}
+
+.jdpd-section-content {
+    padding: 0;
+}
+
+.jdpd-setting-row {
+    display: flex;
+    flex-direction: column;
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--jdpd-border-light);
+    gap: 12px;
+}
+
+.jdpd-setting-row:last-child {
+    border-bottom: none;
+}
+
+@media screen and (min-width: 783px) {
+    .jdpd-setting-row {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        gap: 24px;
+    }
+}
+
+.jdpd-setting-label {
+    flex: 1;
+    min-width: 0;
+}
+
+.jdpd-setting-label label {
+    display: block;
+    font-weight: 600;
+    color: var(--jdpd-text);
+    font-size: 14px;
+    margin-bottom: 4px;
+}
+
+.jdpd-setting-label .description {
+    color: var(--jdpd-text-muted);
+    font-size: 13px;
+    margin: 0;
+    line-height: 1.4;
+}
+
+.jdpd-setting-field {
+    flex-shrink: 0;
+}
+
+@media screen and (min-width: 783px) {
+    .jdpd-setting-field {
+        min-width: 200px;
+        text-align: right;
+    }
+}
+
+.jdpd-setting-field select,
+.jdpd-setting-field input[type="text"],
+.jdpd-setting-field input[type="number"] {
+    height: 40px;
+    padding: 0 14px;
+    border: 1px solid var(--jdpd-border);
+    border-radius: var(--jdpd-radius);
+    font-size: 14px;
+    transition: var(--jdpd-transition);
+    min-width: 180px;
+}
+
+.jdpd-setting-field select:focus,
+.jdpd-setting-field input:focus {
+    border-color: var(--jdpd-primary);
+    box-shadow: 0 0 0 3px rgba(34, 88, 141, 0.15);
+    outline: none;
+}
+
+/* Main Tabs - Settings vs Debug */
+.jdpd-main-tabs {
+    margin-bottom: 24px !important;
+}
+
+.jdpd-main-tabs .nav-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 20px;
+}
+
+.jdpd-main-tabs .nav-tab .dashicons {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+}
+
+/* Submit button styling */
+.jdpd-settings-wrap .submit {
+    margin-top: 8px;
+    padding: 0;
+}
+
+.jdpd-settings-wrap .submit .button-large {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 28px;
+    height: auto;
+    font-size: 15px;
+}
+
+.jdpd-settings-wrap .submit .button-large .dashicons {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+}
+
+/* ========================================
+   Plugin Footer - Combined Info & Credits
+   ======================================== */
+.jdpd-plugin-footer {
+    margin-top: 40px;
+    padding: 24px;
+    background: linear-gradient(135deg, var(--jdpd-bg), #ffffff);
+    border: 1px solid var(--jdpd-border);
+    border-radius: var(--jdpd-radius-lg);
+    box-shadow: var(--jdpd-shadow);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+@media screen and (min-width: 783px) {
+    .jdpd-plugin-footer {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+    }
+}
+
+.jdpd-footer-info {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.jdpd-footer-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.jdpd-footer-title {
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--jdpd-text);
+}
+
+.jdpd-footer-version {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 10px;
+    font-size: 11px;
+    font-weight: 600;
+    background: var(--jdpd-primary);
+    color: #ffffff;
+    border-radius: 20px;
+}
+
+.jdpd-footer-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.jdpd-meta-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--jdpd-text-muted);
+}
+
+.jdpd-meta-item .dashicons {
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
+    color: var(--jdpd-text-light);
+}
+
+.jdpd-footer-credits {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-start;
+}
+
+@media screen and (min-width: 783px) {
+    .jdpd-footer-credits {
+        align-items: flex-end;
+    }
+}
+
+.jdpd-credits-text {
+    font-size: 13px;
+    color: var(--jdpd-text-muted);
+}
+
+.jdpd-credits-text strong {
+    color: var(--jdpd-text);
+}
+
+.jdpd-credits-text a {
+    color: var(--jdpd-primary);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.jdpd-credits-text a:hover {
+    color: var(--jdpd-primary-dark);
+}
+
+.jdpd-credits-separator {
+    margin: 0 8px;
+    color: var(--jdpd-border);
+}
+
+.jdpd-footer-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.jdpd-footer-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    font-size: 13px;
+    font-weight: 500;
+    text-decoration: none;
+    border-radius: var(--jdpd-radius);
+    transition: var(--jdpd-transition);
+    background: var(--jdpd-card-bg);
+    color: var(--jdpd-text);
+    border: 1px solid var(--jdpd-border);
+}
+
+.jdpd-footer-btn:hover {
+    background: var(--jdpd-bg);
+    border-color: var(--jdpd-primary);
+    color: var(--jdpd-primary);
+}
+
+.jdpd-footer-btn .dashicons {
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
+}
+
+.jdpd-footer-btn-primary {
+    background: var(--jdpd-primary);
+    color: #ffffff;
+    border-color: var(--jdpd-primary);
+}
+
+.jdpd-footer-btn-primary:hover {
+    background: var(--jdpd-primary-dark);
+    border-color: var(--jdpd-primary-dark);
+    color: #ffffff;
+}
+
+/* ========================================
    Jezweb Branding & Credits
    ======================================== */
 

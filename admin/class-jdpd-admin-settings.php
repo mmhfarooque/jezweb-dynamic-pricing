@@ -95,52 +95,23 @@ class JDPD_Admin_Settings {
      * @return string
      */
     public function get_current_tab() {
-        return isset( $_GET['tab'] ) ? sanitize_key( $_GET['tab'] ) : 'general';
+        $tab = isset( $_GET['tab'] ) ? sanitize_key( $_GET['tab'] ) : 'settings';
+        // Only allow 'settings' or 'debug' tabs now
+        return in_array( $tab, array( 'settings', 'debug' ), true ) ? $tab : 'settings';
     }
 
     /**
-     * Render settings tabs
+     * Render settings tabs (kept for backward compatibility)
      */
     public function render_tabs() {
-        $current_tab = $this->get_current_tab();
-        ?>
-        <nav class="nav-tab-wrapper woo-nav-tab-wrapper">
-            <?php foreach ( $this->tabs as $tab_key => $tab_label ) : ?>
-                <a href="<?php echo esc_url( admin_url( 'admin.php?page=jdpd-settings&tab=' . $tab_key ) ); ?>"
-                   class="nav-tab <?php echo $current_tab === $tab_key ? 'nav-tab-active' : ''; ?>">
-                    <?php echo esc_html( $tab_label ); ?>
-                </a>
-            <?php endforeach; ?>
-        </nav>
-        <?php
+        // Tabs are now rendered directly in the view
     }
 
     /**
-     * Render settings fields
+     * Render settings fields (kept for backward compatibility)
      */
     public function render_settings_fields() {
-        $current_tab = $this->get_current_tab();
-
-        switch ( $current_tab ) {
-            case 'general':
-                $this->render_general_settings();
-                break;
-            case 'display':
-                $this->render_display_settings();
-                break;
-            case 'cart':
-                $this->render_cart_settings();
-                break;
-            case 'checkout':
-                $this->render_checkout_settings();
-                break;
-            case 'advanced':
-                $this->render_advanced_settings();
-                break;
-            case 'debug':
-                $this->render_debug_settings();
-                break;
-        }
+        // Settings are now rendered directly in the view as sections
     }
 
     /**
@@ -462,7 +433,7 @@ class JDPD_Admin_Settings {
     /**
      * Render debug settings
      */
-    private function render_debug_settings() {
+    public function render_debug_settings() {
         $logger = function_exists( 'jdpd_logger' ) ? jdpd_logger() : null;
         $error_handler = function_exists( 'jdpd_error_handler' ) ? jdpd_error_handler() : null;
         $log_contents = $logger ? $logger->get_log_contents( 200 ) : '';
