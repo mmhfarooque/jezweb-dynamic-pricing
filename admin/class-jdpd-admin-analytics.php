@@ -16,9 +16,28 @@ if ( ! defined( 'ABSPATH' ) ) {
 class JDPD_Admin_Analytics {
 
     /**
+     * Instance
+     *
+     * @var JDPD_Admin_Analytics
+     */
+    private static $instance = null;
+
+    /**
+     * Get instance
+     *
+     * @return JDPD_Admin_Analytics
+     */
+    public static function get_instance() {
+        if ( null === self::$instance ) {
+            self::$instance = new self();
+        }
+        return self::$instance;
+    }
+
+    /**
      * Constructor
      */
-    public function __construct() {
+    private function __construct() {
         add_action( 'wp_ajax_jdpd_get_analytics', array( $this, 'ajax_get_analytics' ) );
         add_action( 'wp_ajax_jdpd_export_analytics', array( $this, 'ajax_export_analytics' ) );
     }
