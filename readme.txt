@@ -4,7 +4,7 @@ Tags: woocommerce, pricing, discounts, dynamic pricing, bulk pricing, quantity d
 Requires at least: 6.0
 Tested up to: 6.7
 Requires PHP: 8.0
-Stable tag: 1.6.5
+Stable tag: 1.6.6
 WC requires at least: 8.0
 WC tested up to: 9.4
 License: GPLv2 or later
@@ -81,6 +81,12 @@ Yes, all rules support scheduling with start and end dates, including advanced s
 Yes, the plugin is fully compatible with WooCommerce High-Performance Order Storage.
 
 == Changelog ==
+
+= 1.6.6 =
+* NEW: Checkout subtotal shows price breakdown (original strikethrough → discounted price)
+* NEW: Order emails and invoices show price breakdown with savings amount
+* NEW: Badge displays on order items in emails with inline styles for compatibility
+* IMPROVED: CSS styling for checkout and order price breakdowns
 
 = 1.6.5 =
 * NEW: Badge customization per rule - choose background and text colors
@@ -222,6 +228,9 @@ Yes, the plugin is fully compatible with WooCommerce High-Performance Order Stor
 * Initial release
 
 == Upgrade Notice ==
+
+= 1.6.6 =
+Invoice and email improvement: Checkout and order emails now show full price breakdown with original price, discounted price, and savings amount.
 
 = 1.5.6 =
 Critical fix: Ensures event sale database columns are created properly and settings persist after save.

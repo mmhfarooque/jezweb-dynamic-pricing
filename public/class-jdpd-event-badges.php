@@ -70,7 +70,10 @@ class JDPD_Event_Badges {
 
         // Checkout order review - product name and price
         add_filter( 'woocommerce_checkout_cart_item_quantity', array( $this, 'add_event_badge_to_checkout_item' ), 100, 3 );
-        add_filter( 'woocommerce_order_item_name', array( $this, 'add_price_breakdown_to_checkout' ), 100, 3 );
+
+        // Order emails and invoices - show price breakdown
+        add_filter( 'woocommerce_order_item_name', array( $this, 'add_badge_to_order_item_name' ), 100, 3 );
+        add_action( 'woocommerce_order_item_meta_end', array( $this, 'add_price_breakdown_to_order_item' ), 10, 4 );
 
         // Enqueue styles
         add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_styles' ) );
@@ -144,7 +147,7 @@ class JDPD_Event_Badges {
     }
 
     /**
-     * Add event badge to cart item subtotal
+     * Add price breakdown to cart/checkout item subtotal
      *
      * @param string $subtotal   Subtotal HTML.
      * @param array  $cart_item  Cart item data.
@@ -152,7 +155,35 @@ class JDPD_Event_Badges {
      * @return string
      */
     public function add_event_badge_to_cart_subtotal( $subtotal, $cart_item, $cart_item_key ) {
-        // Only show badge on price, not subtotal to avoid duplication
+        // Only on checkout page - show full price breakdown
+        if ( ! is_checkout() ) {
+            return $subtotal;
+        }
+
+        $product = $cart_item['data'];
+        $badge_data = $this->get_product_event_badge( $product );
+
+        if ( empty( $badge_data ) ) {
+            return $subtotal;
+        }
+
+        // Get original and discounted prices
+        $original_price = $product->get_regular_price();
+        $discounted_price = $product->get_price();
+        $quantity = $cart_item['quantity'];
+
+        if ( $original_price && $discounted_price && floatval( $original_price ) > floatval( $discounted_price ) ) {
+            $original_subtotal = floatval( $original_price ) * $quantity;
+            $discounted_subtotal = floatval( $discounted_price ) * $quantity;
+
+            $price_html = '<span class="jdpd-checkout-subtotal-breakdown">';
+            $price_html .= '<del>' . wc_price( $original_subtotal ) . '</del><br>';
+            $price_html .= '<ins>' . wc_price( $discounted_subtotal ) . '</ins>';
+            $price_html .= '</span>';
+
+            return $price_html;
+        }
+
         return $subtotal;
     }
 
@@ -195,56 +226,88 @@ class JDPD_Event_Badges {
     }
 
     /**
-     * Add price breakdown to checkout product name
+     * Add badge to order item name (for emails and order details)
      *
      * @param string $name     Product name.
-     * @param array  $cart_item Cart item data.
-     * @param string $cart_item_key Cart item key.
+     * @param object $item     Order item.
+     * @param bool   $visible  Is item visible.
      * @return string
      */
-    public function add_price_breakdown_to_checkout( $name, $cart_item, $cart_item_key ) {
-        // Only on checkout page
-        if ( ! is_checkout() || is_wc_endpoint_url() ) {
+    public function add_badge_to_order_item_name( $name, $item, $visible ) {
+        // Get product from order item
+        if ( ! is_a( $item, 'WC_Order_Item_Product' ) ) {
             return $name;
         }
 
-        // Handle both cart items and order items
-        if ( is_array( $cart_item ) && isset( $cart_item['data'] ) ) {
-            $product = $cart_item['data'];
-        } elseif ( is_a( $cart_item, 'WC_Order_Item_Product' ) ) {
-            $product = $cart_item->get_product();
-        } else {
-            return $name;
-        }
-
+        $product = $item->get_product();
         if ( ! $product ) {
             return $name;
         }
 
         $badge_data = $this->get_product_event_badge( $product );
 
+        if ( ! empty( $badge_data ) ) {
+            // For emails, use inline styles
+            $badge_style = sprintf(
+                'display: inline-block; background-color: %s; color: %s; padding: 2px 6px; font-size: 10px; font-weight: bold; text-transform: uppercase; border-radius: 3px; margin-left: 5px;',
+                esc_attr( $badge_data['bg_color'] ),
+                esc_attr( $badge_data['text_color'] )
+            );
+            $name .= ' <span style="' . $badge_style . '">' . esc_html( $badge_data['text'] ) . '</span>';
+        }
+
+        return $name;
+    }
+
+    /**
+     * Add price breakdown to order item meta (for emails and invoices)
+     *
+     * @param int    $item_id   Item ID.
+     * @param object $item      Order item.
+     * @param object $order     Order object.
+     * @param bool   $plain_text Is plain text email.
+     */
+    public function add_price_breakdown_to_order_item( $item_id, $item, $order, $plain_text = false ) {
+        if ( ! is_a( $item, 'WC_Order_Item_Product' ) ) {
+            return;
+        }
+
+        $product = $item->get_product();
+        if ( ! $product ) {
+            return;
+        }
+
+        $badge_data = $this->get_product_event_badge( $product );
+
         if ( empty( $badge_data ) ) {
-            return $name;
+            return;
         }
 
         // Get original and discounted prices
         $original_price = $product->get_regular_price();
         $discounted_price = $product->get_price();
+        $quantity = $item->get_quantity();
 
         if ( $original_price && $discounted_price && floatval( $original_price ) > floatval( $discounted_price ) ) {
-            $savings = floatval( $original_price ) - floatval( $discounted_price );
-            $savings_percent = round( ( $savings / floatval( $original_price ) ) * 100 );
+            $original_subtotal = floatval( $original_price ) * $quantity;
+            $discounted_subtotal = floatval( $discounted_price ) * $quantity;
+            $savings = $original_subtotal - $discounted_subtotal;
 
-            $price_html = '<span class="jdpd-checkout-price-breakdown">';
-            $price_html .= '<del>' . wc_price( $original_price ) . '</del> ';
-            $price_html .= '<ins>' . wc_price( $discounted_price ) . '</ins>';
-            $price_html .= ' ' . $this->render_badge( $badge_data['text'], 'small', $badge_data );
-            $price_html .= '</span>';
-
-            $name .= '<br>' . $price_html;
+            if ( $plain_text ) {
+                echo "\n" . sprintf(
+                    __( 'Original: %s | Discounted: %s | You Save: %s', 'jezweb-dynamic-pricing' ),
+                    strip_tags( wc_price( $original_subtotal ) ),
+                    strip_tags( wc_price( $discounted_subtotal ) ),
+                    strip_tags( wc_price( $savings ) )
+                );
+            } else {
+                echo '<div class="jdpd-order-item-discount" style="font-size: 12px; color: #666; margin-top: 5px;">';
+                echo '<span style="text-decoration: line-through; color: #999;">' . wc_price( $original_subtotal ) . '</span>';
+                echo ' <span style="color: #77a464; font-weight: bold;">' . wc_price( $discounted_subtotal ) . '</span>';
+                echo ' <span style="color: #d83a34; font-size: 11px;">(' . sprintf( __( 'Save %s', 'jezweb-dynamic-pricing' ), wc_price( $savings ) ) . ')</span>';
+                echo '</div>';
+            }
         }
-
-        return $name;
     }
 
     /**

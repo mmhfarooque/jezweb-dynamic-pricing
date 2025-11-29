@@ -51,23 +51,35 @@
 }
 
 /* Checkout Price Breakdown */
-.jdpd-checkout-price-breakdown {
+.jdpd-checkout-price-breakdown,
+.jdpd-checkout-subtotal-breakdown {
     display: block;
     margin-top: 5px;
     font-size: 13px;
+    line-height: 1.6;
 }
 
-.jdpd-checkout-price-breakdown del {
+.jdpd-checkout-price-breakdown del,
+.jdpd-checkout-subtotal-breakdown del {
     color: #999;
     text-decoration: line-through;
     margin-right: 5px;
 }
 
-.jdpd-checkout-price-breakdown ins {
+.jdpd-checkout-price-breakdown ins,
+.jdpd-checkout-subtotal-breakdown ins {
     color: #77a464;
     font-weight: 600;
     text-decoration: none;
     margin-right: 8px;
+}
+
+/* Order/Invoice Price Breakdown */
+.jdpd-order-item-discount {
+    font-size: 12px;
+    color: #666;
+    margin-top: 5px;
+    line-height: 1.4;
 }
 
 /* Product Loop Adjustments */
