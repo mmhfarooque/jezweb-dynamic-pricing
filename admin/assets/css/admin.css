@@ -583,13 +583,21 @@
 
 /* Rule Edit Form - Wider inputs and selects */
 .jdpd-rule-edit-wrap select,
-.jdpd-rule-edit-wrap .postbox select {
-    min-width: 280px;
+.jdpd-rule-edit-wrap .postbox select,
+.jdpd-rule-edit-wrap .jdpd-form-field select {
+    min-width: 320px !important;
+    width: auto !important;
     height: 42px;
-    padding: 0 14px;
+    padding: 0 40px 0 14px !important;
     border: 1px solid var(--jdpd-border);
     border-radius: var(--jdpd-radius);
     font-size: 14px;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background: #fff url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12"><path fill="%23333" d="M6 8L1 3h10z"/></svg>') no-repeat right 14px center;
+    background-size: 12px;
+    cursor: pointer;
 }
 
 .jdpd-rule-edit-wrap input[type="text"],
@@ -603,9 +611,10 @@
 }
 
 .jdpd-rule-edit-wrap input[type="number"],
-.jdpd-rule-edit-wrap .postbox input[type="number"] {
-    min-width: 100px;
-    width: 120px;
+.jdpd-rule-edit-wrap .postbox input[type="number"],
+.jdpd-rule-edit-wrap .jdpd-form-field input[type="number"] {
+    min-width: 80px !important;
+    width: 100px !important;
     height: 42px;
     padding: 0 14px;
     border: 1px solid var(--jdpd-border);
@@ -618,6 +627,13 @@
     min-width: 400px;
     width: 100%;
     max-width: 500px;
+}
+
+/* Special Offer type selects need extra width */
+.jdpd-rule-edit-wrap #rule_type,
+.jdpd-rule-edit-wrap #offer_type,
+.jdpd-rule-edit-wrap #discount_type {
+    min-width: 320px !important;
 }
 
 .jdpd-rule-edit-wrap .postbox h2.hndle {
