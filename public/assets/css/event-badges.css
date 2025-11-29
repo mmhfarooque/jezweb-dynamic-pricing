@@ -1,0 +1,99 @@
+/**
+ * Jezweb Dynamic Pricing - Event Badges Styles
+ */
+
+/* Event Badge - Default Style */
+.jdpd-event-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    margin-left: 8px;
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1.2;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-radius: 4px;
+    vertical-align: middle;
+    white-space: nowrap;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+    animation: jdpd-badge-pulse 2s ease-in-out infinite;
+}
+
+/* Small Badge - For mini cart */
+.jdpd-event-badge-small {
+    padding: 2px 6px;
+    font-size: 9px;
+    margin-left: 4px;
+}
+
+/* Badge Pulse Animation */
+@keyframes jdpd-badge-pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.02);
+    }
+}
+
+/* Cart Page Adjustments */
+.woocommerce-cart-form .jdpd-event-badge {
+    display: block;
+    margin: 4px 0 0 0;
+    font-size: 10px;
+}
+
+/* Checkout Page Adjustments */
+.woocommerce-checkout .jdpd-event-badge {
+    display: block;
+    margin: 4px 0 0 0;
+    font-size: 10px;
+}
+
+/* Product Loop Adjustments */
+.woocommerce ul.products li.product .jdpd-event-badge {
+    display: block;
+    margin: 8px 0 0 0;
+}
+
+/* Single Product Page */
+.single-product .jdpd-event-badge {
+    font-size: 12px;
+    padding: 5px 12px;
+}
+
+/* Mini Cart Widget */
+.widget_shopping_cart .jdpd-event-badge {
+    display: inline-block;
+    font-size: 9px;
+    padding: 2px 5px;
+}
+
+/* Order Emails - Inline style support */
+.jdpd-event-badge-email {
+    display: inline-block;
+    padding: 3px 8px;
+    font-size: 10px;
+    font-weight: bold;
+    text-transform: uppercase;
+    border-radius: 3px;
+}
+
+/* Responsive Adjustments */
+@media screen and (max-width: 768px) {
+    .jdpd-event-badge {
+        font-size: 10px;
+        padding: 3px 8px;
+    }
+
+    .woocommerce ul.products li.product .jdpd-event-badge {
+        margin: 6px 0 0 0;
+    }
+}
+
+/* Dark Theme Support */
+@media (prefers-color-scheme: dark) {
+    .jdpd-event-badge {
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+}

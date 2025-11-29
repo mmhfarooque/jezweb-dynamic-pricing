@@ -294,6 +294,74 @@ if ( $is_edit ) {
                                             <p class="description"><?php esc_html_e( '100% = Free item', 'jezweb-dynamic-pricing' ); ?></p>
                                         </div>
                                     </div>
+
+                                    <!-- Event Sale Settings (shown when event_sale type is selected) -->
+                                    <div class="jdpd-event-sale-settings" id="jdpd-event-sale-settings" style="display: none;">
+                                        <div class="jdpd-form-row">
+                                            <div class="jdpd-form-label">
+                                                <label for="event_type"><?php esc_html_e( 'Select Event', 'jezweb-dynamic-pricing' ); ?></label>
+                                            </div>
+                                            <div class="jdpd-form-field">
+                                                <select name="event_type" id="event_type">
+                                                    <option value=""><?php esc_html_e( '-- Select Event --', 'jezweb-dynamic-pricing' ); ?></option>
+                                                    <?php foreach ( jdpd_get_special_events() as $event_key => $event ) : ?>
+                                                        <option value="<?php echo esc_attr( $event_key ); ?>" data-month="<?php echo esc_attr( $event['month'] ); ?>" data-categories="<?php echo esc_attr( $event['categories'] ); ?>">
+                                                            <?php echo esc_html( $event['name'] ); ?>
+                                                        </option>
+                                                    <?php endforeach; ?>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="jdpd-form-row" id="custom-event-name-row" style="display: none;">
+                                            <div class="jdpd-form-label">
+                                                <label for="custom_event_name"><?php esc_html_e( 'Custom Event Name', 'jezweb-dynamic-pricing' ); ?></label>
+                                            </div>
+                                            <div class="jdpd-form-field">
+                                                <input type="text" name="custom_event_name" id="custom_event_name" class="regular-text" placeholder="<?php esc_attr_e( 'e.g., Summer Clearance Sale', 'jezweb-dynamic-pricing' ); ?>">
+                                                <p class="description"><?php esc_html_e( 'Enter a custom name for your special event. This will be displayed as the discount badge.', 'jezweb-dynamic-pricing' ); ?></p>
+                                            </div>
+                                        </div>
+                                        <div class="jdpd-form-row" id="event-info-row" style="display: none;">
+                                            <div class="jdpd-form-label">
+                                                <label><?php esc_html_e( 'Event Info', 'jezweb-dynamic-pricing' ); ?></label>
+                                            </div>
+                                            <div class="jdpd-form-field">
+                                                <div class="jdpd-event-info-box">
+                                                    <p><strong><?php esc_html_e( 'Month:', 'jezweb-dynamic-pricing' ); ?></strong> <span id="event-month"></span></p>
+                                                    <p><strong><?php esc_html_e( 'Best Categories:', 'jezweb-dynamic-pricing' ); ?></strong> <span id="event-categories"></span></p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="jdpd-form-row">
+                                            <div class="jdpd-form-label">
+                                                <label for="event_discount_type"><?php esc_html_e( 'Discount Type', 'jezweb-dynamic-pricing' ); ?></label>
+                                            </div>
+                                            <div class="jdpd-form-field">
+                                                <select name="event_discount_type" id="event_discount_type">
+                                                    <option value="percentage"><?php esc_html_e( 'Percentage Off', 'jezweb-dynamic-pricing' ); ?></option>
+                                                    <option value="fixed"><?php esc_html_e( 'Fixed Amount Off', 'jezweb-dynamic-pricing' ); ?></option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="jdpd-form-row">
+                                            <div class="jdpd-form-label">
+                                                <label for="event_discount_value"><?php esc_html_e( 'Discount Value', 'jezweb-dynamic-pricing' ); ?></label>
+                                            </div>
+                                            <div class="jdpd-form-field">
+                                                <input type="number" name="event_discount_value" id="event_discount_value" value="10" min="0" step="0.01" class="small-text">
+                                                <span id="event-discount-suffix">%</span>
+                                            </div>
+                                        </div>
+                                        <div class="jdpd-form-row">
+                                            <div class="jdpd-form-label">
+                                                <label><?php esc_html_e( 'Badge Preview', 'jezweb-dynamic-pricing' ); ?></label>
+                                            </div>
+                                            <div class="jdpd-form-field">
+                                                <span class="jdpd-event-badge-preview" id="event-badge-preview" style="display: none;"></span>
+                                                <p class="description"><?php esc_html_e( 'This badge will appear next to the product price.', 'jezweb-dynamic-pricing' ); ?></p>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 

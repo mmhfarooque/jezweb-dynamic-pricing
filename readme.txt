@@ -4,7 +4,7 @@ Tags: woocommerce, pricing, discounts, dynamic pricing, bulk pricing, quantity d
 Requires at least: 6.0
 Tested up to: 6.7
 Requires PHP: 8.0
-Stable tag: 1.4.0
+Stable tag: 1.5.4
 WC requires at least: 8.0
 WC tested up to: 9.4
 License: GPLv2 or later
@@ -82,6 +82,36 @@ Yes, the plugin is fully compatible with WooCommerce High-Performance Order Stor
 
 == Changelog ==
 
+= 1.5.4 =
+* NEW: 14 Special Event Sale options for Australian retail calendar
+* NEW: Custom Event option - create your own special event names
+* NEW: Event discount badges displayed next to product prices (cart, checkout, product pages)
+* NEW: Special Discount Style settings - customize badge background and text colors
+* NEW: Live preview for badge styling in admin settings
+* Improved event list: New Year's Day Sale, Back to School, Afterpay Day, Easter Sales, Click Frenzy Mayhem, VOSN, EOFY, Amazon Prime Day, Click Frenzy Main, Singles' Day, Black Friday, Cyber Monday, Green Monday, Boxing Day
+
+= 1.5.3 =
+* Added Special Event Sale option for retail calendar events
+* Event info display with month and best categories suggestions
+* UI improvements for special offers settings
+
+= 1.5.2 =
+* Removed blue header background from admin pages
+* Settings page max-width 800px for better readability
+* Minor UI improvements
+
+= 1.5.1 =
+* Combined settings page with modern sections layout
+* Added Yes/No toggle switches for settings
+* Fixed narrow dropdown inputs in rule edit form
+* Merged plugin info and credits into single footer section
+
+= 1.5.0 =
+* Fixed singleton pattern issues with frontend classes
+* Fixed class loading errors on plugin activation
+* Improved textdomain loading for WordPress 6.7+
+* Code stability improvements
+
 = 1.4.0 =
 * NEW: Profit Margin Protection - Prevent discounts from going below cost price
 * NEW: Bundle Builder - Customer-created bundles with "Pick X for $Y" deals
@@ -123,5 +153,5 @@ Yes, the plugin is fully compatible with WooCommerce High-Performance Order Stor
 
 == Upgrade Notice ==
 
-= 1.4.0 =
-Major update with 10 new features including profit protection, bundle builder, geo pricing, and more.
+= 1.5.4 =
+Major update: 14 special retail events with custom event support, discount badges on product prices, and customizable badge styling.

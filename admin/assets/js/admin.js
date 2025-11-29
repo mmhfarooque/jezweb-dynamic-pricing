@@ -13,6 +13,8 @@
             this.initStatusToggle();
             this.initBulkActions();
             this.initDeleteConfirm();
+            this.initEventSale();
+            this.initColorPickers();
         },
 
         /**
@@ -402,6 +404,158 @@
                     e.preventDefault();
                 }
             });
+        },
+
+        /**
+         * Initialize event sale functionality
+         */
+        initEventSale: function() {
+            var self = this;
+
+            // Special offer type change - show/hide event sale settings
+            $('#special_offer_type').on('change', function() {
+                self.toggleEventSaleSettings($(this).val());
+            });
+
+            // Event type change - show event info
+            $('#event_type').on('change', function() {
+                self.showEventInfo($(this));
+                self.updateBadgePreview();
+            });
+
+            // Custom event name change - update badge preview
+            $('#custom_event_name').on('input', function() {
+                self.updateBadgePreview();
+            });
+
+            // Event discount type change - update suffix
+            $('#event_discount_type').on('change', function() {
+                self.updateEventDiscountSuffix($(this).val());
+            });
+
+            // Initialize on load
+            this.toggleEventSaleSettings($('#special_offer_type').val());
+        },
+
+        /**
+         * Toggle event sale settings visibility
+         */
+        toggleEventSaleSettings: function(offerType) {
+            var $eventSettings = $('#jdpd-event-sale-settings');
+            var $buyGetFields = $('#special_offer_type').closest('.jdpd-form-fields').find('.jdpd-form-row').not(':first').not('.jdpd-event-sale-settings .jdpd-form-row');
+
+            if (offerType === 'event_sale') {
+                $eventSettings.show();
+                // Hide Buy X Get Y fields for event sale
+                $buyGetFields.slice(0, 3).hide();
+            } else {
+                $eventSettings.hide();
+                // Show Buy X Get Y fields for other offer types
+                $buyGetFields.slice(0, 3).show();
+            }
+        },
+
+        /**
+         * Show event info when event is selected
+         */
+        showEventInfo: function($select) {
+            var $selected = $select.find('option:selected');
+            var eventType = $select.val();
+            var month = $selected.data('month');
+            var categories = $selected.data('categories');
+            var $infoRow = $('#event-info-row');
+            var $customNameRow = $('#custom-event-name-row');
+
+            // Show/hide custom event name field
+            if (eventType === 'custom') {
+                $customNameRow.show();
+                $infoRow.hide();
+            } else if (month && categories) {
+                $customNameRow.hide();
+                var monthNames = [
+                    '', 'January', 'February', 'March', 'April', 'May', 'June',
+                    'July', 'August', 'September', 'October', 'November', 'December'
+                ];
+                $('#event-month').text(monthNames[month]);
+                $('#event-categories').text(categories);
+                $infoRow.show();
+            } else {
+                $customNameRow.hide();
+                $infoRow.hide();
+            }
+        },
+
+        /**
+         * Update badge preview
+         */
+        updateBadgePreview: function() {
+            var $select = $('#event_type');
+            var $selected = $select.find('option:selected');
+            var eventType = $select.val();
+            var $preview = $('#event-badge-preview');
+            var badgeText = '';
+
+            if (eventType === 'custom') {
+                badgeText = $('#custom_event_name').val() || 'Custom Event';
+            } else if (eventType) {
+                badgeText = $selected.text();
+            }
+
+            if (badgeText) {
+                $preview.text(badgeText).show();
+            } else {
+                $preview.hide();
+            }
+        },
+
+        /**
+         * Update event discount suffix based on type
+         */
+        updateEventDiscountSuffix: function(discountType) {
+            var $suffix = $('#event-discount-suffix');
+
+            if (discountType === 'percentage') {
+                $suffix.text('%');
+            } else {
+                $suffix.text(jdpd_admin.currency_symbol || '$');
+            }
+        },
+
+        /**
+         * Initialize color pickers for badge styling
+         */
+        initColorPickers: function() {
+            var self = this;
+
+            // Background color picker
+            $('#jdpd_event_badge_bg_color').on('input', function() {
+                var color = $(this).val();
+                $('#jdpd_event_badge_bg_color_text').val(color);
+                self.updateBadgeLivePreview();
+            });
+
+            // Text color picker
+            $('#jdpd_event_badge_text_color').on('input', function() {
+                var color = $(this).val();
+                $('#jdpd_event_badge_text_color_text').val(color);
+                self.updateBadgeLivePreview();
+            });
+        },
+
+        /**
+         * Update badge live preview
+         */
+        updateBadgeLivePreview: function() {
+            var bgColor = $('#jdpd_event_badge_bg_color').val();
+            var textColor = $('#jdpd_event_badge_text_color').val();
+            var $preview = $('#jdpd-badge-live-preview');
+
+            if ($preview.length) {
+                $preview.css({
+                    'background-color': bgColor,
+                    'color': textColor
+                });
+            }
         }
     };
 

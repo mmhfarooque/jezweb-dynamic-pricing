@@ -36,6 +36,7 @@ if ( isset( $_POST['jdpd_save_settings'] ) && wp_verify_nonce( $_POST['jdpd_sett
         'jdpd_show_in_order_email',
         'jdpd_show_order_metabox',
         'jdpd_enable_debug_log',
+        'jdpd_enable_event_badges',
     );
 
     foreach ( $_POST as $key => $value ) {
@@ -416,6 +417,74 @@ if ( isset( $_POST['jdpd_save_settings'] ) && wp_verify_nonce( $_POST['jdpd_sett
                                    value="<?php echo esc_attr( get_option( 'jdpd_checkout_countdown_time', 300 ) ); ?>"
                                    min="60" max="3600" class="small-text">
                             <span class="description"><?php esc_html_e( 'seconds', 'jezweb-dynamic-pricing' ); ?></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Special Discount Style Section -->
+            <div class="jdpd-settings-section">
+                <div class="jdpd-section-header">
+                    <span class="dashicons dashicons-tag"></span>
+                    <h2><?php esc_html_e( 'Special Discount Style', 'jezweb-dynamic-pricing' ); ?></h2>
+                </div>
+                <div class="jdpd-section-content">
+                    <div class="jdpd-setting-row">
+                        <div class="jdpd-setting-label">
+                            <label for="jdpd_enable_event_badges"><?php esc_html_e( 'Enable Event Badges', 'jezweb-dynamic-pricing' ); ?></label>
+                            <p class="description"><?php esc_html_e( 'Show special event badges next to product prices when discounts apply.', 'jezweb-dynamic-pricing' ); ?></p>
+                        </div>
+                        <div class="jdpd-setting-field">
+                            <label class="jdpd-toggle">
+                                <input type="checkbox" name="jdpd_enable_event_badges" id="jdpd_enable_event_badges" value="yes"
+                                    <?php checked( get_option( 'jdpd_enable_event_badges', 'yes' ), 'yes' ); ?>>
+                                <span class="jdpd-toggle-slider"></span>
+                                <span class="jdpd-toggle-label" data-on="<?php esc_attr_e( 'Yes', 'jezweb-dynamic-pricing' ); ?>" data-off="<?php esc_attr_e( 'No', 'jezweb-dynamic-pricing' ); ?>"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="jdpd-setting-row">
+                        <div class="jdpd-setting-label">
+                            <label for="jdpd_event_badge_bg_color"><?php esc_html_e( 'Badge Background Color', 'jezweb-dynamic-pricing' ); ?></label>
+                            <p class="description"><?php esc_html_e( 'Background color for the special event discount badge.', 'jezweb-dynamic-pricing' ); ?></p>
+                        </div>
+                        <div class="jdpd-setting-field">
+                            <div class="jdpd-color-picker-wrap">
+                                <input type="color" name="jdpd_event_badge_bg_color" id="jdpd_event_badge_bg_color"
+                                       value="<?php echo esc_attr( get_option( 'jdpd_event_badge_bg_color', '#d83a34' ) ); ?>">
+                                <input type="text" id="jdpd_event_badge_bg_color_text"
+                                       value="<?php echo esc_attr( get_option( 'jdpd_event_badge_bg_color', '#d83a34' ) ); ?>"
+                                       readonly>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="jdpd-setting-row">
+                        <div class="jdpd-setting-label">
+                            <label for="jdpd_event_badge_text_color"><?php esc_html_e( 'Badge Text Color', 'jezweb-dynamic-pricing' ); ?></label>
+                            <p class="description"><?php esc_html_e( 'Text color for the special event discount badge.', 'jezweb-dynamic-pricing' ); ?></p>
+                        </div>
+                        <div class="jdpd-setting-field">
+                            <div class="jdpd-color-picker-wrap">
+                                <input type="color" name="jdpd_event_badge_text_color" id="jdpd_event_badge_text_color"
+                                       value="<?php echo esc_attr( get_option( 'jdpd_event_badge_text_color', '#ffffff' ) ); ?>">
+                                <input type="text" id="jdpd_event_badge_text_color_text"
+                                       value="<?php echo esc_attr( get_option( 'jdpd_event_badge_text_color', '#ffffff' ) ); ?>"
+                                       readonly>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="jdpd-badge-preview-section">
+                        <h4><?php esc_html_e( 'Live Preview', 'jezweb-dynamic-pricing' ); ?></h4>
+                        <div class="jdpd-price-with-badge">
+                            <span class="jdpd-old-price">$99.00</span>
+                            <span class="jdpd-new-price">$79.00</span>
+                            <span class="jdpd-event-badge-live" id="jdpd-badge-live-preview"
+                                  style="background-color: <?php echo esc_attr( get_option( 'jdpd_event_badge_bg_color', '#d83a34' ) ); ?>; color: <?php echo esc_attr( get_option( 'jdpd_event_badge_text_color', '#ffffff' ) ); ?>;">
+                                <?php esc_html_e( 'Black Friday', 'jezweb-dynamic-pricing' ); ?>
+                            </span>
                         </div>
                     </div>
                 </div>

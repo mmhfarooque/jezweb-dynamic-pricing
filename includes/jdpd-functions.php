@@ -257,11 +257,108 @@ function jdpd_get_apply_to_options() {
  */
 function jdpd_get_special_offer_types() {
     return array(
-        'buy_x_get_y'     => __( 'Buy X Get Y', 'jezweb-dynamic-pricing' ),
-        'bogo'            => __( 'Buy One Get One (BOGO)', 'jezweb-dynamic-pricing' ),
-        'buy_x_for_y'     => __( 'Buy X for Y price', 'jezweb-dynamic-pricing' ),
+        'buy_x_get_y'      => __( 'Buy X Get Y', 'jezweb-dynamic-pricing' ),
+        'bogo'             => __( 'Buy One Get One (BOGO)', 'jezweb-dynamic-pricing' ),
+        'buy_x_for_y'      => __( 'Buy X for Y price', 'jezweb-dynamic-pricing' ),
         'x_for_price_of_y' => __( 'X for the price of Y', 'jezweb-dynamic-pricing' ),
+        'event_sale'       => __( 'Special Event Sale', 'jezweb-dynamic-pricing' ),
     );
+}
+
+/**
+ * Get special retail events (Australian calendar)
+ *
+ * @return array
+ */
+function jdpd_get_special_events() {
+    return array(
+        'new_year_sale' => array(
+            'name'       => __( 'New Year\'s Day Sale', 'jezweb-dynamic-pricing' ),
+            'month'      => 1,
+            'categories' => __( 'Fitness, Home, General Retail', 'jezweb-dynamic-pricing' ),
+        ),
+        'back_to_school' => array(
+            'name'       => __( 'Back to School Sales', 'jezweb-dynamic-pricing' ),
+            'month'      => 1,
+            'categories' => __( 'Laptops, Stationery, Kids\' Shoes', 'jezweb-dynamic-pricing' ),
+        ),
+        'afterpay_day' => array(
+            'name'       => __( 'Afterpay Day', 'jezweb-dynamic-pricing' ),
+            'month'      => 3,
+            'categories' => __( 'Fashion, Beauty, General Retail', 'jezweb-dynamic-pricing' ),
+        ),
+        'easter_sales' => array(
+            'name'       => __( 'Easter Sales', 'jezweb-dynamic-pricing' ),
+            'month'      => 4,
+            'categories' => __( 'Chocolate, Camping Gear, DIY Tools', 'jezweb-dynamic-pricing' ),
+        ),
+        'click_frenzy_mayhem' => array(
+            'name'       => __( 'Click Frenzy Mayhem', 'jezweb-dynamic-pricing' ),
+            'month'      => 5,
+            'categories' => __( 'Tech, Travel, General Retail', 'jezweb-dynamic-pricing' ),
+        ),
+        'vosn' => array(
+            'name'       => __( 'Vogue Online Shopping Night (VOSN)', 'jezweb-dynamic-pricing' ),
+            'month'      => 9,
+            'categories' => __( 'Designer Fashion, Beauty, Luxury', 'jezweb-dynamic-pricing' ),
+        ),
+        'eofy_sales' => array(
+            'name'       => __( 'EOFY Sales (End of Financial Year)', 'jezweb-dynamic-pricing' ),
+            'month'      => 6,
+            'categories' => __( 'Office Tech, Work Vehicles, Furniture', 'jezweb-dynamic-pricing' ),
+        ),
+        'amazon_prime_day' => array(
+            'name'       => __( 'Amazon Prime Day', 'jezweb-dynamic-pricing' ),
+            'month'      => 7,
+            'categories' => __( 'Smart Home, Electronics, Consumables', 'jezweb-dynamic-pricing' ),
+        ),
+        'click_frenzy_main' => array(
+            'name'       => __( 'Click Frenzy (The Main Event)', 'jezweb-dynamic-pricing' ),
+            'month'      => 11,
+            'categories' => __( 'All Categories, Pre-Black Friday', 'jezweb-dynamic-pricing' ),
+        ),
+        'singles_day' => array(
+            'name'       => __( 'Singles\' Day (11.11)', 'jezweb-dynamic-pricing' ),
+            'month'      => 11,
+            'categories' => __( 'Fashion, Electronics, General Retail', 'jezweb-dynamic-pricing' ),
+        ),
+        'black_friday' => array(
+            'name'       => __( 'Black Friday', 'jezweb-dynamic-pricing' ),
+            'month'      => 11,
+            'categories' => __( 'Electronics, Gifts, Everything', 'jezweb-dynamic-pricing' ),
+        ),
+        'cyber_monday' => array(
+            'name'       => __( 'Cyber Monday', 'jezweb-dynamic-pricing' ),
+            'month'      => 11,
+            'categories' => __( 'Online Deals, Tech, Fashion', 'jezweb-dynamic-pricing' ),
+        ),
+        'green_monday' => array(
+            'name'       => __( 'Green Monday', 'jezweb-dynamic-pricing' ),
+            'month'      => 12,
+            'categories' => __( 'Last-Minute Gifts, Electronics', 'jezweb-dynamic-pricing' ),
+        ),
+        'boxing_day' => array(
+            'name'       => __( 'Boxing Day Sales', 'jezweb-dynamic-pricing' ),
+            'month'      => 12,
+            'categories' => __( 'Summer Clothes, Large Appliances', 'jezweb-dynamic-pricing' ),
+        ),
+        'custom' => array(
+            'name'       => __( 'Custom Event', 'jezweb-dynamic-pricing' ),
+            'month'      => 0,
+            'categories' => __( 'Define your own special event', 'jezweb-dynamic-pricing' ),
+        ),
+    );
+}
+
+/**
+ * Get special event by key
+ *
+ * @param string $event_key Event key.
+ * @return array|null
+ */
+function jdpd_get_special_event( $event_key ) {
+    $events = jdpd_get_special_events();
+    return isset( $events[ $event_key ] ) ? $events[ $event_key ] : null;
 }
 
 /**
