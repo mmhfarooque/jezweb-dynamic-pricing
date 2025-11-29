@@ -150,8 +150,8 @@ final class Jezweb_Dynamic_Pricing {
             return;
         }
 
-        // Load textdomain
-        $this->load_textdomain();
+        // Load textdomain on init hook (WordPress 6.7+ requirement)
+        add_action( 'init', array( $this, 'load_textdomain' ) );
 
         // Include required files
         $this->includes();

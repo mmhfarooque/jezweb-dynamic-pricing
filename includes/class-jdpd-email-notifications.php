@@ -125,9 +125,16 @@ class JDPD_Email_Notifications {
      * @return array Modified email classes.
      */
     public function register_email_classes( $email_classes ) {
-        $email_classes['JDPD_Email_Flash_Sale'] = new JDPD_Email_Flash_Sale();
-        $email_classes['JDPD_Email_Price_Drop'] = new JDPD_Email_Price_Drop();
-        $email_classes['JDPD_Email_Cart_Abandonment'] = new JDPD_Email_Cart_Abandonment();
+        // Only register if the email classes have been defined
+        if ( class_exists( 'JDPD_Email_Flash_Sale' ) ) {
+            $email_classes['JDPD_Email_Flash_Sale'] = new JDPD_Email_Flash_Sale();
+        }
+        if ( class_exists( 'JDPD_Email_Price_Drop' ) ) {
+            $email_classes['JDPD_Email_Price_Drop'] = new JDPD_Email_Price_Drop();
+        }
+        if ( class_exists( 'JDPD_Email_Cart_Abandonment' ) ) {
+            $email_classes['JDPD_Email_Cart_Abandonment'] = new JDPD_Email_Cart_Abandonment();
+        }
 
         return $email_classes;
     }
