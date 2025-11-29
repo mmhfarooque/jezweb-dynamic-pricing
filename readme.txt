@@ -4,7 +4,7 @@ Tags: woocommerce, pricing, discounts, dynamic pricing, bulk pricing, quantity d
 Requires at least: 6.0
 Tested up to: 6.7
 Requires PHP: 8.0
-Stable tag: 1.6.2
+Stable tag: 1.6.3
 WC requires at least: 8.0
 WC tested up to: 9.4
 License: GPLv2 or later
@@ -81,6 +81,12 @@ Yes, all rules support scheduling with start and end dates, including advanced s
 Yes, the plugin is fully compatible with WooCommerce High-Performance Order Storage.
 
 == Changelog ==
+
+= 1.6.3 =
+* FIXED: Product variations now correctly match rules applied to parent products
+* When selecting "Specific products", variations now inherit discounts from parent
+* Categories and tags rules now work correctly with product variations
+* This fixes the main issue where event sale discounts weren't applying to variation products
 
 = 1.6.2 =
 * DEBUG: Added extensive logging to trace event sale discount application

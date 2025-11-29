@@ -285,8 +285,19 @@ class JDPD_Rule {
 
         $product_id = $product->get_id();
 
+        // Get parent ID if this is a variation
+        $parent_id = 0;
+        if ( $product->is_type( 'variation' ) ) {
+            $parent_id = $product->get_parent_id();
+        }
+
         // Check if product is excluded
         if ( jdpd_is_product_excluded( $product_id, $this->id ) ) {
+            return false;
+        }
+
+        // Also check if parent is excluded (for variations)
+        if ( $parent_id > 0 && jdpd_is_product_excluded( $parent_id, $this->id ) ) {
             return false;
         }
 
@@ -304,18 +315,53 @@ class JDPD_Rule {
             case 'specific_products':
                 $items = jdpd_get_rule_items( $this->id, 'product' );
                 $product_ids = wp_list_pluck( $items, 'item_id' );
-                return in_array( $product_id, $product_ids, true );
+
+                // Check if product ID matches
+                if ( in_array( $product_id, $product_ids, true ) ) {
+                    return true;
+                }
+
+                // For variations, also check if parent product ID matches
+                if ( $parent_id > 0 && in_array( $parent_id, $product_ids, true ) ) {
+                    return true;
+                }
+
+                return false;
 
             case 'categories':
                 $items = jdpd_get_rule_items( $this->id, 'category' );
                 $category_ids = wp_list_pluck( $items, 'item_id' );
-                $product_cats = $product->get_category_ids();
+
+                // For variations, get categories from parent
+                if ( $parent_id > 0 ) {
+                    $parent_product = wc_get_product( $parent_id );
+                    if ( $parent_product ) {
+                        $product_cats = $parent_product->get_category_ids();
+                    } else {
+                        $product_cats = array();
+                    }
+                } else {
+                    $product_cats = $product->get_category_ids();
+                }
+
                 return ! empty( array_intersect( $category_ids, $product_cats ) );
 
             case 'tags':
                 $items = jdpd_get_rule_items( $this->id, 'tag' );
                 $tag_ids = wp_list_pluck( $items, 'item_id' );
-                $product_tags = $product->get_tag_ids();
+
+                // For variations, get tags from parent
+                if ( $parent_id > 0 ) {
+                    $parent_product = wc_get_product( $parent_id );
+                    if ( $parent_product ) {
+                        $product_tags = $parent_product->get_tag_ids();
+                    } else {
+                        $product_tags = array();
+                    }
+                } else {
+                    $product_tags = $product->get_tag_ids();
+                }
+
                 return ! empty( array_intersect( $tag_ids, $product_tags ) );
         }
 
