@@ -385,6 +385,9 @@ class JDPD_Install {
             self::create_tables();
             update_option( 'jdpd_db_version', JDPD_DB_VERSION );
         }
+
+        // Always ensure event columns exist (handles edge cases where migration failed)
+        self::ensure_event_columns();
     }
 
     /**
@@ -504,29 +507,62 @@ class JDPD_Install {
      * Adds event sale columns to the rules table
      */
     private static function update_155() {
-        global $wpdb;
-
-        $table = $wpdb->prefix . 'jdpd_rules';
-
-        // Check if event_type column exists
-        $column_exists = $wpdb->get_results(
-            $wpdb->prepare(
-                "SHOW COLUMNS FROM {$table} LIKE %s",
-                'event_type'
-            )
-        );
-
-        if ( empty( $column_exists ) ) {
-            // Add event sale columns
-            $wpdb->query( "ALTER TABLE {$table} ADD COLUMN event_type varchar(100) DEFAULT NULL AFTER badge_text" );
-            $wpdb->query( "ALTER TABLE {$table} ADD COLUMN custom_event_name varchar(255) DEFAULT NULL AFTER event_type" );
-            $wpdb->query( "ALTER TABLE {$table} ADD COLUMN event_discount_type varchar(50) DEFAULT 'percentage' AFTER custom_event_name" );
-            $wpdb->query( "ALTER TABLE {$table} ADD COLUMN event_discount_value decimal(19,4) DEFAULT 0 AFTER event_discount_type" );
-        }
+        self::ensure_event_columns();
 
         // Log the upgrade
         if ( function_exists( 'jdpd_log' ) ) {
             jdpd_log( 'Upgraded to version 1.5.5', 'info' );
+        }
+    }
+
+    /**
+     * Ensure event sale columns exist in the rules table
+     * This is called both from migration and directly to handle edge cases
+     */
+    public static function ensure_event_columns() {
+        global $wpdb;
+
+        $table = $wpdb->prefix . 'jdpd_rules';
+
+        // Check if table exists first
+        $table_exists = $wpdb->get_var( "SHOW TABLES LIKE '{$table}'" );
+        if ( ! $table_exists ) {
+            return;
+        }
+
+        // Get existing columns
+        $columns = $wpdb->get_col( "DESCRIBE {$table}", 0 );
+
+        // Add event_type column if it doesn't exist
+        if ( ! in_array( 'event_type', $columns, true ) ) {
+            $wpdb->query( "ALTER TABLE {$table} ADD COLUMN event_type varchar(100) DEFAULT NULL" );
+            if ( function_exists( 'jdpd_log' ) ) {
+                jdpd_log( 'Added event_type column to rules table', 'info' );
+            }
+        }
+
+        // Add custom_event_name column if it doesn't exist
+        if ( ! in_array( 'custom_event_name', $columns, true ) ) {
+            $wpdb->query( "ALTER TABLE {$table} ADD COLUMN custom_event_name varchar(255) DEFAULT NULL" );
+            if ( function_exists( 'jdpd_log' ) ) {
+                jdpd_log( 'Added custom_event_name column to rules table', 'info' );
+            }
+        }
+
+        // Add event_discount_type column if it doesn't exist
+        if ( ! in_array( 'event_discount_type', $columns, true ) ) {
+            $wpdb->query( "ALTER TABLE {$table} ADD COLUMN event_discount_type varchar(50) DEFAULT 'percentage'" );
+            if ( function_exists( 'jdpd_log' ) ) {
+                jdpd_log( 'Added event_discount_type column to rules table', 'info' );
+            }
+        }
+
+        // Add event_discount_value column if it doesn't exist
+        if ( ! in_array( 'event_discount_value', $columns, true ) ) {
+            $wpdb->query( "ALTER TABLE {$table} ADD COLUMN event_discount_value decimal(19,4) DEFAULT 0" );
+            if ( function_exists( 'jdpd_log' ) ) {
+                jdpd_log( 'Added event_discount_value column to rules table', 'info' );
+            }
         }
     }
 }
