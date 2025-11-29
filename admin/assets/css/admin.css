@@ -1238,6 +1238,10 @@
 /* ========================================
    Settings Sections Layout
    ======================================== */
+.jdpd-settings-wrap {
+    max-width: 800px;
+}
+
 .jdpd-settings-section {
     background: var(--jdpd-card-bg);
     border: 1px solid var(--jdpd-border);
