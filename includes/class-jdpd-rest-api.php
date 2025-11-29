@@ -18,6 +18,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 class JDPD_REST_API {
 
     /**
+     * Instance
+     *
+     * @var JDPD_REST_API
+     */
+    private static $instance = null;
+
+    /**
      * API namespace
      *
      * @var string
@@ -25,9 +32,21 @@ class JDPD_REST_API {
     private $namespace = 'jdpd/v1';
 
     /**
+     * Get instance
+     *
+     * @return JDPD_REST_API
+     */
+    public static function get_instance() {
+        if ( null === self::$instance ) {
+            self::$instance = new self();
+        }
+        return self::$instance;
+    }
+
+    /**
      * Constructor
      */
-    public function __construct() {
+    private function __construct() {
         add_action( 'rest_api_init', array( $this, 'register_routes' ) );
     }
 

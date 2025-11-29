@@ -18,9 +18,28 @@ if ( ! defined( 'ABSPATH' ) ) {
 class JDPD_Frontend_Enhancements {
 
     /**
+     * Instance
+     *
+     * @var JDPD_Frontend_Enhancements
+     */
+    private static $instance = null;
+
+    /**
+     * Get instance
+     *
+     * @return JDPD_Frontend_Enhancements
+     */
+    public static function get_instance() {
+        if ( null === self::$instance ) {
+            self::$instance = new self();
+        }
+        return self::$instance;
+    }
+
+    /**
      * Constructor
      */
-    public function __construct() {
+    private function __construct() {
         $this->init_hooks();
     }
 

@@ -18,6 +18,32 @@ if ( ! defined( 'ABSPATH' ) ) {
 class JDPD_Import_Export {
 
     /**
+     * Instance
+     *
+     * @var JDPD_Import_Export
+     */
+    private static $instance = null;
+
+    /**
+     * Get instance
+     *
+     * @return JDPD_Import_Export
+     */
+    public static function get_instance() {
+        if ( null === self::$instance ) {
+            self::$instance = new self();
+        }
+        return self::$instance;
+    }
+
+    /**
+     * Constructor
+     */
+    private function __construct() {
+        // Initialize hooks if needed
+    }
+
+    /**
      * Export rules to JSON
      *
      * @param array $rule_ids Optional. Specific rule IDs to export. Empty for all.

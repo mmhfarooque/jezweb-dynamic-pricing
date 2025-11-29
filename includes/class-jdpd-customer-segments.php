@@ -18,6 +18,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 class JDPD_Customer_Segments {
 
     /**
+     * Instance
+     *
+     * @var JDPD_Customer_Segments
+     */
+    private static $instance = null;
+
+    /**
      * Segments table name
      *
      * @var string
@@ -32,9 +39,21 @@ class JDPD_Customer_Segments {
     private $customer_segments_table;
 
     /**
+     * Get instance
+     *
+     * @return JDPD_Customer_Segments
+     */
+    public static function get_instance() {
+        if ( null === self::$instance ) {
+            self::$instance = new self();
+        }
+        return self::$instance;
+    }
+
+    /**
      * Constructor
      */
-    public function __construct() {
+    private function __construct() {
         global $wpdb;
         $this->segments_table = $wpdb->prefix . 'jdpd_segments';
         $this->customer_segments_table = $wpdb->prefix . 'jdpd_customer_segments';

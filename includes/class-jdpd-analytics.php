@@ -18,6 +18,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 class JDPD_Analytics {
 
     /**
+     * Instance
+     *
+     * @var JDPD_Analytics
+     */
+    private static $instance = null;
+
+    /**
      * Analytics table name
      *
      * @var string
@@ -25,9 +32,21 @@ class JDPD_Analytics {
     private $table_name;
 
     /**
+     * Get instance
+     *
+     * @return JDPD_Analytics
+     */
+    public static function get_instance() {
+        if ( null === self::$instance ) {
+            self::$instance = new self();
+        }
+        return self::$instance;
+    }
+
+    /**
      * Constructor
      */
-    public function __construct() {
+    private function __construct() {
         global $wpdb;
         $this->table_name = $wpdb->prefix . 'jdpd_analytics';
         $this->init_hooks();
