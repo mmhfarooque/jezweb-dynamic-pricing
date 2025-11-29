@@ -4,7 +4,7 @@ Tags: woocommerce, pricing, discounts, dynamic pricing, bulk pricing, quantity d
 Requires at least: 6.0
 Tested up to: 6.7
 Requires PHP: 8.0
-Stable tag: 1.6.1
+Stable tag: 1.6.2
 WC requires at least: 8.0
 WC tested up to: 9.4
 License: GPLv2 or later
@@ -81,6 +81,12 @@ Yes, all rules support scheduling with start and end dates, including advanced s
 Yes, the plugin is fully compatible with WooCommerce High-Performance Order Storage.
 
 == Changelog ==
+
+= 1.6.2 =
+* DEBUG: Added extensive logging to trace event sale discount application
+* FIXED: Textdomain loading too early notice in WordPress 6.7+
+* Improved textdomain loading order for translations
+* Added debug tracing for get_applicable_rules() and calculate_price()
 
 = 1.6.1 =
 * FIXED: Event sale discounts now apply to cart
