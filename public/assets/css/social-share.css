@@ -1,0 +1,166 @@
+/**
+ * Social Share Styles
+ *
+ * @package Jezweb_Dynamic_Pricing
+ * @since 1.4.0
+ */
+
+/* Share Container */
+.jdpd-social-share-wrap {
+    margin: 20px 0;
+    padding: 15px;
+    background: #f9f9f9;
+    border: 1px solid #eee;
+    border-radius: 6px;
+}
+
+.jdpd-share-promo {
+    margin: 0 0 12px;
+    font-size: 14px;
+    color: #333;
+    font-weight: 500;
+}
+
+.jdpd-share-applied {
+    color: #27ae60;
+    font-weight: bold;
+}
+
+/* Share Buttons Container */
+.jdpd-share-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+/* Share Button Base */
+.jdpd-share-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-radius: 4px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    color: #fff;
+    background: var(--platform-color, #333);
+}
+
+.jdpd-share-btn:hover {
+    opacity: 0.85;
+    transform: translateY(-1px);
+    color: #fff;
+}
+
+.jdpd-share-btn:active {
+    transform: translateY(0);
+}
+
+/* Icon */
+.jdpd-share-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+}
+
+.jdpd-share-icon svg {
+    width: 100%;
+    height: 100%;
+}
+
+/* Text */
+.jdpd-share-text {
+    font-size: 13px;
+    font-weight: 500;
+}
+
+/* Style Variations */
+
+/* Icons Only */
+.jdpd-share-buttons.style-icons .jdpd-share-btn {
+    padding: 10px;
+    border-radius: 50%;
+}
+
+/* Icons with Text */
+.jdpd-share-buttons.style-icons_text .jdpd-share-btn {
+    padding: 8px 16px;
+}
+
+/* Full Buttons */
+.jdpd-share-buttons.style-buttons .jdpd-share-btn {
+    padding: 10px 20px;
+    min-width: 140px;
+}
+
+/* Platform Colors (fallbacks) */
+.jdpd-share-facebook {
+    background: #1877f2;
+}
+
+.jdpd-share-twitter {
+    background: #000000;
+}
+
+.jdpd-share-pinterest {
+    background: #bd081c;
+}
+
+.jdpd-share-linkedin {
+    background: #0a66c2;
+}
+
+.jdpd-share-whatsapp {
+    background: #25d366;
+}
+
+.jdpd-share-email {
+    background: #666666;
+}
+
+/* Notification Toast */
+.jdpd-social-notice {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    padding: 15px 25px;
+    background: #333;
+    color: #fff;
+    border-radius: 4px;
+    z-index: 99999;
+    opacity: 0;
+    transition: all 0.3s ease;
+    max-width: 90%;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.jdpd-social-notice.show {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+}
+
+.jdpd-social-notice.success {
+    background: #27ae60;
+}
+
+.jdpd-social-notice.error {
+    background: #e74c3c;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+    .jdpd-share-buttons {
+        justify-content: center;
+    }
+
+    .jdpd-share-buttons.style-buttons .jdpd-share-btn {
+        width: 100%;
+        justify-content: center;
+    }
+}

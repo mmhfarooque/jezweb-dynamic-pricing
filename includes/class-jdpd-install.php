@@ -250,6 +250,24 @@ class JDPD_Install {
             KEY created_at (created_at)
         ) $charset_collate;";
 
+        // Price history table (v1.4.0)
+        $table_price_history = $wpdb->prefix . 'jdpd_price_history';
+        $sql_price_history = "CREATE TABLE IF NOT EXISTS $table_price_history (
+            id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+            product_id bigint(20) unsigned NOT NULL,
+            variation_id bigint(20) unsigned DEFAULT 0,
+            regular_price decimal(19,4) DEFAULT NULL,
+            sale_price decimal(19,4) DEFAULT NULL,
+            effective_price decimal(19,4) NOT NULL,
+            change_type varchar(50) DEFAULT 'update',
+            recorded_at datetime NOT NULL,
+            PRIMARY KEY (id),
+            KEY product_id (product_id),
+            KEY variation_id (variation_id),
+            KEY recorded_at (recorded_at),
+            KEY product_date (product_id, recorded_at)
+        ) $charset_collate;";
+
         require_once ABSPATH . 'wp-admin/includes/upgrade.php';
         dbDelta( $sql_rules );
         dbDelta( $sql_quantity );
@@ -263,6 +281,7 @@ class JDPD_Install {
         dbDelta( $sql_segment_customers );
         dbDelta( $sql_ab_tests );
         dbDelta( $sql_ab_results );
+        dbDelta( $sql_price_history );
     }
 
     /**
@@ -322,6 +341,27 @@ class JDPD_Install {
         if ( ! wp_next_scheduled( 'jdpd_daily_cleanup' ) ) {
             wp_schedule_event( time(), 'daily', 'jdpd_daily_cleanup' );
         }
+
+        // Schedule v1.4.0 events
+        if ( ! wp_next_scheduled( 'jdpd_birthday_check' ) ) {
+            wp_schedule_event( strtotime( '06:00:00' ), 'daily', 'jdpd_birthday_check' );
+        }
+
+        if ( ! wp_next_scheduled( 'jdpd_anniversary_check' ) ) {
+            wp_schedule_event( strtotime( '06:00:00' ), 'daily', 'jdpd_anniversary_check' );
+        }
+
+        if ( ! wp_next_scheduled( 'jdpd_wishlist_reminder' ) ) {
+            wp_schedule_event( strtotime( '09:00:00' ), 'daily', 'jdpd_wishlist_reminder' );
+        }
+
+        if ( ! wp_next_scheduled( 'jdpd_price_drop_notifications' ) ) {
+            wp_schedule_event( time(), 'hourly', 'jdpd_price_drop_notifications' );
+        }
+
+        if ( ! wp_next_scheduled( 'jdpd_price_history_cleanup' ) ) {
+            wp_schedule_event( time(), 'daily', 'jdpd_price_history_cleanup' );
+        }
     }
 
     /**
@@ -353,6 +393,11 @@ class JDPD_Install {
         if ( version_compare( $current_version, '1.3.0', '<' ) ) {
             self::update_130();
         }
+
+        // v1.4.0 upgrade - Add price history table and new features
+        if ( version_compare( $current_version, '1.4.0', '<' ) ) {
+            self::update_140();
+        }
     }
 
     /**
@@ -381,6 +426,67 @@ class JDPD_Install {
         // Log the upgrade
         if ( function_exists( 'jdpd_log' ) ) {
             jdpd_log( 'Upgraded to version 1.3.0', 'info' );
+        }
+    }
+
+    /**
+     * Upgrade to version 1.4.0
+     * Adds price history table and schedules new events
+     */
+    private static function update_140() {
+        // Schedule new events
+        self::schedule_events();
+
+        // Add default options for new features
+        $new_options = array(
+            // Profit Protection
+            'jdpd_profit_protection_enabled'   => 'no',
+            'jdpd_default_min_margin'          => 20,
+
+            // Bundle Builder
+            'jdpd_bundle_builder_enabled'      => 'yes',
+
+            // Geo Pricing
+            'jdpd_geo_pricing_enabled'         => 'no',
+
+            // Urgency & Scarcity
+            'jdpd_urgency_enabled'             => 'yes',
+            'jdpd_show_views_counter'          => 'yes',
+            'jdpd_show_purchase_counter'       => 'yes',
+
+            // Wholesale Pricing
+            'jdpd_wholesale_enabled'           => 'no',
+
+            // Coupon Stacking
+            'jdpd_coupon_stacking_enabled'     => 'yes',
+            'jdpd_max_coupons_per_order'       => 5,
+
+            // Birthday Discounts
+            'jdpd_birthday_enabled'            => 'no',
+            'jdpd_birthday_discount'           => 10,
+
+            // Wishlist Pricing
+            'jdpd_wishlist_pricing_enabled'    => 'no',
+
+            // Social Discounts
+            'jdpd_social_discounts_enabled'    => 'no',
+            'jdpd_social_discount_amount'      => 10,
+
+            // Price History
+            'jdpd_price_history_enabled'       => 'yes',
+            'jdpd_show_price_graph'            => 'yes',
+            'jdpd_omnibus_enabled'             => 'no',
+        );
+
+        foreach ( $new_options as $key => $value ) {
+            if ( false === get_option( $key ) ) {
+                add_option( $key, $value );
+            }
+        }
+
+        // Log the upgrade
+        if ( function_exists( 'jdpd_log' ) ) {
+            jdpd_log( 'Upgraded to version 1.4.0', 'info' );
         }
     }
 }

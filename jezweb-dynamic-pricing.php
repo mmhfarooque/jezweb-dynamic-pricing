@@ -3,7 +3,7 @@
  * Plugin Name: Jezweb Dynamic Pricing & Discounts for WooCommerce
  * Plugin URI: https://github.com/mmhfarooque/jezweb-dynamic-pricing
  * Description: Powerful dynamic pricing and discount rules for WooCommerce. Create quantity discounts, cart rules, BOGO offers, gift products, and special promotions.
- * Version: 1.3.0
+ * Version: 1.5.0
  * Author: Mahmmud Farooque
  * Author URI: https://jezweb.com.au
  * Text Domain: jezweb-dynamic-pricing
@@ -30,12 +30,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Define plugin constants
  */
-define( 'JDPD_VERSION', '1.3.0' );
+define( 'JDPD_VERSION', '1.5.0' );
 define( 'JDPD_PLUGIN_FILE', __FILE__ );
 define( 'JDPD_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
 define( 'JDPD_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'JDPD_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
-define( 'JDPD_DB_VERSION', '1.1.0' );
+define( 'JDPD_DB_VERSION', '1.3.0' );
 
 /**
  * Initialize logger and error handler
@@ -202,6 +202,25 @@ final class Jezweb_Dynamic_Pricing {
         require_once JDPD_PLUGIN_PATH . 'includes/class-jdpd-performance.php';
         require_once JDPD_PLUGIN_PATH . 'includes/class-jdpd-multicurrency.php';
 
+        // New v1.4.0 includes
+        require_once JDPD_PLUGIN_PATH . 'includes/class-jdpd-profit-protection.php';
+        require_once JDPD_PLUGIN_PATH . 'includes/class-jdpd-bundle-builder.php';
+        require_once JDPD_PLUGIN_PATH . 'includes/class-jdpd-geo-pricing.php';
+        require_once JDPD_PLUGIN_PATH . 'includes/class-jdpd-urgency-scarcity.php';
+        require_once JDPD_PLUGIN_PATH . 'includes/class-jdpd-wholesale-pricing.php';
+        require_once JDPD_PLUGIN_PATH . 'includes/class-jdpd-coupon-stacking.php';
+        require_once JDPD_PLUGIN_PATH . 'includes/class-jdpd-birthday-discounts.php';
+        require_once JDPD_PLUGIN_PATH . 'includes/class-jdpd-wishlist-pricing.php';
+        require_once JDPD_PLUGIN_PATH . 'includes/class-jdpd-social-discounts.php';
+        require_once JDPD_PLUGIN_PATH . 'includes/class-jdpd-price-history.php';
+        require_once JDPD_PLUGIN_PATH . 'includes/class-jdpd-loyalty-points.php';
+
+        // New v1.5.0 includes
+        require_once JDPD_PLUGIN_PATH . 'includes/class-jdpd-referral-program.php';
+        require_once JDPD_PLUGIN_PATH . 'includes/class-jdpd-flash-sales.php';
+        require_once JDPD_PLUGIN_PATH . 'includes/class-jdpd-review-discounts.php';
+        require_once JDPD_PLUGIN_PATH . 'includes/class-jdpd-exit-intent.php';
+
         // Admin includes
         if ( is_admin() ) {
             require_once JDPD_PLUGIN_PATH . 'admin/class-jdpd-admin.php';
@@ -273,6 +292,18 @@ final class Jezweb_Dynamic_Pricing {
         JDPD_Email_Notifications::get_instance();
         JDPD_Performance::get_instance();
         JDPD_Multicurrency::get_instance();
+
+        // Initialize new v1.4.0 components
+        JDPD_Profit_Protection::get_instance();
+        JDPD_Bundle_Builder::get_instance();
+        JDPD_Geo_Pricing::get_instance();
+        JDPD_Urgency_Scarcity::get_instance();
+        JDPD_Wholesale_Pricing::get_instance();
+        JDPD_Coupon_Stacking::get_instance();
+        JDPD_Birthday_Discounts::get_instance();
+        JDPD_Wishlist_Pricing::get_instance();
+        JDPD_Social_Discounts::get_instance();
+        JDPD_Price_History::get_instance();
 
         // Declare HPOS compatibility
         add_action( 'before_woocommerce_init', array( $this, 'declare_hpos_compatibility' ) );
@@ -371,6 +402,11 @@ final class Jezweb_Dynamic_Pricing {
     public function deactivate() {
         // Clean up scheduled events if any
         wp_clear_scheduled_hook( 'jdpd_daily_cleanup' );
+
+        // Clear v1.4.0 scheduled events
+        JDPD_Birthday_Discounts::clear_events();
+        JDPD_Wishlist_Pricing::clear_events();
+        JDPD_Price_History::clear_events();
     }
 
     /**

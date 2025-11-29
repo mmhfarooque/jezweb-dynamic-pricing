@@ -37,3 +37,8 @@ phpunit.xml
 .env
 .env.local
 wp-config.php
+
+# AI Assistant
+.claude/
+.cursor/
+.copilot/

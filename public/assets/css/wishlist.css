@@ -1,0 +1,181 @@
+/**
+ * Wishlist Styles
+ *
+ * @package Jezweb_Dynamic_Pricing
+ * @since 1.4.0
+ */
+
+/* Wishlist Button */
+.jdpd-wishlist-button-wrap {
+    margin: 10px 0;
+}
+
+.jdpd-wishlist-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background: transparent;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.jdpd-wishlist-button:hover {
+    background: #f5f5f5;
+    border-color: #ccc;
+}
+
+.jdpd-wishlist-button.in-wishlist {
+    background: #fff0f0;
+    border-color: #e74c3c;
+    color: #e74c3c;
+}
+
+.jdpd-wishlist-button.loading {
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+.jdpd-wishlist-icon {
+    font-size: 18px;
+    line-height: 1;
+}
+
+.jdpd-wishlist-button.in-wishlist .jdpd-wishlist-icon {
+    color: #e74c3c;
+}
+
+/* Wishlist Page */
+.jdpd-wishlist-page {
+    margin: 20px 0;
+}
+
+.jdpd-wishlist-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.jdpd-wishlist-table th,
+.jdpd-wishlist-table td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+
+.jdpd-wishlist-table .product-remove {
+    width: 40px;
+    text-align: center;
+}
+
+.jdpd-wishlist-table .product-thumbnail {
+    width: 80px;
+}
+
+.jdpd-wishlist-table .product-thumbnail img {
+    width: 60px;
+    height: auto;
+}
+
+.jdpd-wishlist-table .remove {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    line-height: 22px;
+    text-align: center;
+    border-radius: 50%;
+    background: #f5f5f5;
+    color: #999;
+    text-decoration: none;
+    font-size: 18px;
+    transition: all 0.3s ease;
+}
+
+.jdpd-wishlist-table .remove:hover {
+    background: #e74c3c;
+    color: #fff;
+}
+
+.jdpd-wishlist-table tr.removing {
+    opacity: 0.5;
+}
+
+/* Discount Badge */
+.jdpd-wishlist-discount-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    background: #27ae60;
+    color: #fff;
+    border-radius: 3px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+/* Notices on Product Page */
+.jdpd-wishlist-discount-notice,
+.jdpd-wishlist-promo-notice {
+    padding: 12px 15px;
+    margin: 10px 0;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.jdpd-wishlist-discount-notice {
+    background: #d4edda;
+    border: 1px solid #c3e6cb;
+    color: #155724;
+}
+
+.jdpd-wishlist-promo-notice {
+    background: #fff3cd;
+    border: 1px solid #ffeeba;
+    color: #856404;
+}
+
+/* Toast Notification */
+.jdpd-wishlist-notice {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    padding: 15px 25px;
+    background: #333;
+    color: #fff;
+    border-radius: 4px;
+    z-index: 99999;
+    opacity: 0;
+    transition: all 0.3s ease;
+    max-width: 90%;
+    text-align: center;
+}
+
+.jdpd-wishlist-notice.show {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+}
+
+.jdpd-wishlist-notice.success {
+    background: #27ae60;
+}
+
+.jdpd-wishlist-notice.error {
+    background: #e74c3c;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .jdpd-wishlist-table .product-thumbnail {
+        display: none;
+    }
+
+    .jdpd-wishlist-table th,
+    .jdpd-wishlist-table td {
+        padding: 10px 5px;
+    }
+
+    .jdpd-wishlist-table .product-discount {
+        display: none;
+    }
+}
