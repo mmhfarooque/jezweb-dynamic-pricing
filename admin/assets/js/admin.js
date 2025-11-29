@@ -513,10 +513,30 @@
             }
 
             if (badgeText) {
-                $preview.text(badgeText).show();
+                // Apply custom colors
+                var bgColor = $('#badge_bg_color').val() || '#d83a34';
+                var textColor = $('#badge_text_color').val() || '#ffffff';
+
+                $preview.text(badgeText).css({
+                    'background-color': bgColor,
+                    'color': textColor,
+                    'display': 'inline-block',
+                    'padding': '4px 10px',
+                    'border-radius': '4px',
+                    'font-size': '11px',
+                    'font-weight': '600',
+                    'text-transform': 'uppercase'
+                }).show();
             } else {
                 $preview.hide();
             }
+        },
+
+        /**
+         * Update event badge preview with custom colors (alias for updateBadgePreview)
+         */
+        updateEventBadgePreview: function() {
+            this.updateBadgePreview();
         },
 
         /**
@@ -538,23 +558,53 @@
         initColorPickers: function() {
             var self = this;
 
-            // Background color picker
+            // Settings page - Background color picker
             $('#jdpd_event_badge_bg_color').on('input', function() {
                 var color = $(this).val();
                 $('#jdpd_event_badge_bg_color_text').val(color);
                 self.updateBadgeLivePreview();
             });
 
-            // Text color picker
+            // Settings page - Text color picker
             $('#jdpd_event_badge_text_color').on('input', function() {
                 var color = $(this).val();
                 $('#jdpd_event_badge_text_color_text').val(color);
                 self.updateBadgeLivePreview();
             });
+
+            // Rule editor - Background color picker
+            $('#badge_bg_color').on('input', function() {
+                var color = $(this).val();
+                $('#badge_bg_color_text').val(color);
+                self.updateEventBadgePreview();
+            });
+
+            $('#badge_bg_color_text').on('input', function() {
+                var color = $(this).val();
+                if (/^#[0-9A-Fa-f]{6}$/.test(color)) {
+                    $('#badge_bg_color').val(color);
+                    self.updateEventBadgePreview();
+                }
+            });
+
+            // Rule editor - Text color picker
+            $('#badge_text_color').on('input', function() {
+                var color = $(this).val();
+                $('#badge_text_color_text').val(color);
+                self.updateEventBadgePreview();
+            });
+
+            $('#badge_text_color_text').on('input', function() {
+                var color = $(this).val();
+                if (/^#[0-9A-Fa-f]{6}$/.test(color)) {
+                    $('#badge_text_color').val(color);
+                    self.updateEventBadgePreview();
+                }
+            });
         },
 
         /**
-         * Update badge live preview
+         * Update badge live preview (settings page)
          */
         updateBadgeLivePreview: function() {
             var bgColor = $('#jdpd_event_badge_bg_color').val();

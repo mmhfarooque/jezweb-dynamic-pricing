@@ -57,6 +57,8 @@ class JDPD_Install {
             exclusive tinyint(1) NOT NULL DEFAULT 0,
             show_badge tinyint(1) NOT NULL DEFAULT 1,
             badge_text varchar(255) DEFAULT NULL,
+            badge_bg_color varchar(20) DEFAULT NULL,
+            badge_text_color varchar(20) DEFAULT NULL,
             special_offer_type varchar(100) DEFAULT NULL,
             event_type varchar(100) DEFAULT NULL,
             custom_event_name varchar(255) DEFAULT NULL,
@@ -605,6 +607,30 @@ class JDPD_Install {
             } else {
                 if ( function_exists( 'jdpd_log' ) ) {
                     jdpd_log( 'ensure_event_columns: FAILED to add event_discount_value - ' . $wpdb->last_error, 'error' );
+                }
+            }
+        }
+
+        // Add badge_bg_color column if it doesn't exist
+        if ( ! in_array( 'badge_bg_color', $columns, true ) ) {
+            $result = $wpdb->query( "ALTER TABLE {$table} ADD COLUMN badge_bg_color varchar(20) DEFAULT NULL" );
+            if ( $result !== false ) {
+                $columns_added[] = 'badge_bg_color';
+            } else {
+                if ( function_exists( 'jdpd_log' ) ) {
+                    jdpd_log( 'ensure_event_columns: FAILED to add badge_bg_color - ' . $wpdb->last_error, 'error' );
+                }
+            }
+        }
+
+        // Add badge_text_color column if it doesn't exist
+        if ( ! in_array( 'badge_text_color', $columns, true ) ) {
+            $result = $wpdb->query( "ALTER TABLE {$table} ADD COLUMN badge_text_color varchar(20) DEFAULT NULL" );
+            if ( $result !== false ) {
+                $columns_added[] = 'badge_text_color';
+            } else {
+                if ( function_exists( 'jdpd_log' ) ) {
+                    jdpd_log( 'ensure_event_columns: FAILED to add badge_text_color - ' . $wpdb->last_error, 'error' );
                 }
             }
         }

@@ -4,7 +4,7 @@ Tags: woocommerce, pricing, discounts, dynamic pricing, bulk pricing, quantity d
 Requires at least: 6.0
 Tested up to: 6.7
 Requires PHP: 8.0
-Stable tag: 1.6.4
+Stable tag: 1.6.5
 WC requires at least: 8.0
 WC tested up to: 9.4
 License: GPLv2 or later
@@ -81,6 +81,14 @@ Yes, all rules support scheduling with start and end dates, including advanced s
 Yes, the plugin is fully compatible with WooCommerce High-Performance Order Storage.
 
 == Changelog ==
+
+= 1.6.5 =
+* NEW: Badge customization per rule - choose background and text colors
+* NEW: Checkout page now shows original price with strikethrough, discounted price, and badge
+* IMPROVED: Badge text color now correctly displays as white
+* IMPROVED: Badge preview in rule editor shows live color preview
+* Added badge_bg_color and badge_text_color fields to rule editor
+* Database migration adds new badge color columns automatically
 
 = 1.6.4 =
 * FIXED: Critical bug - specific products comparison now uses correct type matching

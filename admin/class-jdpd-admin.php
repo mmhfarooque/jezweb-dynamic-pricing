@@ -314,6 +314,10 @@ class JDPD_Admin {
         $rule->set( 'event_discount_type', ! empty( $_POST['event_discount_type'] ) ? sanitize_key( $_POST['event_discount_type'] ) : 'percentage' );
         $rule->set( 'event_discount_value', ! empty( $_POST['event_discount_value'] ) ? floatval( $_POST['event_discount_value'] ) : 0 );
 
+        // Badge customization colors
+        $rule->set( 'badge_bg_color', ! empty( $_POST['badge_bg_color'] ) ? sanitize_hex_color( $_POST['badge_bg_color'] ) : '' );
+        $rule->set( 'badge_text_color', ! empty( $_POST['badge_text_color'] ) ? sanitize_hex_color( $_POST['badge_text_color'] ) : '' );
+
         // Verify the values were set
         if ( function_exists( 'jdpd_log' ) ) {
             jdpd_log( 'Event Sale Debug - After set, rule event_type: ' . $rule->get( 'event_type' ), 'debug' );

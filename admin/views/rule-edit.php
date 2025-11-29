@@ -38,6 +38,10 @@ $custom_event_name = $is_edit ? $rule->get( 'custom_event_name' ) : '';
 $event_discount_type = $is_edit ? $rule->get( 'event_discount_type' ) : 'percentage';
 $event_discount_value = $is_edit ? $rule->get( 'event_discount_value' ) : 10;
 
+// Badge customization
+$badge_bg_color = $is_edit ? $rule->get( 'badge_bg_color' ) : '';
+$badge_text_color = $is_edit ? $rule->get( 'badge_text_color' ) : '';
+
 // Get quantity ranges
 $quantity_ranges = $is_edit ? $rule->get_quantity_ranges() : array();
 
@@ -368,6 +372,26 @@ if ( $is_edit ) {
                                             <div class="jdpd-form-field">
                                                 <span class="jdpd-event-badge-preview" id="event-badge-preview" style="display: none;"></span>
                                                 <p class="description"><?php esc_html_e( 'This badge will appear next to the product price.', 'jezweb-dynamic-pricing' ); ?></p>
+                                            </div>
+                                        </div>
+                                        <div class="jdpd-form-row">
+                                            <div class="jdpd-form-label">
+                                                <label for="badge_bg_color"><?php esc_html_e( 'Badge Background Color', 'jezweb-dynamic-pricing' ); ?></label>
+                                            </div>
+                                            <div class="jdpd-form-field">
+                                                <input type="color" name="badge_bg_color" id="badge_bg_color" value="<?php echo esc_attr( $badge_bg_color ? $badge_bg_color : '#d83a34' ); ?>" class="jdpd-color-picker">
+                                                <input type="text" id="badge_bg_color_text" value="<?php echo esc_attr( $badge_bg_color ? $badge_bg_color : '#d83a34' ); ?>" class="small-text" style="width: 80px;">
+                                                <p class="description"><?php esc_html_e( 'Choose the badge background color. Default: #d83a34 (red)', 'jezweb-dynamic-pricing' ); ?></p>
+                                            </div>
+                                        </div>
+                                        <div class="jdpd-form-row">
+                                            <div class="jdpd-form-label">
+                                                <label for="badge_text_color"><?php esc_html_e( 'Badge Text Color', 'jezweb-dynamic-pricing' ); ?></label>
+                                            </div>
+                                            <div class="jdpd-form-field">
+                                                <input type="color" name="badge_text_color" id="badge_text_color" value="<?php echo esc_attr( $badge_text_color ? $badge_text_color : '#ffffff' ); ?>" class="jdpd-color-picker">
+                                                <input type="text" id="badge_text_color_text" value="<?php echo esc_attr( $badge_text_color ? $badge_text_color : '#ffffff' ); ?>" class="small-text" style="width: 80px;">
+                                                <p class="description"><?php esc_html_e( 'Choose the badge text color. Default: #ffffff (white)', 'jezweb-dynamic-pricing' ); ?></p>
                                             </div>
                                         </div>
                                     </div>

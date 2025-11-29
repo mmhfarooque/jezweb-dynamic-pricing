@@ -42,6 +42,8 @@ class JDPD_Rule {
         'exclusive'            => false,
         'show_badge'           => true,
         'badge_text'           => '',
+        'badge_bg_color'       => '',
+        'badge_text_color'     => '',
         'special_offer_type'   => '',
         'event_type'           => '',
         'custom_event_name'    => '',
@@ -406,6 +408,8 @@ class JDPD_Rule {
             'exclusive'            => $this->get( 'exclusive' ) ? 1 : 0,
             'show_badge'           => $this->get( 'show_badge' ) ? 1 : 0,
             'badge_text'           => $this->get( 'badge_text' ),
+            'badge_bg_color'       => $this->get( 'badge_bg_color' ),
+            'badge_text_color'     => $this->get( 'badge_text_color' ),
             'special_offer_type'   => $this->get( 'special_offer_type' ),
             'event_type'           => $this->get( 'event_type' ),
             'custom_event_name'    => $this->get( 'custom_event_name' ),
@@ -414,7 +418,7 @@ class JDPD_Rule {
         );
 
         $format = array(
-            '%s', '%s', '%s', '%d', '%s', '%f', '%s', '%s', '%s', '%s', '%d', '%d', '%d', '%s', '%s', '%s', '%s', '%s', '%f',
+            '%s', '%s', '%s', '%d', '%s', '%f', '%s', '%s', '%s', '%s', '%d', '%d', '%d', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%f',
         );
 
         // Debug logging

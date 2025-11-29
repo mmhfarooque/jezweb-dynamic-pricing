@@ -68,6 +68,10 @@ class JDPD_Event_Badges {
         // Mini cart
         add_filter( 'woocommerce_widget_cart_item_quantity', array( $this, 'add_event_badge_to_mini_cart' ), 100, 3 );
 
+        // Checkout order review - product name and price
+        add_filter( 'woocommerce_checkout_cart_item_quantity', array( $this, 'add_event_badge_to_checkout_item' ), 100, 3 );
+        add_filter( 'woocommerce_order_item_name', array( $this, 'add_price_breakdown_to_checkout' ), 100, 3 );
+
         // Enqueue styles
         add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_styles' ) );
 
@@ -111,10 +115,10 @@ class JDPD_Event_Badges {
      * @return string
      */
     public function add_event_badge_to_price( $price_html, $product ) {
-        $badge = $this->get_product_event_badge( $product );
+        $badge_data = $this->get_product_event_badge( $product );
 
-        if ( ! empty( $badge ) ) {
-            $price_html .= ' ' . $this->render_badge( $badge );
+        if ( ! empty( $badge_data ) ) {
+            $price_html .= ' ' . $this->render_badge( $badge_data['text'], 'default', $badge_data );
         }
 
         return $price_html;
@@ -130,10 +134,10 @@ class JDPD_Event_Badges {
      */
     public function add_event_badge_to_cart_price( $price_html, $cart_item, $cart_item_key ) {
         $product = $cart_item['data'];
-        $badge = $this->get_product_event_badge( $product );
+        $badge_data = $this->get_product_event_badge( $product );
 
-        if ( ! empty( $badge ) ) {
-            $price_html .= ' ' . $this->render_badge( $badge );
+        if ( ! empty( $badge_data ) ) {
+            $price_html .= ' ' . $this->render_badge( $badge_data['text'], 'default', $badge_data );
         }
 
         return $price_html;
@@ -162,20 +166,92 @@ class JDPD_Event_Badges {
      */
     public function add_event_badge_to_mini_cart( $quantity, $cart_item, $cart_item_key ) {
         $product = $cart_item['data'];
-        $badge = $this->get_product_event_badge( $product );
+        $badge_data = $this->get_product_event_badge( $product );
 
-        if ( ! empty( $badge ) ) {
-            $quantity .= ' ' . $this->render_badge( $badge, 'small' );
+        if ( ! empty( $badge_data ) ) {
+            $quantity .= ' ' . $this->render_badge( $badge_data['text'], 'small', $badge_data );
         }
 
         return $quantity;
     }
 
     /**
+     * Add event badge to checkout order review
+     *
+     * @param string $quantity   Quantity HTML.
+     * @param array  $cart_item  Cart item data.
+     * @param string $cart_item_key Cart item key.
+     * @return string
+     */
+    public function add_event_badge_to_checkout_item( $quantity, $cart_item, $cart_item_key ) {
+        $product = $cart_item['data'];
+        $badge_data = $this->get_product_event_badge( $product );
+
+        if ( ! empty( $badge_data ) ) {
+            $quantity .= ' ' . $this->render_badge( $badge_data['text'], 'small', $badge_data );
+        }
+
+        return $quantity;
+    }
+
+    /**
+     * Add price breakdown to checkout product name
+     *
+     * @param string $name     Product name.
+     * @param array  $cart_item Cart item data.
+     * @param string $cart_item_key Cart item key.
+     * @return string
+     */
+    public function add_price_breakdown_to_checkout( $name, $cart_item, $cart_item_key ) {
+        // Only on checkout page
+        if ( ! is_checkout() || is_wc_endpoint_url() ) {
+            return $name;
+        }
+
+        // Handle both cart items and order items
+        if ( is_array( $cart_item ) && isset( $cart_item['data'] ) ) {
+            $product = $cart_item['data'];
+        } elseif ( is_a( $cart_item, 'WC_Order_Item_Product' ) ) {
+            $product = $cart_item->get_product();
+        } else {
+            return $name;
+        }
+
+        if ( ! $product ) {
+            return $name;
+        }
+
+        $badge_data = $this->get_product_event_badge( $product );
+
+        if ( empty( $badge_data ) ) {
+            return $name;
+        }
+
+        // Get original and discounted prices
+        $original_price = $product->get_regular_price();
+        $discounted_price = $product->get_price();
+
+        if ( $original_price && $discounted_price && floatval( $original_price ) > floatval( $discounted_price ) ) {
+            $savings = floatval( $original_price ) - floatval( $discounted_price );
+            $savings_percent = round( ( $savings / floatval( $original_price ) ) * 100 );
+
+            $price_html = '<span class="jdpd-checkout-price-breakdown">';
+            $price_html .= '<del>' . wc_price( $original_price ) . '</del> ';
+            $price_html .= '<ins>' . wc_price( $discounted_price ) . '</ins>';
+            $price_html .= ' ' . $this->render_badge( $badge_data['text'], 'small', $badge_data );
+            $price_html .= '</span>';
+
+            $name .= '<br>' . $price_html;
+        }
+
+        return $name;
+    }
+
+    /**
      * Get event badge for a product
      *
      * @param WC_Product $product Product object.
-     * @return string|null Badge text or null if no badge.
+     * @return array|null Badge data array or null if no badge.
      */
     private function get_product_event_badge( $product ) {
         if ( ! $product ) {
@@ -190,19 +266,19 @@ class JDPD_Event_Badges {
         }
 
         // Get active event sale rules for this product
-        $badge_text = $this->get_active_event_badge_for_product( $product );
+        $badge_data = $this->get_active_event_badge_for_product( $product );
 
         // Cache the result
-        $this->product_badges[ $product_id ] = $badge_text;
+        $this->product_badges[ $product_id ] = $badge_data;
 
-        return $badge_text;
+        return $badge_data;
     }
 
     /**
      * Get active event badge for a product
      *
      * @param WC_Product $product Product object.
-     * @return string|null
+     * @return array|null Badge data array with text, bg_color, text_color.
      */
     private function get_active_event_badge_for_product( $product ) {
         $product_id = $product->get_id();
@@ -225,17 +301,31 @@ class JDPD_Event_Badges {
 
             // Get event name from the rule
             $event_type = $rule_obj->get( 'event_type' );
+            $badge_text = null;
 
             if ( 'custom' === $event_type ) {
                 $custom_name = $rule_obj->get( 'custom_event_name' );
                 if ( ! empty( $custom_name ) ) {
-                    return sanitize_text_field( $custom_name );
+                    $badge_text = sanitize_text_field( $custom_name );
                 }
             } elseif ( ! empty( $event_type ) ) {
                 $event = jdpd_get_special_event( $event_type );
                 if ( $event ) {
-                    return $event['name'];
+                    $badge_text = $event['name'];
                 }
+            }
+
+            if ( $badge_text ) {
+                // Get custom colors from rule (with fallback to global settings)
+                $bg_color = $rule_obj->get( 'badge_bg_color' );
+                $text_color = $rule_obj->get( 'badge_text_color' );
+
+                return array(
+                    'text'       => $badge_text,
+                    'bg_color'   => ! empty( $bg_color ) ? $bg_color : get_option( 'jdpd_event_badge_bg_color', '#d83a34' ),
+                    'text_color' => ! empty( $text_color ) ? $text_color : get_option( 'jdpd_event_badge_text_color', '#ffffff' ),
+                    'rule_id'    => $rule_obj->get_id(),
+                );
             }
         }
 
@@ -304,19 +394,32 @@ class JDPD_Event_Badges {
     /**
      * Render badge HTML
      *
-     * @param string $text Badge text.
-     * @param string $size Badge size (default, small).
+     * @param string $text       Badge text.
+     * @param string $size       Badge size (default, small).
+     * @param array  $badge_data Optional badge data with custom colors.
      * @return string
      */
-    private function render_badge( $text, $size = 'default' ) {
+    private function render_badge( $text, $size = 'default', $badge_data = array() ) {
         $class = 'jdpd-event-badge';
         if ( 'small' === $size ) {
             $class .= ' jdpd-event-badge-small';
         }
 
+        // Build inline style for custom colors
+        $style = '';
+        if ( ! empty( $badge_data['bg_color'] ) ) {
+            $style .= 'background-color: ' . esc_attr( $badge_data['bg_color'] ) . ';';
+        }
+        if ( ! empty( $badge_data['text_color'] ) ) {
+            $style .= 'color: ' . esc_attr( $badge_data['text_color'] ) . ';';
+        }
+
+        $style_attr = ! empty( $style ) ? ' style="' . esc_attr( $style ) . '"' : '';
+
         return sprintf(
-            '<span class="%s">%s</span>',
+            '<span class="%s"%s>%s</span>',
             esc_attr( $class ),
+            $style_attr,
             esc_html( $text )
         );
     }

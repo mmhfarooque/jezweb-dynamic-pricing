@@ -45,9 +45,29 @@
 
 /* Checkout Page Adjustments */
 .woocommerce-checkout .jdpd-event-badge {
-    display: block;
+    display: inline-block;
     margin: 4px 0 0 0;
     font-size: 10px;
+}
+
+/* Checkout Price Breakdown */
+.jdpd-checkout-price-breakdown {
+    display: block;
+    margin-top: 5px;
+    font-size: 13px;
+}
+
+.jdpd-checkout-price-breakdown del {
+    color: #999;
+    text-decoration: line-through;
+    margin-right: 5px;
+}
+
+.jdpd-checkout-price-breakdown ins {
+    color: #77a464;
+    font-weight: 600;
+    text-decoration: none;
+    margin-right: 8px;
 }
 
 /* Product Loop Adjustments */
