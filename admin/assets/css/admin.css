@@ -1543,7 +1543,7 @@
    Jezweb Branding & Credits
    ======================================== */
 
-/* Page Header with Jezweb Branding */
+/* Page Header - Clean White Style */
 .jdpd-page-header {
     display: flex;
     align-items: center;
@@ -1551,15 +1551,16 @@
     flex-wrap: wrap;
     gap: 20px;
     margin-bottom: 30px;
-    padding: 24px 28px;
-    background: linear-gradient(135deg, var(--jdpd-primary), var(--jdpd-primary-dark));
+    padding: 20px 24px;
+    background: var(--jdpd-card-bg);
+    border: 1px solid var(--jdpd-border);
     border-radius: var(--jdpd-radius-lg);
-    box-shadow: var(--jdpd-shadow-md);
+    box-shadow: var(--jdpd-shadow);
 }
 
 .jdpd-page-header h1 {
-    color: #ffffff;
-    font-size: 24px;
+    color: var(--jdpd-text);
+    font-size: 22px;
     font-weight: 700;
     margin: 0;
     display: flex;
@@ -1568,9 +1569,9 @@
 }
 
 .jdpd-page-header .page-title-action {
-    background: rgba(255, 255, 255, 0.15);
+    background: var(--jdpd-primary);
     color: white;
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    border: none;
     padding: 8px 16px;
     border-radius: 6px;
     font-weight: 500;
@@ -1579,12 +1580,11 @@
 }
 
 .jdpd-page-header .page-title-action:hover {
-    background: rgba(255, 255, 255, 0.25);
-    border-color: rgba(255, 255, 255, 0.5);
+    background: var(--jdpd-primary-dark);
 }
 
 .jdpd-header-logo {
-    height: 36px;
+    height: 32px;
     width: auto;
 }
 
@@ -1683,10 +1683,10 @@
 .jdpd-version-badge {
     display: inline-flex;
     align-items: center;
-    padding: 4px 10px;
+    padding: 4px 12px;
     font-size: 11px;
     font-weight: 600;
-    background: rgba(255, 255, 255, 0.2);
+    background: var(--jdpd-primary);
     color: #ffffff;
     border-radius: 20px;
     letter-spacing: 0.3px;
@@ -1695,11 +1695,11 @@
 /* Responsive Credits */
 @media screen and (max-width: 782px) {
     .jdpd-page-header {
-        padding: 20px;
+        padding: 16px;
     }
 
     .jdpd-page-header h1 {
-        font-size: 20px;
+        font-size: 18px;
     }
 
     .jdpd-credits {
