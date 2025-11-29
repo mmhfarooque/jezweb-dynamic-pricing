@@ -618,6 +618,3 @@ class JDPD_Frontend_Enhancements {
         wp_send_json_success( array( 'message' => $message ) );
     }
 }
-
-// Initialize
-new JDPD_Frontend_Enhancements();

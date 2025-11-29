@@ -691,6 +691,3 @@ class JDPD_REST_API {
         );
     }
 }
-
-// Initialize REST API
-new JDPD_REST_API();
