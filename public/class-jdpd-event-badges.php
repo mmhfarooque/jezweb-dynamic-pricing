@@ -206,35 +206,31 @@ class JDPD_Event_Badges {
      */
     private function get_active_event_badge_for_product( $product ) {
         $product_id = $product->get_id();
-        $product_categories = wp_get_post_terms( $product_id, 'product_cat', array( 'fields' => 'ids' ) );
-        $product_tags = wp_get_post_terms( $product_id, 'product_tag', array( 'fields' => 'ids' ) );
 
         // Get all active special offer rules
         $rules = jdpd_get_active_rules( 'special_offer' );
 
         foreach ( $rules as $rule ) {
-            // Check if rule has settings
-            if ( empty( $rule->settings ) ) {
-                continue;
-            }
+            $rule_obj = new JDPD_Rule( $rule );
 
-            $settings = maybe_unserialize( $rule->settings );
-
-            // Check if this is an event sale
-            if ( empty( $settings['special_offer_type'] ) || 'event_sale' !== $settings['special_offer_type'] ) {
+            // Check if this is an event sale (using the new column structure)
+            if ( 'event_sale' !== $rule_obj->get( 'special_offer_type' ) ) {
                 continue;
             }
 
             // Check if product matches this rule
-            if ( ! $this->product_matches_rule( $product_id, $product_categories, $product_tags, $rule ) ) {
+            if ( ! $rule_obj->applies_to_product( $product ) ) {
                 continue;
             }
 
-            // Get event name
-            $event_type = ! empty( $settings['event_type'] ) ? $settings['event_type'] : '';
+            // Get event name from the rule
+            $event_type = $rule_obj->get( 'event_type' );
 
-            if ( 'custom' === $event_type && ! empty( $settings['custom_event_name'] ) ) {
-                return sanitize_text_field( $settings['custom_event_name'] );
+            if ( 'custom' === $event_type ) {
+                $custom_name = $rule_obj->get( 'custom_event_name' );
+                if ( ! empty( $custom_name ) ) {
+                    return sanitize_text_field( $custom_name );
+                }
             } elseif ( ! empty( $event_type ) ) {
                 $event = jdpd_get_special_event( $event_type );
                 if ( $event ) {

@@ -185,6 +185,18 @@ class JDPD_Price_Rules {
      * @return float
      */
     private function get_rule_discount( $rule, $product, $price, $quantity = 1 ) {
+        // Check if this is an event sale (special_offer with event_sale type)
+        if ( 'event_sale' === $rule->get( 'special_offer_type' ) ) {
+            $discount_type = $rule->get( 'event_discount_type' ) ?: 'percentage';
+            $discount_value = floatval( $rule->get( 'event_discount_value' ) );
+
+            if ( $discount_value > 0 ) {
+                return jdpd_calculate_discount( $price, $discount_type, $discount_value );
+            }
+            return 0;
+        }
+
+        // Standard price rule discount
         $discount_type = $rule->get( 'discount_type' );
         $discount_value = $rule->get( 'discount_value' );
 
@@ -239,6 +251,21 @@ class JDPD_Price_Rules {
 
         foreach ( $all_rules as $rule ) {
             $rule_obj = new JDPD_Rule( $rule );
+
+            if ( $rule_obj->applies_to_product( $product ) ) {
+                $applicable[] = $rule;
+            }
+        }
+
+        // Also get event sale special offers and apply them as price discounts
+        $special_offers = jdpd_get_active_rules( 'special_offer' );
+        foreach ( $special_offers as $rule ) {
+            $rule_obj = new JDPD_Rule( $rule );
+
+            // Only process event_sale type special offers
+            if ( 'event_sale' !== $rule_obj->get( 'special_offer_type' ) ) {
+                continue;
+            }
 
             if ( $rule_obj->applies_to_product( $product ) ) {
                 $applicable[] = $rule;
